@@ -5,6 +5,8 @@
   "private": true,
   "dependencies": {
     "menubar": "*",
+    "axios": "^0.18.0",
+    "bignumber.js": "^7.2.1",
     "shelljs": "^0.8.2",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",

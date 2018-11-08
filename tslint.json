@@ -6,5 +6,13 @@
       "node_modules/**/*.ts",
       "coverage/lcov-report/*.js"
     ]
+  },
+  "rules": { // Disable for typescript
+    "no-console": false,
+    "object-literal-sort-keys": false
+  },
+  "jsRules": { // Disable for javascript
+    "no-console": false,
+    "object-literal-sort-keys": false
   }
 }
