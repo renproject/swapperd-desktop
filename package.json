@@ -1,5 +1,6 @@
 {
   "name": "swapperd-native",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,18 +11,30 @@
     "react-scripts-ts": "3.1.0"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
+    "start": "cd build; npm run start; cd ../",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "watch": "npm-watch build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.2",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
-    "typescript": "^3.1.6",
     "electron-packager": "^5.1.0",
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "npm-watch": "^0.4.0",
+    "typescript": "^3.1.6"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "."
+      ],
+      "ignore": "build",
+      "extensions": "*",
+      "quiet": false
+    }
   }
 }
