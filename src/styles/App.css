@@ -115,3 +115,42 @@
   white-space: nowrap;
   overflow: auto;
 }
+
+.balances ul {
+  margin: 0;
+  padding: 0;
+}
+
+.balanceItem {
+  border: 1px solid #666666;
+  box-shadow: 4px 4px 0px #666666;
+  padding: 10px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.balanceItem--left img {
+  height: 50px;
+}
+
+.balanceItem--right {
+  padding: 0 10px;
+  width: calc(100% - 80px);
+}
+
+.balanceAddress {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.withdrawButton {
+  cursor: pointer;
+  color: #006fe8;
+}
+
+.approve-withdraw img {
+  width: 50px;
+}

@@ -6,24 +6,10 @@ import axios from 'axios';
 
 import BigNumber from "bignumber.js";
 
-import btc from '../styles/images/btc.svg';
-import eth from '../styles/images/eth.svg';
 import swap from '../styles/images/swap.svg';
-import wbtc from '../styles/images/wbtc.png';
-import { IPartialSwapRequest, ISwapRequest } from './App';
 
-const getLogo = (symbol: string) => {
-    switch (symbol) {
-        case "WBTC":
-            return wbtc;
-        case "BTC":
-            return btc;
-        case "ETH":
-            return eth;
-        default:
-            return swap;
-    }
-}
+import { getLogo } from 'src/lib/logos';
+import { IPartialSwapRequest, ISwapRequest } from '../lib/swapperd';
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;

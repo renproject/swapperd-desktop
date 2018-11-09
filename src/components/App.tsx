@@ -3,29 +3,17 @@ import * as React from 'react';
 import '../styles/App.css';
 
 import ApproveSwap from './ApproveSwap';
-import Listening from './Listening';
 
-export interface ISwapRequest extends IPartialSwapRequest {
-    id: string,
-    timeLock: number,
-    secretHash: string,
-}
-
-export interface IPartialSwapRequest {
-    sendToken: string,
-    receiveToken: string,
-
-    // SendAmount and ReceiveAmount are hex encoded.
-    sendAmount: string,
-    receiveAmount: string,
-
-    sendTo: string,
-    receiveFrom: string,
-    shouldInitiateFirst: boolean,
-}
+import { getBalances, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest } from '../lib/swapperd';
+import { ApproveWithdraw } from './ApproveWithdraw';
+import { Balances } from './Balances';
+import { Banner } from './Banner';
 
 interface IAppState {
     swapDetails: IPartialSwapRequest | null;
+    withdrawRequest: IPartialWithdrawRequest | null;
+    balances: IBalancesResponse | null;
+    balancesError: string | null;
 }
 
 class App extends React.Component<{}, IAppState> {
@@ -34,25 +22,51 @@ class App extends React.Component<{}, IAppState> {
         super(props);
         this.state = {
             swapDetails: null,
+            withdrawRequest: null,
+            balances: null,
+            balancesError: null,
         }
     }
 
-    public componentDidMount() {
-        // chrome.runtime.sendMessage({ method: 'getswapDetails' }, (response) => {
-        //     this.setState({ swapDetails: response.swapDetails });
-        // });
+    public async componentDidMount() {
+        this.setState({ balancesError: null });
+        try {
+            const balances = await getBalances();
+            this.setState({ balances });
+        } catch (err) {
+            this.setState({ balancesError: err.message });
+        }
     }
 
     public render() {
-        const { swapDetails } = this.state;
-        return (
-            <div className="app">
-                {swapDetails === null ?
-                    <Listening /> :
-                    <ApproveSwap swapDetails={swapDetails} />
-                }
+        const { swapDetails, withdrawRequest, balances, balancesError } = this.state;
+
+        if (swapDetails) {
+            return <div className="app">
+                <Banner title="Approve swap" />
+                <ApproveSwap swapDetails={swapDetails} />
             </div>
-        );
+        }
+
+        if (withdrawRequest) {
+            return <div className="app">
+                <Banner title="Withdraw" />
+                <ApproveWithdraw
+                    setWithdrawRequest={this.setWithdrawRequest}
+                    withdrawRequest={withdrawRequest}
+                    balances={balances}
+                />
+            </div>
+        }
+
+        return <div className="app">
+            <Banner title="Balances" />
+            <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
+        </div>;
+    }
+
+    public setWithdrawRequest = (withdrawRequest: IPartialWithdrawRequest | null) => {
+        this.setState({ withdrawRequest });
     }
 }
 

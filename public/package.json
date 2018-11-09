@@ -4,15 +4,16 @@
   "version": "1.0.0",
   "description": "example menubar electron app",
   "dependencies": {
-    "menubar": "*"
+    "menubar": "*",
+    "ws": "^6.1.0"
   },
   "devDependencies": {
-    "electron-packager": "^5.1.0",
-    "electron-prebuilt": "^0.36.0"
+    "electron-packager": "^12.2.0",
+    "electron-prebuilt": "^1.4.13"
   },
   "main": "main.js",
   "scripts": {
     "build": "electron-packager . Example --platform=linux --arch=x64 --version=0.36.0 --icon=Icon.icns",
-    "start": "XDG_CURRENT_DESKTOP=Unity electron ."
+    "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js ."
   }
 }
