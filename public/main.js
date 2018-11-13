@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const menubar = require('menubar')
 
 const mb = menubar({
-  icon: "./IconTemplate.png",
+  tooltip: "swapperd",
 });
 
 mb.on('ready', function ready() {
