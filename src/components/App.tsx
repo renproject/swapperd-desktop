@@ -36,6 +36,15 @@ class App extends React.Component<{}, IAppState> {
         } catch (err) {
             this.setState({ balancesError: err.message });
         }
+
+        const ws = new WebSocket('ws://localhost:8080');
+        ws.onopen = () => {
+            ws.send("connect");
+        };
+        ws.onmessage = (evt) => {
+            const swapDetails = JSON.parse(evt.data);
+            this.setState({ swapDetails });
+        };
     }
 
     public render() {

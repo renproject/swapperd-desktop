@@ -1,22 +1,27 @@
-const WebSocket = require('ws');
-const menubar = require('menubar')
+const menubar = require("menubar");
+const WebSocket = require("ws");
 
 const mb = menubar({
-  tooltip: "swapperd",
+    tooltip: "Swapperd",
+    showDockIcon: true,
 });
 
-mb.on('ready', function ready() {
-  console.log('App is being served...');
-})
+mb.on("ready", function ready() {
+    console.log("App is being served...");
+});
 
 const wss = new WebSocket.Server({
-  port: 8080
+    port: 8080
 });
 
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
+let client = WebSocket;
 
-  ws.send('something');
+wss.on("connection", function connection(ws) {
+    ws.on("message", function incoming(message) {
+        if (message === "connect") {
+            client = ws;
+        }
+        client.send(message);
+        mb.showWindow();
+    });
 });

@@ -14,8 +14,6 @@
 .swap-header--row {
   display: flex;
   flex-direction: row;
-  font-family: monospace;
-  font-size: 1.2rem;
   margin: 1rem;
 }
 
@@ -28,19 +26,11 @@
 
 .swap-header--row-body {
   display: flex;
-  flex: 2;
   flex-direction: column;
-  align-items: start;
 }
 
 .swap-header--row-title {
   font-weight: bold;
-}
-
-.swap-header--icons {
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0;
 }
 
 .retro--blue {
@@ -48,7 +38,6 @@
   background-color: white;
   box-shadow: 4px 4px 0px #006fe8;
   border: 1px solid #006fe8;
-  font-family: monospace;
   position: relative;
 
   top: 0px;
@@ -67,7 +56,6 @@
   background-color: white;
   box-shadow: 4px 4px 0px #666666;
   border: 1px solid #666666;
-  font-family: monospace;
   transition: 50ms ease-in-out;
 }
 

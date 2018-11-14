@@ -6,8 +6,6 @@ import axios from 'axios';
 
 import BigNumber from "bignumber.js";
 
-import swap from '../styles/images/swap.svg';
-
 import { getLogo } from 'src/lib/logos';
 import { IPartialSwapRequest, ISwapRequest } from '../lib/swapperd';
 
@@ -54,9 +52,6 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
                     </> :
                     <>
                         <header className="swap-header">
-                            <div className="swap-header--icons">
-                                <img style={{ margin: "0 0.5rem" }} src={swap} />
-                            </div>
                             <div className="swap-header--row-list">
                                 <div className="swap-header--row">
                                     <img className="swap-header--row-img" src={getLogo(swapDetails.sendToken)} />
