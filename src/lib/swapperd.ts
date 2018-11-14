@@ -67,6 +67,16 @@ export const getBalances = async () => {
     return balances;
 }
 
+export const getAccount = async () => {
+    // function UrlExists(url)
+    // {
+    //     var http = new XMLHttpRequest();
+    //     http.open('HEAD', url, false);
+    //     http.send();
+    //     return http.status!=404;
+    // }
+}
+
 export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, username: string, password: string) => {
 
     const decimal = decimals.get(withdrawRequest.token);

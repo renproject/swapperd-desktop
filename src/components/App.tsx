@@ -17,6 +17,7 @@ interface IAppState {
 }
 
 class App extends React.Component<{}, IAppState> {
+    private msg: string;
 
     constructor(props: {}) {
         super(props);
@@ -26,6 +27,7 @@ class App extends React.Component<{}, IAppState> {
             balances: null,
             balancesError: null,
         }
+        this.reject = this.reject.bind(this);
     }
 
     public async componentDidMount() {
@@ -43,6 +45,7 @@ class App extends React.Component<{}, IAppState> {
         };
         ws.onmessage = (evt) => {
             try {
+                this.msg = evt.data;
                 const swapDetails = JSON.parse(evt.data);
                 this.setState({ swapDetails });
             } catch (e) {
@@ -56,8 +59,17 @@ class App extends React.Component<{}, IAppState> {
 
         if (swapDetails) {
             return <div className="app">
+                <p>{this.msg}</p>
                 <Banner title="Approve swap" />
-                <ApproveSwap swapDetails={swapDetails} />
+                <ApproveSwap swapDetails={swapDetails} reject={this.reject} />
+            </div>
+        }
+
+        if (swapDetails) {
+            return <div className="app">
+                <p>{this.msg}</p>
+                <Banner title="Approve swap" />
+                <ApproveSwap swapDetails={swapDetails} reject={this.reject} />
             </div>
         }
 
@@ -80,6 +92,10 @@ class App extends React.Component<{}, IAppState> {
 
     public setWithdrawRequest = (withdrawRequest: IPartialWithdrawRequest | null) => {
         this.setState({ withdrawRequest });
+    }
+
+    private reject(): void {
+        this.setState({ swapDetails: null });
     }
 }
 

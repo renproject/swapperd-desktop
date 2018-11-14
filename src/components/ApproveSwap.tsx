@@ -11,6 +11,7 @@ import { IPartialSwapRequest, ISwapRequest } from '../lib/swapperd';
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
+    reject(): void;
 }
 
 interface IApproveSwapState {
@@ -97,6 +98,7 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
     }
 
     private onReject = async () => {
+        this.props.reject();
         // chrome.runtime.sendMessage({ method: 'rejectedSwap' }, console.log);
     }
 
