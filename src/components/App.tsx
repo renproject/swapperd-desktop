@@ -42,8 +42,12 @@ class App extends React.Component<{}, IAppState> {
             ws.send("connect");
         };
         ws.onmessage = (evt) => {
-            const swapDetails = JSON.parse(evt.data);
-            this.setState({ swapDetails });
+            try {
+                const swapDetails = JSON.parse(evt.data);
+                this.setState({ swapDetails });
+            } catch (e) {
+                console.log(e);
+            }
         };
     }
 

@@ -14,7 +14,7 @@ mb.on("ready", function ready() {
         label: "Application",
         submenu: [
             {
-                label: "About Application",
+                label: "About",
                 selector: "orderFrontStandardAboutPanel:"
             },
             {
