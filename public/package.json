@@ -1,12 +1,13 @@
 {
-  "name": "swapperd-native",
+  "name": "swapperd-menubar-app",
   "config": {
+    "appName": "Swapperd",
     "outputDir": "../release-builds"
   },
   "homepage": ".",
   "version": "1.0.0",
-  "description": "Swapper daemon for Atomic Swaps",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "menubar": "*",
     "ws": "^6.1.0"
   },
@@ -17,9 +18,9 @@
   },
   "main": "main.js",
   "scripts": {
+    "build": "electron-packager . ${npm_package_config_appName} --platform=darwin --arch=x64 --icon=Icon.icns",
     "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
-    "build": "XDG_CURRENT_DESKTOP=Unity electron-packager . --platform=linux --arch=x64 --icon=Icon.icns --out=${npm_package_config_outputDir}",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
-    "create-installer-mac": "electron-installer-dmg ${npm_package_config_outputDir}/${npm_package_name}-darwin-x64/${npm_package_name}.app ${npm_package_name} --out=${npm_package_config_outputDir} --overwrite --icon=assets/icons/mac/icon.icns && echo \"Wrote DMG to: ${npm_package_config_outputDir}/${npm_package_name}.dmg\""
+    "create-installer-mac": "electron-installer-dmg ${npm_package_config_outputDir}/${npm_package_name}-darwin-x64/${npm_package_name}.app ${npm_package_config_appName} --out=${npm_package_config_outputDir} --overwrite --icon=assets/icons/mac/icon.icns && echo \"Wrote DMG to: ${npm_package_config_outputDir}/${npm_package_name}.dmg\""
   }
 }
