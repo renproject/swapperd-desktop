@@ -67,7 +67,7 @@ export const getBalances = async () => {
     return balances;
 }
 
-export const getAccount = async () => {
+export const checkAccountExists = async (): Promise<boolean> => {
     // function UrlExists(url)
     // {
     //     var http = new XMLHttpRequest();
@@ -75,6 +75,11 @@ export const getAccount = async () => {
     //     http.send();
     //     return http.status!=404;
     // }
+    return false;
+}
+
+export const createAccount = async (network: string, username: string, password: string) => {
+    return;
 }
 
 export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, username: string, password: string) => {
