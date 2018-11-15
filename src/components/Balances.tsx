@@ -32,7 +32,7 @@ export class Balances extends React.Component<IBalancesProps, IBalancesState> {
     }
 
     public render() {
-        const { balances, balancesError } = this.props;
+        const { balances } = this.props;
         return (
 
             <div className="balances">
