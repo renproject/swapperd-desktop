@@ -1,6 +1,12 @@
 import axios from 'axios';
-
 import BigNumber from 'bignumber.js';
+import * as child from 'child_process';
+import * as fs from 'fs';
+
+export enum Network {
+    Mainnet = "mainnet",
+    Testnet = "testnet",
+}
 
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
@@ -67,14 +73,12 @@ export const getBalances = async () => {
     return balances;
 }
 
-export const getAccount = async () => {
-    // function UrlExists(url)
-    // {
-    //     var http = new XMLHttpRequest();
-    //     http.open('HEAD', url, false);
-    //     http.send();
-    //     return http.status!=404;
-    // }
+export const checkAccountExists = async () => {
+    return fs.existsSync("~/.swapperd/testnet.json")
+}
+
+export const createAccount = async (network: Network, username: string, password: string) => {
+    child.exec(`install.sh ${network} ${username} ${password}`)  
 }
 
 export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, username: string, password: string) => {
