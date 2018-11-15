@@ -2,6 +2,7 @@ const menubar = require("menubar");
 const WebSocket = require("ws");
 const Menu = require("electron").Menu;
 const fs = require("fs");
+const serve = require("./server.js").Serve;
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -75,11 +76,14 @@ mb.on("ready", function ready() {
         edit
     ]
 
-    if (!fs.existsSync("~/.swapperd/testnet.json")) {
-        serve()
-    }
-    
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+
+    /* fs.access("~/.swapperd/testnet.json", fs.constants.F_OK, (err) => {
+        if (err) {
+            serve();            
+        }
+    }); */
+    serve();
 });
 
 const wss = new WebSocket.Server({

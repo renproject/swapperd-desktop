@@ -8,7 +8,9 @@
   "version": "1.0.0",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "menubar": "*",
+    "shelljs": "^0.8.3",
     "ws": "^6.1.0"
   },
   "devDependencies": {

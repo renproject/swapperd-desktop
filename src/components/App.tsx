@@ -4,7 +4,7 @@ import '../styles/App.css';
 
 import ApproveSwap from './ApproveSwap';
 
-import { checkAccountExists, getBalances, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest } from '../lib/swapperd';
+import { getBalances, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest } from '../lib/swapperd';
 import { ApproveWithdraw } from './ApproveWithdraw';
 import { Balances } from './Balances';
 import { Banner } from './Banner';
@@ -33,9 +33,11 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public async componentDidMount() {
+        const xhr = new XMLHttpRequest();
         try {
-            const accountExists = await checkAccountExists();
-            this.setState({ accountExists });
+            xhr.open("GET", "http://localhost:7777/whoami", false);
+            xhr.send("");
+            this.setState({ accountExists: true });
         } catch (e) {
             console.log(e);
         }
@@ -101,6 +103,15 @@ class App extends React.Component<{}, IAppState> {
 
     private accountCreated(): void {
         this.setState({ accountExists: true });
+
+        setTimeout(async () => {
+            try {
+                const balances = await getBalances();
+                this.setState({ balances });
+            } catch (err) {
+                this.setState({ balancesError: err.message });
+            }
+        }, 2000);
     }
 
     private rejectSwap(): void {

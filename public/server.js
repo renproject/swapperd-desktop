@@ -1,17 +1,24 @@
-const express = require('express');
-const { exec } = require('child_process');
+const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
+const shell = require("shelljs");
 
 function serve() {
-    app.listen(7778)       
+    app.use(bodyParser.json());
+    app.post("/account", (req, res) => {
+        shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${req.body.username} ${req.body.password}`, (code, stdout, stderr) => {
+            if (code !== 0) {
+                res.status(400);
+                res.send(stderr);
+            } else {
+                res.status(200);
+                res.send(stdout)
+            }
+        });
+    });
+    app.listen(7778);
 }
 
-app.post('/account', (req, res) => {
-    console.log(req.body)
-    request = JSON.parse(req.body)
-    createAccount(request.Username, request.Password)
-});
-
-function createAccount(username, password) {
-    exec(`install.sh testnet ${username} ${password}`)
-}
+module.exports = {
+    Serve: serve,
+};

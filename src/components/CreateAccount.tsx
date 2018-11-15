@@ -1,6 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { createAccount, Network } from 'src/lib/swapperd';
+import axios from "axios";
+import Loading from './Loading';
 
 interface ICreateAccountProps {
     resolve(): void;
@@ -10,6 +11,7 @@ interface ICreateAccountProps {
 interface ICreateAccountState {
     username: string;
     password: string;
+    loading: boolean;
 }
 
 export class CreateAccount extends React.Component<ICreateAccountProps, ICreateAccountState> {
@@ -17,20 +19,26 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         super(props);
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            loading: false
         };
         this.handleInput = this.handleInput.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     public render() {
+        const { loading } = this.state;
         return (
             <div className="account">
-                <form onSubmit={this.onSubmit}>
-                    <input className="retro--grey" type="text" name="username" placeholder="Username" onChange={this.handleInput} />
-                    <input className="retro--grey" type="password" name="password" placeholder="Password" onChange={this.handleInput} />
-                    <input className="retro--blue" type="submit" value="Create account" />
-                </form>
+                {!loading ?
+                    <form onSubmit={this.onSubmit}>
+                        <input className="retro--grey" type="text" name="username" placeholder="Username" onChange={this.handleInput} />
+                        <input className="retro--grey" type="password" name="password" placeholder="Password" onChange={this.handleInput} />
+                        <input className="retro--blue" type="submit" value="Create account" />
+                    </form>
+                    :
+                    <Loading />
+                }
             </div>
         );
     }
@@ -41,13 +49,13 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     }
 
     private async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        this.setState({ loading: true });
         event.preventDefault();
         const { username, password } = this.state;
-        try {
-            await createAccount(Network.Testnet, username, password);
+
+        const response = await axios.post("http://localhost:7778/account", { username, password });
+        if (response.status === 200) {
             this.props.resolve();
-        } catch (error) {
-            console.log(error);
         }
     }
 }

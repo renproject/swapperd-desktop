@@ -54,7 +54,7 @@ export class Balances extends React.Component<IBalancesProps, IBalancesState> {
                         </form> */}
                     </>
                 }
-                {balancesError ? <p className="red">{balancesError}</p> : null}
+                {/* balancesError ? <p className="red">{balancesError}</p> : null */}
             </div>
         );
     }
