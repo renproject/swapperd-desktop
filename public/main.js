@@ -2,7 +2,6 @@ const menubar = require("menubar");
 const WebSocket = require("ws");
 const Menu = require("electron").Menu;
 const fs = require("fs");
-const http = require("http");
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -71,19 +70,15 @@ mb.on("ready", function ready() {
         ]
     }
 
-    if (!fs.existsSync("~/.swapperd/testnet.json")) {
-        http.createServer(function (req, res) {
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write(req.url);
-            res.end();
-        }).listen(7778);
-    }
-
     const template = [
         application,
         edit
     ]
 
+    if (!fs.existsSync("~/.swapperd/testnet.json")) {
+        serve()
+    }
+    
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 });
 
