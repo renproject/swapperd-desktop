@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { createAccount } from 'src/lib/swapperd';
+import { createAccount, Network } from 'src/lib/swapperd';
 
 interface ICreateAccountProps {
     resolve(): void;
@@ -10,7 +10,6 @@ interface ICreateAccountProps {
 interface ICreateAccountState {
     username: string;
     password: string;
-    network: string;
 }
 
 export class CreateAccount extends React.Component<ICreateAccountProps, ICreateAccountState> {
@@ -18,8 +17,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         super(props);
         this.state = {
             username: "",
-            password: "",
-            network: ""
+            password: ""
         };
         this.handleInput = this.handleInput.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -31,7 +29,6 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                 <form onSubmit={this.onSubmit}>
                     <input className="retro--grey" type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                     <input className="retro--grey" type="password" name="password" placeholder="Password" onChange={this.handleInput} />
-                    <input className="retro--grey" type="text" name="network" placeholder="Network" onChange={this.handleInput} />
                     <input className="retro--blue" type="submit" value="Create account" />
                 </form>
             </div>
@@ -45,9 +42,9 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
 
     private async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
-        const { username, password, network } = this.state;
+        const { username, password } = this.state;
         try {
-            await createAccount(network, username, password);
+            await createAccount(Network.Testnet, username, password);
             this.props.resolve();
         } catch (error) {
             console.log(error);
