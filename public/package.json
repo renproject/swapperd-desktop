@@ -1,8 +1,8 @@
 {
-  "name": "example-menubar-app",
+  "name": "swapperd-native",
   "homepage": ".",
   "version": "1.0.0",
-  "description": "example menubar electron app",
+  "description": "Swapper daemon for Atomic Swaps",
   "dependencies": {
     "menubar": "*",
     "ws": "^6.1.0"
