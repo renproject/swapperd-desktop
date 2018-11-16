@@ -16,13 +16,18 @@
   "devDependencies": {
     "electron-installer-dmg": "^2.0.0",
     "electron-packager": "^12.2.0",
-    "electron-prebuilt": "^1.4.13"
+    "electron-prebuilt": "^1.4.13",
+    "innosetup-compiler": "^5.5.9",
+    "minimalist": "^1.0.0",
+    "mustache": "^3.0.1"
   },
   "main": "main.js",
   "scripts": {
     "build": "electron-packager . ${npm_package_config_appName} --platform=darwin --arch=x64 --icon=Icon.icns",
     "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
-    "create-installer-mac": "electron-installer-dmg ${npm_package_config_outputDir}/${npm_package_name}-darwin-x64/${npm_package_name}.app ${npm_package_config_appName} --out=${npm_package_config_outputDir} --overwrite --icon=assets/icons/mac/icon.icns && echo \"Wrote DMG to: ${npm_package_config_outputDir}/${npm_package_name}.dmg\""
+    "create-installer-mac": "electron-installer-dmg ${npm_package_config_outputDir}/${npm_package_name}-darwin-x64/${npm_package_name}.app ${npm_package_config_appName} --out=${npm_package_config_outputDir} --overwrite --icon=assets/icons/mac/icon.icns && echo \"Wrote DMG to: ${npm_package_config_outputDir}/${npm_package_name}.dmg\"",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --out=${npm_package_config_outputDir} --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"${npm_package_name}\"",
+    "create-installer-win": "node installers/windows/createinstaller.js --licenseFile ../LICENSE --publisher \"Ren Inc.\"",
   }
 }
