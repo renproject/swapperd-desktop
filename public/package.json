@@ -24,11 +24,13 @@
   },
   "main": "main.js",
   "scripts": {
-    "build": "electron-packager . ${npm_package_config_appName} --platform=darwin --arch=x64 --icon=Icon.icns",
+    "build": "npm run build-mac",
     "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
     "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
+    "build-mac": "npm run package-mac && npm run create-installer-mac",
     "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --out=${npm_package_config_outputDir} --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"${npm_package_name}\"",
     "create-installer-win": "node installers/windows/createinstaller.js --licenseFile ../LICENSE --publisher \"Ren Inc.\"",
+    "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns"
   }
 }
