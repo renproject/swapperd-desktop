@@ -11,6 +11,7 @@ import { Banner } from './Banner';
 import { CreateAccount } from './CreateAccount';
 
 interface IAppState {
+    socket: WebSocket | null;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
@@ -22,6 +23,7 @@ class App extends React.Component<{}, IAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+            socket: null,
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
@@ -29,7 +31,7 @@ class App extends React.Component<{}, IAppState> {
             balancesError: null,
         }
         this.accountCreated = this.accountCreated.bind(this);
-        this.rejectSwap = this.rejectSwap.bind(this);
+        this.resetSwapDetails = this.resetSwapDetails.bind(this);
     }
 
     public async componentDidMount() {
@@ -50,6 +52,8 @@ class App extends React.Component<{}, IAppState> {
         }
 
         const ws = new WebSocket('ws://localhost:8080');
+        const socket = new WebSocket('ws://localhost:8081');
+        this.setState({ socket });
         ws.onopen = () => {
             ws.send("connect");
         };
@@ -64,7 +68,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render() {
-        const { accountExists, swapDetails, withdrawRequest, balances, balancesError } = this.state;
+        const { socket, accountExists, swapDetails, withdrawRequest, balances, balancesError } = this.state;
 
         if (!accountExists) {
             return <div className="app">
@@ -76,7 +80,7 @@ class App extends React.Component<{}, IAppState> {
         if (swapDetails) {
             return <div className="app">
                 <Banner title="Approve swap" />
-                <ApproveSwap swapDetails={swapDetails} reject={this.rejectSwap} />
+                <ApproveSwap socket={socket} swapDetails={swapDetails} reset={this.resetSwapDetails} />
             </div>
         }
 
@@ -114,7 +118,7 @@ class App extends React.Component<{}, IAppState> {
         }, 2000);
     }
 
-    private rejectSwap(): void {
+    private resetSwapDetails(): void {
         this.setState({ swapDetails: null });
     }
 }

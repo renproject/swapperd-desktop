@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
 const shell = require("shelljs");
 
 function serve() {
+    const app = express();
     app.use(bodyParser.json());
     app.post("/account", (req, res) => {
         shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${req.body.username} ${req.body.password}`, (code, stdout, stderr) => {
