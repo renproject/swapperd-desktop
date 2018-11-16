@@ -11,7 +11,8 @@ import { IPartialSwapRequest, ISwapRequest } from '../lib/swapperd';
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
-    reject(): void;
+    socket: WebSocket | null;
+    reset(): void;
 }
 
 interface IApproveSwapState {
@@ -98,7 +99,7 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
     }
 
     private onReject = async () => {
-        this.props.reject();
+        this.props.reset();
         // chrome.runtime.sendMessage({ method: 'rejectedSwap' }, console.log);
     }
 
@@ -107,7 +108,7 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
         this.setState({ error: null, loading: true });
 
         try {
-            const { swapDetails } = this.props;
+            const { swapDetails, socket } = this.props;
             const postResponse = await axios({
                 method: 'POST',
                 url: "http://localhost:7777/swaps",
@@ -120,8 +121,8 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
 
             const response: ISwapRequest = postResponse.data;
 
-            if (swapDetails.shouldInitiateFirst) {
 
+            if (swapDetails.shouldInitiateFirst) {
                 const balances = (await axios({
                     method: 'GET',
                     url: "http://localhost:7777/balances",
@@ -143,17 +144,16 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
 
                 response.receiveFrom = balanceMap[response.receiveToken];
                 response.sendTo = balanceMap[response.sendToken];
-
                 response.shouldInitiateFirst = false;
 
-                this.setState({ response });
-            } else {
-                this.onDone();
-            }
+                if (socket) {
+                    socket.send(JSON.stringify(response));
+                }
+            } 
+            this.props.reset();
         } catch (err) {
             this.setState({ error: err.message || err });
         }
-
         this.setState({ loading: false, gettingPassword: false });
     }
 

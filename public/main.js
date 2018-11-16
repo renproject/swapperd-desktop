@@ -2,7 +2,7 @@ const menubar = require("menubar");
 const WebSocket = require("ws");
 const Menu = require("electron").Menu;
 const fs = require("fs");
-const serve = require("./server.js").Serve;
+const server = require("./server.js");
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -83,14 +83,20 @@ mb.on("ready", function ready() {
             serve();            
         }
     }); */
-    serve();
+
+    server.Serve();
 });
 
 const wss = new WebSocket.Server({
     port: 8080
 });
 
+const wss2 = new WebSocket.Server({
+    port: 8081
+})
+
 let client = WebSocket;
+let client2 = WebSocket;
 
 wss.on("connection", function connection(ws) {
     ws.on("message", function incoming(message) {
@@ -101,3 +107,12 @@ wss.on("connection", function connection(ws) {
         mb.showWindow();
     });
 });
+
+wss2.on("connection", function connection(ws) {
+    ws.on("message", function incoming(message) {
+        if (message === "connect") {
+            client2 = ws;
+        }
+        client2.send(message);
+    })
+})
