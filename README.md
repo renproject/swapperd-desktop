@@ -9,7 +9,11 @@ npm run build
 
 # Packaging the project
 
-After building the project, run:
+Notice: Wine is needed to package for Windows, if packaging on a Mac or Linux device.
+
+You can install Wine through the following command: `brew install wine`
+
+After building the project (see above), run:
 
 ```bash
 cd build
