@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import axios from "axios";
 import BigNumber from "bignumber.js";
 
 import { getLogo } from "src/lib/logos";
-import { IPartialSwapRequest, ISwapRequest } from "../lib/swapperd";
+import { getBalances, IPartialSwapRequest, submitSwap } from "../lib/swapperd";
+import { Banner } from './Banner';
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
@@ -13,7 +13,6 @@ interface IApproveSwapProps {
 }
 
 interface IApproveSwapState {
-    gettingPassword: boolean;
     password: string;
     loading: boolean;
     error: null | string;
@@ -24,7 +23,6 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     constructor(props: IApproveSwapProps) {
         super(props);
         this.state = {
-            gettingPassword: false,
             password: "",
             loading: false,
             error: null,
@@ -33,89 +31,48 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
     public render() {
         const { swapDetails } = this.props;
-        const { gettingPassword, password, loading, error } = this.state;
+        const { password, loading, error } = this.state;
         return (
-            <div className="swap">
-                <div>
-                    <div className="swap--item">
-                        <img src={getLogo(swapDetails.sendToken)} />
+            <>
+                <Banner title="Approve swap" reject={this.onReject} />
+                <div className="swap">
+                    <div className="swap--details">
                         <div>
-                            <h1>Send</h1>
-                            <div>{new BigNumber(swapDetails.sendAmount).dividedBy(100000000).toString()} {swapDetails.sendToken}</div>
+                            <img src={getLogo(swapDetails.sendToken)} />
+                            <p>{new BigNumber(swapDetails.sendAmount).dividedBy(100000000).toString()} {swapDetails.sendToken}</p>
+                        </div>
+                        <div>
+                            <img src={getLogo(swapDetails.receiveToken)} />
+                            <p>{new BigNumber(swapDetails.receiveAmount).dividedBy(100000000).toString()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
-                    <div className="swap--item">
-                        <img src={getLogo(swapDetails.receiveToken)} />
-                        <div>
-                            <h1>Receive</h1>
-                            <div>{new BigNumber(swapDetails.receiveAmount).dividedBy(100000000).toString()} {swapDetails.receiveToken}</div>
-                        </div>
+                    <div className="swap--inputs">
+                        <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
+                        <button onClick={this.onAccept} disabled={loading}><span>Swap</span></button>
                     </div>
+                    {error ? <p className="error">{error}</p> : null}
                 </div>
-                <div className="swap--inputs">
-                    <input type="password" name="password" placeholder="Password" value={password} onChange={this.handleInput} disabled={loading} />
-                    <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
-                    {gettingPassword ?
-                        <>
-                            <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
-                            <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
-                        </>
-                        :
-                        <>
-                            <button onClick={this.onSwap} disabled={loading}><span>Swap</span></button>
-                            <button onClick={this.onReject} disabled={loading}><span>Reject</span></button>
-                        </>
-                    }
-                </div>
-                {error ? <p className="error">{error}</p> : null}
-            </div>
+            </>
         );
     }
 
-    private handleInput = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private onSwap = async () => {
-        this.setState({ gettingPassword: true });
-    }
-
-    private onReject = async () => {
-        this.props.reset();
-    }
-
-    private onAccept = async () => {
+    private async onAccept(): Promise<void> {
+        const { swapDetails, socket } = this.props;
         const { password } = this.state;
         this.setState({ error: null, loading: true });
 
         try {
-            const { swapDetails, socket } = this.props;
-            const postResponse = await axios({
-                method: 'POST',
-                url: "http://localhost:7927/swaps",
-                auth: {
-                    username: "",
-                    password,
-                },
-                data: swapDetails,
-            });
-
-            const response: ISwapRequest = postResponse.data;
-
+            const response = await submitSwap(swapDetails, password);
 
             if (swapDetails.shouldInitiateFirst) {
-                const balances = (await axios({
-                    method: 'GET',
-                    url: "http://localhost:7927/balances",
-                    auth: {
-                        username: "",
-                        password,
-                    },
-                })).data.balances;
-
+                const balances = await getBalances();
                 const balanceMap = {};
-                for (const balanceItem of balances) {
+                for (const balanceItem of balances.balances) {
                     balanceMap[balanceItem.token] = balanceItem.address;
                 }
 
@@ -133,9 +90,15 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                 }
             }
             this.props.reset();
-        } catch (err) {
-            this.setState({ error: err.message || err });
+        } catch (e) {
+            console.error(e);
+            this.setState({ error: "There was an error submitting your request. Please try again later." });
         }
-        this.setState({ loading: false, gettingPassword: false });
+
+        this.setState({ loading: false });
+    }
+
+    private onReject(): void {
+        this.props.reset();
     }
 }
