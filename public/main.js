@@ -89,3 +89,9 @@ app.post("/swaps", (req, res) => {
     });
 });
 app.listen(7929);
+
+ipcMain.on('createaccount', (event) => {
+    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${req.body.username} ${req.body.password}`, (code) => {
+        event.returnValue = code;
+    });
+})

@@ -19,7 +19,7 @@ export class Swaps extends React.Component<ISwapsProps> {
             <>
                 <Banner title="History" />
                 <div className="swaps">
-                    {swaps ?
+                    {swaps && swaps.swaps !== null ?
                         swaps.swaps.map(swap => {
                             return <SwapItem key={swap.id} swapItem={swap} />;
                         })

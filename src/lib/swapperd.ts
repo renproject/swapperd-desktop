@@ -83,15 +83,17 @@ export async function getSwaps(): Promise<ISwapsResponse> {
     });
 
     const swaps: ISwapsResponse = postResponse.data;
-    for (const swap of swaps.swaps) {
-        if (swap.sendToken === undefined || swap.receiveToken === undefined) {
-            continue;
-        }
-        const sendDecimal = decimals.get(swap.sendToken);
-        const receiveDecimal = decimals.get(swap.receiveToken);
-        if (sendDecimal !== undefined && receiveDecimal !== undefined) {
-            swap.sendAmount = new BigNumber(swap.sendAmount).div(new BigNumber(10).pow(sendDecimal)).toFixed();
-            swap.receiveAmount = new BigNumber(swap.receiveAmount).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
+    if (swaps.swaps !== null) {
+        for (const swap of swaps.swaps) {
+            if (swap.sendToken === undefined || swap.receiveToken === undefined) {
+                continue;
+            }
+            const sendDecimal = decimals.get(swap.sendToken);
+            const receiveDecimal = decimals.get(swap.receiveToken);
+            if (sendDecimal !== undefined && receiveDecimal !== undefined) {
+                swap.sendAmount = new BigNumber(swap.sendAmount).div(new BigNumber(10).pow(sendDecimal)).toFixed();
+                swap.receiveAmount = new BigNumber(swap.receiveAmount).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
+            }
         }
     }
 

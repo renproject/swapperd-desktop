@@ -1,9 +1,8 @@
 import * as React from "react";
 
-import axios from "axios";
-
-import { Banner } from './Banner';
-import { Loading } from './Loading';
+import { ipcRenderer } from "electron";
+import { Banner } from "./Banner";
+import { Loading } from "./Loading";
 
 interface ICreateAccountProps {
     resolve: () => void;
@@ -58,8 +57,8 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         event.preventDefault();
         const { username, password } = this.state;
 
-        const response = await axios.post("http://localhost:7928/account", { username, password });
-        if (response.status === 200) {
+        const code = ipcRenderer.sendSync("create-account", username, password);
+        if (code === 0) {
             this.props.resolve();
         }
     }
