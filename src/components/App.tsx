@@ -87,14 +87,12 @@ class App extends React.Component<{}, IAppState> {
 
         if (!accountExists) {
             return <div className="app">
-                <h1>Create account</h1>
                 <CreateAccount resolve={this.accountCreated} />
             </div>
         }
 
         if (swapDetails) {
             return <div className="app">
-                <h1>Approve swap</h1>
                 <ApproveSwap socket={socket} swapDetails={swapDetails} reset={this.resetSwapDetails} />
             </div>
         }

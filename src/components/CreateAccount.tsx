@@ -2,6 +2,7 @@ import * as React from "react";
 
 import axios from "axios";
 
+import { Banner } from './Banner';
 import { Loading } from './Loading';
 
 interface ICreateAccountProps {
@@ -30,17 +31,20 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     public render() {
         const { loading } = this.state;
         return (
-            <div className="account">
-                {!loading ?
-                    <form onSubmit={this.onSubmit}>
-                        <input className="retro--grey" type="text" name="username" placeholder="Username" onChange={this.handleInput} />
-                        <input className="retro--grey" type="password" name="password" placeholder="Password" onChange={this.handleInput} />
-                        <input className="retro--blue" type="submit" value="Create account" />
-                    </form>
-                    :
-                    <Loading />
-                }
-            </div>
+            <>
+                <Banner title="Create account" />
+                <div className="account">
+                    {!loading ?
+                        <form onSubmit={this.onSubmit}>
+                            <input className="retro--grey" type="text" name="username" placeholder="Username" onChange={this.handleInput} />
+                            <input className="retro--grey" type="password" name="password" placeholder="Password" onChange={this.handleInput} />
+                            <input className="retro--blue" type="submit" value="Create account" />
+                        </form>
+                        :
+                        <Loading />
+                    }
+                </div>
+            </>
         );
     }
 
