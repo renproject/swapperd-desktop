@@ -25,7 +25,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    public render() {
+    public render(): JSX.Element {
         const { loading } = this.state;
         return (
             <>
@@ -45,18 +45,19 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         );
     }
 
-    private handleInput = (event: React.FormEvent<HTMLInputElement>): void => {
+    private handleInput(event: React.FormEvent<HTMLInputElement>): void {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
     private handleSubmit(): void {
         this.setState({ loading: true });
-        const { username, password } = this.state;
-
-        const code = (window as any).ipcRenderer.sendSync("create-account", username, password);
-        if (code === 0) {
-            this.props.resolve();
-        }
+        setTimeout(() => {
+            const { username, password } = this.state;
+            const code = (window as any).ipcRenderer.sendSync("create-account", username, password);
+            if (code === 0) {
+                this.props.resolve();
+            }
+        });
     }
 }

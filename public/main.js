@@ -1,16 +1,17 @@
 const menubar = require("menubar");
-const Menu = require("electron").Menu;
 const express = require("express");
 const bodyParser = require("body-parser");
-const ipcMain = require("electron").ipcMain;
 const shell = require("shelljs");
+const notifier = require('node-notifier');
+
+const { ipcMain, Menu } = require("electron");
 
 const mb = menubar({
     tooltip: "Swapperd",
     showDockIcon: true,
     webPreferences: {
         nodeIntegration: false,
-        preload: __dirname + "/preload.js"
+        preload: __dirname + "/preload.js",
     }
 });
 const app = express();
@@ -83,9 +84,9 @@ mb.on("ready", function ready() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 });
 
-mb.on("after-create-window", () => {
+/* mb.on("after-create-window", () => {
     mb.window.openDevTools();
-});
+}); */
 
 app.use(bodyParser.json());
 app.post("/swaps", (req, res) => {
@@ -101,4 +102,14 @@ ipcMain.on("create-account", (event, ...args) => {
     shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]}`, (code) => {
         event.returnValue = code;
     });
+});
+
+ipcMain.on("notify", (event, ...args) => {
+    notifier.notify({
+        title: "Swapperd",
+        message: args[0],
+        icon: __dirname + "/Icon.icns",
+        wait: true,
+    });
+    event.returnValue = "";
 })

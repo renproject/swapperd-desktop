@@ -54,21 +54,25 @@ class App extends React.Component<{}, IAppState> {
 
         // Check balances and swaps on an interval
         setInterval(async () => {
-            try {
-                const balances = await getBalances();
-                this.setState({ balances });
-            } catch (e) {
-                console.error(e);
-                this.setState({ balancesError: "Unable to retrieve balances. Please try again later." });
+            if (this.state.accountExists) {
+                try {
+                    const balances = await getBalances();
+                    this.setState({ balances });
+                } catch (e) {
+                    console.error(e);
+                    this.setState({ balancesError: "Unable to retrieve balances. Please try again later." });
+                }
             }
         }, 2000);
 
         setInterval(async () => {
-            try {
-                const swaps = await getSwaps();
-                this.setState({ swaps });
-            } catch (e) {
-                console.error(e);
+            if (this.state.accountExists) {
+                try {
+                    const swaps = await getSwaps();
+                    this.setState({ swaps });
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }, 5000);
     }
@@ -106,6 +110,7 @@ class App extends React.Component<{}, IAppState> {
 
     private accountCreated(): void {
         this.setState({ accountExists: true });
+        (window as any).ipcRenderer.sendSync("notify", "Account creation successful!");
     }
 
     private setSwapDetails(swapDetails: IPartialSwapRequest): void {
