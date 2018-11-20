@@ -116,3 +116,17 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 
     return postResponse.data;
 }
+
+export async function submitSwap(swapRequest: IPartialSwapRequest, password: string) {
+    const postResponse = await axios({
+        method: 'POST',
+        url: "http://localhost:7927/swaps",
+        auth: {
+            username: "",
+            password,
+        },
+        data: swapRequest,
+    });
+
+    return postResponse.data;
+}

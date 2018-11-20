@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const shell = require("shelljs");
-const ipcMain = require("electron").ipcMain;
+const Notification = require("electron").Notification;
 
-function local() {
+function serve(mb) {
     const app = express();
     app.use(bodyParser.json());
     app.post("/account", (req, res) => {
@@ -16,6 +16,16 @@ function local() {
                 res.send(stdout);
             }
         });
+    });
+    app.post("/notify", (req, res) => {
+        res.status(200);
+        res.send("");
+        const notification = new Notification(req.body.title, {
+            body: req.body.message
+        });
+        notification.onclick = () => {
+            mb.showWindow();
+        }
     });
     app.listen(7928);
 }
