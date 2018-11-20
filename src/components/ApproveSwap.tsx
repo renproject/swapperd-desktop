@@ -9,16 +9,14 @@ import { IPartialSwapRequest, ISwapRequest } from "../lib/swapperd";
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
     socket: WebSocket | null;
-    reset(): void;
+    reset: () => void;
 }
 
 interface IApproveSwapState {
     gettingPassword: boolean;
-    error: null | string;
-    loading: boolean;
-    response: null | ISwapRequest;
-    username: string;
     password: string;
+    loading: boolean;
+    error: null | string;
 }
 
 
@@ -27,61 +25,49 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         super(props);
         this.state = {
             gettingPassword: false,
-            error: null,
-            loading: false,
-            response: null,
-            username: "",
             password: "",
+            loading: false,
+            error: null,
         };
     }
 
     public render() {
         const { swapDetails } = this.props;
-        const { gettingPassword, username, password, response, loading, error } = this.state;
+        const { gettingPassword, password, loading, error } = this.state;
         return (
-
-            <div className="approve-swap">
-                {response ?
-                    <>
-                        <h2>Send these details to the other trader:</h2>
-                        <textarea value={JSON.stringify(response, null, 4)} />
-                        <div className="button-list">
-                            <div className="button retro--blue" onClick={this.onDone}>Done</div>
+            <div className="swap">
+                <div>
+                    <div className="swap--item">
+                        <img src={getLogo(swapDetails.sendToken)} />
+                        <div>
+                            <h1>Send</h1>
+                            <div>{new BigNumber(swapDetails.sendAmount).dividedBy(100000000).toString()} {swapDetails.sendToken}</div>
                         </div>
-                    </> :
-                    <>
-                        <header className="swap-header">
-                            <div className="swap-header--row-list">
-                                <div className="swap-header--row">
-                                    <img className="swap-header--row-img" src={getLogo(swapDetails.sendToken)} />
-                                    <div className="swap-header--row-body">
-                                        <div className="swap-header--row-title">Send</div><div>{new BigNumber(swapDetails.sendAmount).dividedBy(100000000).toString()} {swapDetails.sendToken}</div>
-                                    </div>
-                                </div>
-                                <div className="swap-header--row">
-                                    <img className="swap-header--row-img" src={getLogo(swapDetails.receiveToken)} />
-                                    <div className="swap-header--row-body">
-                                        <div className="swap-header--row-title">Receive</div><div>{new BigNumber(swapDetails.receiveAmount).dividedBy(100000000).toString()} {swapDetails.receiveToken}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </header>
-
-                        {error ? <p className="retro--red">{error}</p> : null}
-
-                        {gettingPassword ?
-                            <div className="button-list">
-                                <input className={`retro--grey ${loading ? "disabled" : ""}`} placeholder="Username" value={username} name="username" onChange={this.handleInput} disabled={loading} />
-                                <input className={`retro--grey ${loading ? "disabled" : ""}`} placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} type="password" />
-                                <div className={`button retro--blue ${loading ? "disabled" : ""}`} onClick={this.onAccept2}>Accept</div>
-                            </div> :
-                            <div className="button-list">
-                                <div className={`button retro--blue ${loading ? "disabled" : ""}`} onClick={this.onAccept1}>Accept</div>
-                                <div className={`button retro--grey ${loading ? "disabled" : ""}`} onClick={this.onReject}>Reject</div>
-                            </div>
-                        }
-                    </>
-                }
+                    </div>
+                    <div className="swap--item">
+                        <img src={getLogo(swapDetails.receiveToken)} />
+                        <div>
+                            <h1>Receive</h1>
+                            <div>{new BigNumber(swapDetails.receiveAmount).dividedBy(100000000).toString()} {swapDetails.receiveToken}</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="swap--inputs">
+                    <input type="password" name="password" placeholder="Password" value={password} onChange={this.handleInput} disabled={loading} />
+                    <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
+                    {gettingPassword ?
+                        <>
+                            <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
+                            <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
+                        </>
+                        :
+                        <>
+                            <button onClick={this.onSwap} disabled={loading}><span>Swap</span></button>
+                            <button onClick={this.onReject} disabled={loading}><span>Reject</span></button>
+                        </>
+                    }
+                </div>
+                {error ? <p className="error">{error}</p> : null}
             </div>
         );
     }
@@ -91,26 +77,25 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private onAccept1 = async () => {
+    private onSwap = async () => {
         this.setState({ gettingPassword: true });
     }
 
     private onReject = async () => {
         this.props.reset();
-        // chrome.runtime.sendMessage({ method: 'rejectedSwap' }, console.log);
     }
 
-    private onAccept2 = async () => {
-        const { password, username } = this.state;
+    private onAccept = async () => {
+        const { password } = this.state;
         this.setState({ error: null, loading: true });
 
         try {
             const { swapDetails, socket } = this.props;
             const postResponse = await axios({
                 method: 'POST',
-                url: "http://localhost:7777/swaps",
+                url: "http://localhost:7927/swaps",
                 auth: {
-                    username,
+                    username: "",
                     password,
                 },
                 data: swapDetails,
@@ -122,9 +107,9 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             if (swapDetails.shouldInitiateFirst) {
                 const balances = (await axios({
                     method: 'GET',
-                    url: "http://localhost:7777/balances",
+                    url: "http://localhost:7927/balances",
                     auth: {
-                        username,
+                        username: "",
                         password,
                     },
                 })).data.balances;
@@ -152,10 +137,5 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             this.setState({ error: err.message || err });
         }
         this.setState({ loading: false, gettingPassword: false });
-    }
-
-    private onDone = async () => {
-        // const { response } = this.state;
-        // chrome.runtime.sendMessage({ method: 'approvedSwap', response }, console.log);
     }
 }

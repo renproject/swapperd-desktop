@@ -30,7 +30,9 @@ button {
 
 input:disabled,
 button:disabled {
-    background-color: #fafafa;
+    background-color: white;
+    color: #999;
+    border: 1px solid #ccc;
     cursor: not-allowed;
 }
 
@@ -124,6 +126,10 @@ button span {
 
 /* Balances */
 
+.balances p {
+    padding: 0 10px;
+}
+
 .balances--item {
     display: flex;
     align-items: center;
@@ -134,11 +140,22 @@ button span {
 .balances--item img {
     width: 30px;
     height: auto;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .balances--item p + p {
     margin-top: 5px;
+}
+
+/* Swaps */
+
+.swaps p {
+    padding: 0 10px;
+}
+
+.swaps--item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
 }
 
 /* Withdraw */
@@ -155,7 +172,7 @@ button span {
 .withdraw--balance img {
     width: 30px;
     height: auto;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .withdraw--balance p + p {

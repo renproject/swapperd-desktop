@@ -5,7 +5,7 @@ import axios from "axios";
 import { Loading } from './Loading';
 
 interface ICreateAccountProps {
-    resolve(): void;
+    resolve: () => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -54,7 +54,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         event.preventDefault();
         const { username, password } = this.state;
 
-        const response = await axios.post("http://localhost:7778/account", { username, password });
+        const response = await axios.post("http://localhost:7928/account", { username, password });
         if (response.status === 200) {
             this.props.resolve();
         }

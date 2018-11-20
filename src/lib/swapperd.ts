@@ -34,8 +34,23 @@ export interface IBalanceItem {
     address: string;
     amount: string;
 }
+
 export interface IBalancesResponse {
     balances: IBalanceItem[]
+}
+
+export interface ISwapItem {
+    id: string;
+    sendToken: string;
+    receiveToken: string;
+    sendAmount: string;
+    receiveAmount: string;
+    timestamp: number;
+    status: number;
+}
+
+export interface ISwapsResponse {
+    swaps: ISwapItem[]
 }
 
 const decimals = new Map<string, number>()
@@ -43,10 +58,10 @@ const decimals = new Map<string, number>()
     .set("BTC", 8)
     .set("ETH", 18);
 
-export const getBalances = async () => {
+export async function getBalances(): Promise<IBalancesResponse> {
     const postResponse = await axios({
         method: 'GET',
-        url: "http://localhost:7777/balances",
+        url: "http://localhost:7927/balances",
     });
 
     const balances: IBalancesResponse = postResponse.data;
@@ -61,7 +76,29 @@ export const getBalances = async () => {
     return balances;
 }
 
-export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, password: string) => {
+export async function getSwaps(): Promise<ISwapsResponse> {
+    const postResponse = await axios({
+        method: 'GET',
+        url: "http://localhost:7927/swaps",
+    });
+
+    const swaps: ISwapsResponse = postResponse.data;
+    for (const swap of swaps.swaps) {
+        if (swap.sendToken === undefined || swap.receiveToken === undefined) {
+            continue;
+        }
+        const sendDecimal = decimals.get(swap.sendToken);
+        const receiveDecimal = decimals.get(swap.receiveToken);
+        if (sendDecimal !== undefined && receiveDecimal !== undefined) {
+            swap.sendAmount = new BigNumber(swap.sendAmount).div(new BigNumber(10).pow(sendDecimal)).toFixed();
+            swap.receiveAmount = new BigNumber(swap.receiveAmount).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
+        }
+    }
+
+    return swaps;
+}
+
+export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password: string) {
     const decimal = decimals.get(withdrawRequest.token);
     if (decimal !== undefined) {
         withdrawRequest.amount = new BigNumber(withdrawRequest.amount).times(new BigNumber(10).pow(decimal)).toFixed();
@@ -69,7 +106,7 @@ export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, password
 
     const postResponse = await axios({
         method: 'POST',
-        url: "http://localhost:7777/withdrawals",
+        url: "http://localhost:7927/withdrawals",
         auth: {
             username: "",
             password,

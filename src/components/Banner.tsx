@@ -2,14 +2,12 @@ import * as React from 'react';
 
 interface IBannerProps {
     title: string;
-    reject(): void;
+    reject?: () => void;
 }
 
 export class Banner extends React.Component<IBannerProps, {}> {
     constructor(props: IBannerProps) {
         super(props);
-        this.state = {
-        };
     }
 
     public render() {
@@ -17,7 +15,9 @@ export class Banner extends React.Component<IBannerProps, {}> {
         return (
             <div className="banner">
                 <h1>{title}</h1>
-                <div className="banner--cross" onClick={reject} />
+                {reject !== undefined &&
+                    <div className="banner--cross" onClick={reject} />
+                }
             </div>
         );
     }

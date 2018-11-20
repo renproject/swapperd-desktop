@@ -70,11 +70,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                         <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} disabled={loading} />
                         {gettingPassword ?
                             <>
-                                <input className={loading ? "disabled" : ""} placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} type="password" />
-                                <button className={loading ? "disabled" : ""} onClick={this.onAccept}><span>Accept</span></button>
+                                <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
+                                <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
                             </>
                             :
-                            <button className={loading ? "disabled" : ""} onClick={this.onWithdraw}><span>Withdraw</span></button>
+                            <button onClick={this.onWithdraw} disabled={loading}><span>Withdraw</span></button>
                         }
                     </div>
                     {error ? <p className="error">{error}</p> : null}
