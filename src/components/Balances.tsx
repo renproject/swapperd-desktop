@@ -22,12 +22,8 @@ export class Balances extends React.Component<IBalancesProps> {
             <div className="balances">
                 {balances ?
                     balances.balances.sort((a, b) => {
-                        // Sort by amount, if amounts are equal, sort by name
-                        const fstAmount = parseInt(a.amount, 10);
-                        const sndAmount = parseInt(b.amount, 10);
-                        if (fstAmount !== sndAmount) {
-                            return fstAmount - sndAmount;
-                        } else if (a.token < b.token) {
+                        // Sort by name
+                        if (a.token < b.token) {
                             return -1;
                         } else {
                             return 1;
