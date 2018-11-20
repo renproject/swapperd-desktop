@@ -1,37 +1,37 @@
 {
-  "name": "swapperd-menubar-app",
-  "config": {
-    "appName": "Swapperd",
-    "outputDir": "../release-builds"
-  },
-  "homepage": ".",
-  "version": "1.0.0",
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "menubar": "*",
-    "shelljs": "^0.8.3",
-    "ws": "^6.1.0"
-  },
-  "devDependencies": {
-    "electron-installer-dmg": "^2.0.0",
-    "electron-packager": "^12.2.0",
-    "electron-prebuilt": "^1.4.13",
-    "innosetup-compiler": "^5.5.9",
-    "minimalist": "^1.0.0",
-    "mustache": "^3.0.1",
-    "rimraf": "^2.6.2"
-  },
-  "main": "main.js",
-  "scripts": {
-    "build": "npm run build-mac; npm run build-win",
-    "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
-    "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
-    "build-mac": "npm run package-mac && npm run create-installer-mac",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --out=${npm_package_config_outputDir} --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"${npm_package_name}\"",
-    "create-installer-win": "node installers/windows/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-win32-ia32 --licenseFile ../LICENSE --publisher \"Ren Inc.\" --clean",
-    "build-win": "npm run package-win && npm run create-installer-win",
-    "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns"
-  }
+    "name": "Swapperd",
+    "config": {
+        "appName": "Swapperd",
+        "outputDir": "../release-builds"
+    },
+    "homepage": ".",
+    "version": "1.0.0",
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "express": "^4.16.4",
+        "menubar": "*",
+        "shelljs": "^0.8.3",
+        "ws": "^6.1.0"
+    },
+    "devDependencies": {
+        "electron-installer-dmg": "^2.0.0",
+        "electron-packager": "^12.2.0",
+        "electron-prebuilt": "^1.4.13",
+        "innosetup-compiler": "^5.5.9",
+        "minimalist": "^1.0.0",
+        "mustache": "^3.0.1",
+        "rimraf": "^2.6.2"
+    },
+    "main": "main.js",
+    "scripts": {
+        "build": "npm run build-mac; npm run build-win",
+        "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
+        "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
+        "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
+        "build-mac": "npm run package-mac && npm run create-installer-mac",
+        "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --out=${npm_package_config_outputDir} --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"${npm_package_name}\"",
+        "create-installer-win": "node installers/windows/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-win32-ia32 --licenseFile ../LICENSE --publisher \"Ren Inc.\" --clean",
+        "build-win": "npm run package-win && npm run create-installer-win",
+        "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns"
+    }
 }
