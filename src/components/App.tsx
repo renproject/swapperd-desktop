@@ -45,8 +45,8 @@ class App extends React.Component<{}, IAppState> {
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
-                const swap = JSON.parse(args[0]);
-                this.setState({ swapDetails: swap });
+                console.log(args[0]);
+                this.setState({ swapDetails: args[0] });
             } catch (e) {
                 console.log(e);
             }
@@ -114,7 +114,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private setSwapDetails(swapDetails: IPartialSwapRequest): void {
-        (window as any).ipcRenderer.send('swapresponse', swapDetails);
+        (window as any).ipcRenderer.send('swap-response', swapDetails);
         this.setState({ swapDetails: null });
     }
 

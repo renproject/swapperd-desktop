@@ -84,14 +84,15 @@ mb.on("ready", function ready() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 });
 
-/* mb.on("after-create-window", () => {
+mb.on("after-create-window", () => {
     mb.window.openDevTools();
-}); */
+});
 
 app.use(bodyParser.json());
 app.post("/swaps", (req, res) => {
+    mb.showWindow();
     mb.window.webContents.send("swap", req.body)
-    ipcMain.on("swapresponse", (event, ...args) => {
+    ipcMain.on("swap-response", (event, ...args) => {
         res.status(201);
         res.send(args[0]);
     });

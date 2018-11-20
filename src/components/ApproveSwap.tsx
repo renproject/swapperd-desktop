@@ -17,7 +17,6 @@ interface IApproveSwapState {
     error: null | string;
 }
 
-
 export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
     constructor(props: IApproveSwapProps) {
         super(props);
@@ -26,9 +25,12 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             loading: false,
             error: null,
         };
+        this.handleInput = this.handleInput.bind(this);
+        this.onAccept = this.onAccept.bind(this);
+        this.onReject = this.onReject.bind(this);
     }
 
-    public render() {
+    public render(): JSX.Element {
         const { swapDetails } = this.props;
         const { password, loading, error } = this.state;
         return (
