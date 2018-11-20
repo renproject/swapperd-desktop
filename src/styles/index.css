@@ -158,6 +158,20 @@ button span {
     padding: 10px;
 }
 
+/* Account */
+
+.account {
+    padding: 0 10px;
+}
+
+.account input + input {
+    margin-top: -1px;
+}
+
+.account button {
+    margin-top: 10px;
+}
+
 /* Withdraw */
 
 .withdraw {

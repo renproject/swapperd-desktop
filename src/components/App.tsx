@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { IpcMessageEvent, ipcRenderer } from "electron";
 import { getBalances, getSwaps, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -44,7 +43,7 @@ class App extends React.Component<{}, IAppState> {
             console.error(e);
         }
 
-        ipcRenderer.on('sync', (event: IpcMessageEvent, ...args: any) => {
+        (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
                 const swap = JSON.parse(args[0]);
                 this.setState({ swapDetails: swap });
@@ -110,7 +109,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private setSwapDetails(swapDetails: IPartialSwapRequest): void {
-        ipcRenderer.send('swapresponse', swapDetails)
+        (window as any).ipcRenderer.send('swapresponse', swapDetails);
         this.setState({ swapDetails: null });
     }
 
