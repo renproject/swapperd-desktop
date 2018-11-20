@@ -1,7 +1,6 @@
 const menubar = require("menubar");
 const WebSocket = require("ws");
 const Menu = require("electron").Menu;
-const fs = require("fs");
 const server = require("./server.js");
 
 const mb = menubar({
@@ -77,14 +76,7 @@ mb.on("ready", function ready() {
     ]
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
-
-    /* fs.access("~/.swapperd/testnet.json", fs.constants.F_OK, (err) => {
-        if (err) {
-            serve();            
-        }
-    }); */
-
-    server.Serve();
+    server.Serve(mb);
 });
 
 const wss = new WebSocket.Server({
