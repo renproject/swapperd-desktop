@@ -8,8 +8,7 @@ import { IPartialSwapRequest, ISwapRequest } from "../lib/swapperd";
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
-    socket: WebSocket | null;
-    reset: () => void;
+    setSwapDetails: (swapDetails: IPartialSwapRequest | null) => void;
 }
 
 interface IApproveSwapState {
@@ -82,7 +81,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject = async () => {
-        this.props.reset();
+        this.props.setSwapDetails(null);
     }
 
     private onAccept = async () => {
@@ -90,7 +89,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState({ error: null, loading: true });
 
         try {
-            const { swapDetails, socket } = this.props;
+            const { swapDetails } = this.props;
             const postResponse = await axios({
                 method: 'POST',
                 url: "http://localhost:7927/swaps",
@@ -102,8 +101,6 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             });
 
             const response: ISwapRequest = postResponse.data;
-
-
             if (swapDetails.shouldInitiateFirst) {
                 const balances = (await axios({
                     method: 'GET',
@@ -126,13 +123,9 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
                 response.receiveFrom = balanceMap[response.receiveToken];
                 response.sendTo = balanceMap[response.sendToken];
-                response.shouldInitiateFirst = false;
-
-                if (socket) {
-                    socket.send(JSON.stringify(response));
-                }
+                response.shouldInitiateFirst = false; 
             }
-            this.props.reset();
+            this.props.setSwapDetails(response);
         } catch (err) {
             this.setState({ error: err.message || err });
         }

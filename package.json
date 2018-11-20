@@ -6,6 +6,7 @@
     "dependencies": {
         "axios": "^0.18.0",
         "bignumber.js": "^7.2.1",
+        "electron": "^3.0.10",
         "menubar": "*",
         "react": "^16.6.1",
         "react-dom": "^16.6.1",

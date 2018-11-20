@@ -1,13 +1,14 @@
 const menubar = require("menubar");
-const WebSocket = require("ws");
 const Menu = require("electron").Menu;
-const fs = require("fs");
-const server = require("./server.js");
+const express = require("express");
+const bodyParser = require("body-parser");
+const ipcMain = require("electron").ipcMain;
 
 const mb = menubar({
     tooltip: "Swapperd",
     showDockIcon: true,
 });
+const app = express();
 
 mb.on("ready", function ready() {
     console.log("App is being served...");
@@ -77,42 +78,14 @@ mb.on("ready", function ready() {
     ]
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
-
-    /* fs.access("~/.swapperd/testnet.json", fs.constants.F_OK, (err) => {
-        if (err) {
-            serve();            
-        }
-    }); */
-
-    server.Serve();
 });
 
-const wss = new WebSocket.Server({
-    port: 8080
-});
-
-const wss2 = new WebSocket.Server({
-    port: 8081
-})
-
-let client = WebSocket;
-let client2 = WebSocket;
-
-wss.on("connection", function connection(ws) {
-    ws.on("message", function incoming(message) {
-        if (message === "connect") {
-            client = ws;
-        }
-        client.send(message);
-        mb.showWindow();
+app.use(bodyParser.json());
+app.post("/swaps", (req, res) => {
+    mb.window.webContents.send('swap', req.body)
+    ipcMain.on('swapresponse', (event, ...args) => {
+        res.status(201);
+        res.send(args[0]);
     });
 });
-
-wss2.on("connection", function connection(ws) {
-    ws.on("message", function incoming(message) {
-        if (message === "connect") {
-            client2 = ws;
-        }
-        client2.send(message);
-    })
-})
+app.listen(7929);
