@@ -8,8 +8,7 @@ import { Banner } from './Banner';
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
-    socket: WebSocket | null;
-    reset: () => void;
+    setSwapDetails: (swapDetails: IPartialSwapRequest | null) => void;
 }
 
 interface IApproveSwapState {
@@ -62,13 +61,12 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private async onAccept(): Promise<void> {
-        const { swapDetails, socket } = this.props;
+        const { swapDetails } = this.props;
         const { password } = this.state;
         this.setState({ error: null, loading: true });
 
         try {
             const response = await submitSwap(swapDetails, password);
-
             if (swapDetails.shouldInitiateFirst) {
                 const balances = await getBalances();
                 const balanceMap = {};
@@ -83,13 +81,9 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
                 response.receiveFrom = balanceMap[response.receiveToken];
                 response.sendTo = balanceMap[response.sendToken];
-                response.shouldInitiateFirst = false;
-
-                if (socket) {
-                    socket.send(JSON.stringify(response));
-                }
+                response.shouldInitiateFirst = false; 
             }
-            this.props.reset();
+            this.props.setSwapDetails(response);
         } catch (e) {
             console.error(e);
             this.setState({ error: "There was an error submitting your request. Please try again later." });
@@ -99,6 +93,6 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject(): void {
-        this.props.reset();
+        this.props.setSwapDetails(null);
     }
 }

@@ -1,14 +1,14 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { getBalances, getSwaps, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from '../lib/swapperd';
-import { ApproveSwap } from './ApproveSwap';
-import { ApproveWithdraw } from './ApproveWithdraw';
-import { Balances } from './Balances';
-import { CreateAccount } from './CreateAccount';
-import { Swaps } from './Swaps';
+import { IpcMessageEvent, ipcRenderer } from "electron";
+import { getBalances, getSwaps, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
+import { ApproveSwap } from "./ApproveSwap";
+import { ApproveWithdraw } from "./ApproveWithdraw";
+import { Balances } from "./Balances";
+import { CreateAccount } from "./CreateAccount";
+import { Swaps } from "./Swaps";
 
 interface IAppState {
-    socket: WebSocket | null;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
@@ -21,7 +21,6 @@ class App extends React.Component<{}, IAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            socket: null,
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
@@ -30,7 +29,7 @@ class App extends React.Component<{}, IAppState> {
             swaps: null,
         }
         this.accountCreated = this.accountCreated.bind(this);
-        this.resetSwapDetails = this.resetSwapDetails.bind(this);
+        this.setSwapDetails = this.setSwapDetails.bind(this);
         this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
     }
 
@@ -45,21 +44,14 @@ class App extends React.Component<{}, IAppState> {
             console.error(e);
         }
 
-        // Set-up WebSockets for interacting with the client website
-        const ws = new WebSocket('ws://localhost:8080');
-        const socket = new WebSocket('ws://localhost:8081');
-        this.setState({ socket });
-        ws.onopen = () => {
-            ws.send("connect");
-        };
-        ws.onmessage = (evt) => {
+        ipcRenderer.on('sync', (event: IpcMessageEvent, ...args: any) => {
             try {
-                const swapDetails = JSON.parse(evt.data);
-                this.setState({ swapDetails });
+                const swap = JSON.parse(args[0]);
+                this.setState({ swapDetails: swap });
             } catch (e) {
-                console.error(e);
+                console.log(e);
             }
-        };
+        });
 
         // Check balances and swaps on an interval
         setInterval(async () => {
@@ -83,7 +75,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { socket, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+        const { accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
 
         if (!accountExists) {
             return <div className="app">
@@ -93,7 +85,7 @@ class App extends React.Component<{}, IAppState> {
 
         if (swapDetails) {
             return <div className="app">
-                <ApproveSwap socket={socket} swapDetails={swapDetails} reset={this.resetSwapDetails} />
+                <ApproveSwap swapDetails={swapDetails} setSwapDetails={this.setSwapDetails} />
             </div>
         }
 
@@ -117,7 +109,8 @@ class App extends React.Component<{}, IAppState> {
         this.setState({ accountExists: true });
     }
 
-    private resetSwapDetails(): void {
+    private setSwapDetails(swapDetails: IPartialSwapRequest): void {
+        ipcRenderer.send('swapresponse', swapDetails)
         this.setState({ swapDetails: null });
     }
 
