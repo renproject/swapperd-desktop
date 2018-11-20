@@ -35,6 +35,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public async componentDidMount() {
+        // Check if user has an account set-up
         const xhr = new XMLHttpRequest();
         try {
             xhr.open("GET", "http://localhost:7777/whoami", false);
@@ -44,13 +45,17 @@ class App extends React.Component<{}, IAppState> {
             console.log(e);
         }
 
-        try {
-            const balances = await getBalances();
-            this.setState({ balances });
-        } catch (err) {
-            this.setState({ balancesError: err.message });
-        }
+        // Check balances on an interval
+        setInterval(async () => {
+            try {
+                const balances = await getBalances();
+                this.setState({ balances });
+            } catch (err) {
+                this.setState({ balancesError: err.message });
+            }
+        }, 2000);
 
+        // Set-up WebSockets for interacting with the client website
         const ws = new WebSocket('ws://localhost:8080');
         const socket = new WebSocket('ws://localhost:8081');
         this.setState({ socket });
@@ -105,17 +110,15 @@ class App extends React.Component<{}, IAppState> {
         this.setState({ withdrawRequest });
     }
 
-    private accountCreated(): void {
+    private async accountCreated(): Promise<void> {
         this.setState({ accountExists: true });
 
-        setTimeout(async () => {
-            try {
-                const balances = await getBalances();
-                this.setState({ balances });
-            } catch (err) {
-                this.setState({ balancesError: err.message });
-            }
-        }, 2000);
+        try {
+            const balances = await getBalances();
+            this.setState({ balances });
+        } catch (err) {
+            this.setState({ balancesError: err.message });
+        }
     }
 
     private resetSwapDetails(): void {
