@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { ISwapsResponse } from '../lib/swapperd';
 import { Banner } from './Banner';
+import { Loading } from './Loading';
 import { SwapItem } from './SwapItem';
 
 interface ISwapsProps {
@@ -19,12 +20,22 @@ export class Swaps extends React.Component<ISwapsProps> {
             <>
                 <Banner title="History" />
                 <div className="swaps">
-                    {swaps && swaps.swaps !== null ?
-                        swaps.swaps.map(swap => {
-                            return <SwapItem key={swap.id} swapItem={swap} />;
-                        })
+                    {swaps !== null ?
+                        swaps.swaps !== null ?
+                            swaps.swaps.sort((a, b) => {
+                                // Sort by timestamp in descending order
+                                if (a.timestamp < b.timestamp) {
+                                    return 1;
+                                } else {
+                                    return -1;
+                                }
+                            }).map((swap, index) => {
+                                return <SwapItem key={index} index={index + 1} swapItem={swap} />;
+                            })
+                            :
+                            <p>You have no transactions.</p>
                         :
-                        <p>You have no transactions.</p>
+                        <Loading />
                     }
                 </div>
             </>
