@@ -47,14 +47,9 @@ export const getBalances = async () => {
     const postResponse = await axios({
         method: 'GET',
         url: "http://localhost:7777/balances",
-        // auth: {
-        //     username,
-        //     password,
-        // },
     });
 
     const balances: IBalancesResponse = postResponse.data;
-
     for (const balance of balances.balances) {
         const token = balance.token;
         const decimal = decimals.get(token);
@@ -66,25 +61,21 @@ export const getBalances = async () => {
     return balances;
 }
 
-export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, username: string, password: string) => {
-
+export const submitWithdraw = async (withdrawRequest: IWithdrawRequest, password: string) => {
     const decimal = decimals.get(withdrawRequest.token);
     if (decimal !== undefined) {
         withdrawRequest.amount = new BigNumber(withdrawRequest.amount).times(new BigNumber(10).pow(decimal)).toFixed();
     }
 
-
     const postResponse = await axios({
         method: 'POST',
         url: "http://localhost:7777/withdrawals",
         auth: {
-            username,
+            username: "",
             password,
         },
         data: withdrawRequest,
     });
 
-    const response: any = postResponse.data;
-
-    return response;
+    return postResponse.data;
 }

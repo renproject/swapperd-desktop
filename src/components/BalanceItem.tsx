@@ -8,31 +8,26 @@ interface IBalanceItemProps {
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
 }
 
-
-
 export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
     constructor(props: IBalanceItemProps) {
         super(props);
-        this.state = {
-        };
+        this.handleWithdraw = this.handleWithdraw.bind(this);
     }
 
     public render() {
         const { balanceItem } = this.props;
         return (
-            <div className="balanceItem">
-                <div className="balanceItem--left">
-                    <img src={getLogo(balanceItem.token)} />
-                </div>
-                <div className="balanceItem--right">
-                    <p>{balanceItem.amount} {balanceItem.token} <span onClick={this.handleWithdraw} className="withdrawButton">(withdraw)</span></p>
-                    <p className="balanceAddress">{balanceItem.address}</p>
+            <div className="balances--item">
+                <img src={getLogo(balanceItem.token)} />
+                <div>
+                    <p>{balanceItem.amount} {balanceItem.token} (<a onClick={this.handleWithdraw}>withdraw</a>)</p>
+                    <p>{balanceItem.address}</p>
                 </div>
             </div>
         );
     }
 
-    private handleWithdraw = () => {
+    private handleWithdraw(): void {
         this.props.setWithdrawRequest({ token: this.props.balanceItem.token });
     }
 }

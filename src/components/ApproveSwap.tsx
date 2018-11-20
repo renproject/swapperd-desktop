@@ -1,13 +1,10 @@
-import * as React from 'react';
+import * as React from "react";
 
-import '../styles/ApproveSwap.css';
-
-import axios from 'axios';
-
+import axios from "axios";
 import BigNumber from "bignumber.js";
 
-import { getLogo } from 'src/lib/logos';
-import { IPartialSwapRequest, ISwapRequest } from '../lib/swapperd';
+import { getLogo } from "src/lib/logos";
+import { IPartialSwapRequest, ISwapRequest } from "../lib/swapperd";
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
@@ -25,7 +22,7 @@ interface IApproveSwapState {
 }
 
 
-class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
+export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
     constructor(props: IApproveSwapProps) {
         super(props);
         this.state = {
@@ -149,7 +146,7 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
                 if (socket) {
                     socket.send(JSON.stringify(response));
                 }
-            } 
+            }
             this.props.reset();
         } catch (err) {
             this.setState({ error: err.message || err });
@@ -162,5 +159,3 @@ class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> 
         // chrome.runtime.sendMessage({ method: 'approvedSwap', response }, console.log);
     }
 }
-
-export default ApproveSwap;

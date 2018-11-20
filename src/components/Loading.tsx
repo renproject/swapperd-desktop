@@ -1,19 +1,10 @@
 import * as React from "react";
 
-import '../styles/Loading.css';
-
 interface ILoadingProps {
     alt?: boolean;
 }
 
-// tslint:disable-next-line:no-empty-interface
-interface ILoadingState {
-}
-
-/**
- * Loading is a visual component that renders a spinning animation
- */
-class Loading extends React.Component<ILoadingProps, ILoadingState> {
+export class Loading extends React.Component<ILoadingProps> {
     public render(): JSX.Element {
         const { alt } = this.props;
         return (
@@ -21,5 +12,3 @@ class Loading extends React.Component<ILoadingProps, ILoadingState> {
         );
     }
 }
-
-export default Loading;

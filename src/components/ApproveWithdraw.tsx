@@ -1,47 +1,49 @@
 import * as React from 'react';
 
 import { getLogo } from 'src/lib/logos';
-import { IBalancesResponse, IPartialWithdrawRequest, ISwapRequest, IWithdrawRequest, submitWithdraw } from '../lib/swapperd';
+import { IBalancesResponse, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from '../lib/swapperd';
+import { Banner } from './Banner';
 
 interface IApproveWithdrawProps {
-    withdrawRequest: IPartialWithdrawRequest;
     balances: null | IBalancesResponse;
+    withdrawRequest: IPartialWithdrawRequest;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest | null) => void;
 }
 
 interface IApproveWithdrawState {
     gettingPassword: boolean;
-    error: null | string;
-    loading: boolean;
-    response: null | ISwapRequest;
-    username: string;
     password: string;
     to: string;
     amount: string;
     available: string;
+    loading: boolean;
+    error: null | string;
 }
-
 
 export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApproveWithdrawState> {
     constructor(props: IApproveWithdrawProps) {
         super(props);
-
         this.state = {
             gettingPassword: false,
-            error: null,
-            loading: false,
-            response: null,
-            username: "",
-            password: "",
-            to: "",
-            amount: "",
             available: "-",
+            amount: "",
+            to: "",
+            password: "",
+            loading: false,
+            error: null,
         };
 
-        this.componentWillReceiveProps(props);
+        this.handleInput = this.handleInput.bind(this);
+        this.onWithdraw = this.onWithdraw.bind(this);
+        this.onAccept = this.onAccept.bind(this);
+        this.onReject = this.onReject.bind(this);
     }
 
-    public componentWillReceiveProps(props: IApproveWithdrawProps) {
+    public componentDidMount(): void {
+        this.componentWillReceiveProps(this.props);
+    }
+
+    public componentWillReceiveProps(props: IApproveWithdrawProps): void {
         if (props.balances) {
             for (const balanceItem of props.balances.balances) {
                 if (balanceItem.token === this.props.withdrawRequest.token) {
@@ -52,54 +54,58 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         }
     }
 
-    public render() {
+    public render(): JSX.Element {
         const { withdrawRequest } = this.props;
-        const { available, gettingPassword, username, password, loading, error, amount, to } = this.state;
+        const { gettingPassword, available, password, loading, amount, to, error } = this.state;
         return (
-
-            <div className="approve-withdraw">
-
-                <img src={getLogo(withdrawRequest.token)} />
-                <p>Withdraw {withdrawRequest.token}</p>
-                <p>Available: {available} {withdrawRequest.token}</p>
-
-                <div className="button-list">
-
-                    <input className={`retro--grey ${gettingPassword ? "disabled" : ""}`} placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} disabled={loading} />
-                    <input className={`retro--grey ${gettingPassword ? "disabled" : ""}`} placeholder="To" value={to} name="to" onChange={this.handleInput} disabled={loading} />
-
-                    {gettingPassword ?
-                        <>
-                            <input className={`retro--grey ${loading ? "disabled" : ""}`} placeholder="Username" value={username} name="username" onChange={this.handleInput} disabled={loading} />
-                            <input className={`retro--grey ${loading ? "disabled" : ""}`} placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} type="password" />
-                            <div className={`button retro--blue ${loading ? "disabled" : ""}`} onClick={this.onAccept2}>Accept</div>
-                        </> :
-                        <div className={`button retro--blue ${loading ? "disabled" : ""}`} onClick={this.onAccept1}>Withdraw</div>
-                    }
-                    <div className={`button retro--grey ${loading ? "disabled" : ""}`} onClick={this.onReject}>Cancel</div>
-
+            <>
+                <Banner title="Withdraw" reject={this.onReject} />
+                <div className="withdraw">
+                    <div className="withdraw--balance">
+                        <img src={getLogo(withdrawRequest.token)} />
+                        <p>Available: {available} {withdrawRequest.token}</p>
+                    </div>
+                    <div className="withdraw--inputs">
+                        <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} disabled={loading} />
+                        <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} disabled={loading} />
+                        {gettingPassword ?
+                            <>
+                                <input className={loading ? "disabled" : ""} placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} type="password" />
+                                <button className={loading ? "disabled" : ""} onClick={this.onAccept}><span>Accept</span></button>
+                            </>
+                            :
+                            <button className={loading ? "disabled" : ""} onClick={this.onWithdraw}><span>Withdraw</span></button>
+                        }
+                    </div>
+                    {error ? <p className="error">{error}</p> : null}
                 </div>
-                {error ? <p className="retro--red">{error}</p> : null}
-            </div>
+            </>
         );
     }
 
-    private handleInput = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private onAccept1 = async () => {
-        this.setState({ gettingPassword: true });
+    private onWithdraw(): void {
+        const { available, to, amount } = this.state;
+        if (parseInt(amount, 10) > 0 && parseInt(amount, 10) <= parseInt(available, 10)) {
+            this.setState({ gettingPassword: true });
+        } else {
+            this.setState({ error: "Please enter a valid amount." });
+            return;
+        }
+
+        if (to.length > 0) {
+            this.setState({ error: "Please enter an address." });
+            return;
+        }
     }
 
-    private onReject = async () => {
-        this.props.setWithdrawRequest(null);
-    }
-
-    private onAccept2 = async () => {
+    private async onAccept(): Promise<void> {
         const { withdrawRequest } = this.props;
-        const { password, username, to, amount } = this.state;
+        const { password, to, amount } = this.state;
         this.setState({ error: null, loading: true });
 
         const request: IWithdrawRequest = {
@@ -109,12 +115,17 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         };
 
         try {
-            await submitWithdraw(request, username, password);
+            await submitWithdraw(request, password);
             this.props.setWithdrawRequest(null);
-        } catch (err) {
-            this.setState({ error: err.message || err });
+        } catch (e) {
+            console.error(e);
+            this.setState({ error: "There was an error submitting your request. Please try again later." });
         }
 
-        this.setState({ loading: false, gettingPassword: false });
+        this.setState({ loading: false });
+    }
+
+    private onReject(): void {
+        this.props.setWithdrawRequest(null);
     }
 }

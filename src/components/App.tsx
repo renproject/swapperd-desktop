@@ -1,13 +1,9 @@
 import * as React from 'react';
 
-import '../styles/App.css';
-
-import ApproveSwap from './ApproveSwap';
-
 import { getBalances, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest } from '../lib/swapperd';
+import { ApproveSwap } from './ApproveSwap';
 import { ApproveWithdraw } from './ApproveWithdraw';
 import { Balances } from './Balances';
-import { Banner } from './Banner';
 import { CreateAccount } from './CreateAccount';
 
 interface IAppState {
@@ -32,6 +28,7 @@ class App extends React.Component<{}, IAppState> {
         }
         this.accountCreated = this.accountCreated.bind(this);
         this.resetSwapDetails = this.resetSwapDetails.bind(this);
+        this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
     }
 
     public async componentDidMount() {
@@ -77,52 +74,43 @@ class App extends React.Component<{}, IAppState> {
 
         if (!accountExists) {
             return <div className="app">
-                <Banner title="Create account" />
+                <h1>Create account</h1>
                 <CreateAccount resolve={this.accountCreated} />
             </div>
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Banner title="Approve swap" />
+                <h1>Approve swap</h1>
                 <ApproveSwap socket={socket} swapDetails={swapDetails} reset={this.resetSwapDetails} />
             </div>
         }
 
         if (withdrawRequest) {
             return <div className="app">
-                <Banner title="Withdraw" />
                 <ApproveWithdraw
-                    setWithdrawRequest={this.setWithdrawRequest}
-                    withdrawRequest={withdrawRequest}
                     balances={balances}
+                    withdrawRequest={withdrawRequest}
+                    setWithdrawRequest={this.setWithdrawRequest}
                 />
             </div>
         }
 
         return <div className="app">
-            <Banner title="Balances" />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
         </div>;
     }
 
-    public setWithdrawRequest = (withdrawRequest: IPartialWithdrawRequest | null) => {
-        this.setState({ withdrawRequest });
-    }
-
-    private async accountCreated(): Promise<void> {
+    private accountCreated(): void {
         this.setState({ accountExists: true });
-
-        try {
-            const balances = await getBalances();
-            this.setState({ balances });
-        } catch (err) {
-            this.setState({ balancesError: err.message });
-        }
     }
 
     private resetSwapDetails(): void {
         this.setState({ swapDetails: null });
+    }
+
+    private setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void {
+        this.setState({ withdrawRequest });
     }
 }
 
