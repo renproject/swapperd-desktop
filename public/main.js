@@ -89,6 +89,11 @@ mb.on("after-create-window", () => {
 });
 
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});  
 app.post("/swaps", (req, res) => {
     mb.showWindow();
     mb.window.webContents.send("swap", req.body)
@@ -97,7 +102,7 @@ app.post("/swaps", (req, res) => {
         res.send(args[0]);
     });
 });
-app.listen(7929);
+app.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
     shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]}`, (code) => {
