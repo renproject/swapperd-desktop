@@ -29,8 +29,8 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
         }
     }
 
-    public componentDidUpdate(): void {
-        const { swaps } = this.props;
+    public componentWillReceiveProps(nextProps: ISwapsProps): void {
+        const { swaps } = nextProps;
         if (swaps && swaps.swaps) {
             const pending = this.pendingSwaps(swaps.swaps);
             if (pending.length < this.state.pending.length) {
