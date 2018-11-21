@@ -99,11 +99,10 @@ app.post("/swaps", (req, res) => {
     mb.showWindow();
     mb.window.webContents.send("swap", req.body);
     ipcMain.once("swap-response", (event, ...args) => {
-        res.status(201);
-        res.send(args[0]);
+        res.status(args[0]);
+        res.send(args[1]);
     });
 });
-
 app.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
