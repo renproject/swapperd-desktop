@@ -4,7 +4,6 @@ import * as React from 'react';
 import { ISwapItem } from 'src/lib/swapperd';
 
 interface ISwapItemProps {
-    index: number;
     swapItem: ISwapItem;
 }
 
@@ -14,8 +13,8 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
     }
 
     public render(): JSX.Element {
-        const { index, swapItem } = this.props;
-        const timestamp = moment.unix(swapItem.timestamp).format("MMM DD, YYYY at HH:mm");
+        const { swapItem } = this.props;
+        const timestamp = moment.unix(swapItem.timestamp).format("MMM DD, YYYY [at] HH:mm");
         let status;
         switch (swapItem.status) {
             case 1:
@@ -32,15 +31,14 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
         }
         return (
             <div className="swaps--item">
-                <p>#{index} - {timestamp}</p>
-                <div>
+                <div className="swaps--details">
                     <div>
-                        <p className="swaps--status">{status}</p>
-                        <p>{swapItem.sendToken} to {swapItem.receiveToken}</p>
+                        <p>{timestamp}</p>
+                        <span className={`swaps--status ${status ? status.toLowerCase() : ""}`}>{status}</span>
                     </div>
                     <div>
-                        <p>+{swapItem.receiveAmount}</p>
-                        <p>-{swapItem.sendAmount}</p>
+                        <p>+{swapItem.receiveAmount} {swapItem.receiveToken}</p>
+                        <p>-{swapItem.sendAmount} {swapItem.sendToken}</p>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@ interface IBannerProps {
     reject?: () => void;
 }
 
-export class Banner extends React.Component<IBannerProps, {}> {
+export class Banner extends React.Component<IBannerProps> {
     constructor(props: IBannerProps) {
         super(props);
     }

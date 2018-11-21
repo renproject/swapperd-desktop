@@ -126,10 +126,6 @@ button span {
 
 /* Balances */
 
-.balances p {
-    padding: 0 10px;
-}
-
 .balances--item {
     display: flex;
     align-items: center;
@@ -147,15 +143,71 @@ button span {
     margin-top: 5px;
 }
 
-/* Swaps */
-
-.swaps p {
+.balances .error {
     padding: 0 10px;
 }
+
+/* Swaps */
 
 .swaps--item {
     border-bottom: 1px solid #ccc;
     padding: 10px;
+}
+
+.swaps--item:first-child {
+    padding-top: 0;
+}
+
+.swaps--details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.swaps--details p {
+    font-size: 16px;
+}
+
+.swaps--details > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.swaps--details > div:last-child {
+    align-items: flex-end;
+}
+
+.swaps--details > div:last-child > p:first-child {
+    font-size: 16px;
+}
+
+.swaps--details > div > * + * {
+    margin-top: 5px;
+}
+
+.swaps--status {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 6px;
+}
+
+.swaps--status.pending {
+    background-color: #fdf2dd;
+    color: #ca954a;
+}
+
+.swaps--status.failed {
+    background-color: #fdf1f2;
+    color: #bf2827;
+}
+
+.swaps--status.confirmed {
+    background-color: #edf9da;
+    color: #6d9835;
+}
+
+.swaps .error {
+    padding: 0 10px;
 }
 
 /* Account */
