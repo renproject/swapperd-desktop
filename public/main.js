@@ -87,9 +87,9 @@ mb.on("ready", function ready() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 });
 
-mb.on("after-create-window", () => {
+/* mb.on("after-create-window", () => {
     mb.window.openDevTools();
-});
+}); */
 
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
