@@ -1,7 +1,7 @@
-import btc from '../styles/images/btc.svg';
-import eth from '../styles/images/eth.svg';
-import swap from '../styles/images/swap.svg';
-import wbtc from '../styles/images/wbtc.png';
+import btc from "../styles/images/btc.svg";
+import eth from "../styles/images/eth.svg";
+import swap from "../styles/images/swap.svg";
+import wbtc from "../styles/images/wbtc.png";
 
 export function getLogo(symbol: string) {
     switch (symbol) {

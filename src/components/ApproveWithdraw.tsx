@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { getLogo } from 'src/lib/logos';
-import { IBalancesResponse, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from '../lib/swapperd';
-import { Banner } from './Banner';
+import { getLogo } from "src/lib/logos";
+import { IBalancesResponse, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
+import { Banner } from "./Banner";
 
 interface IApproveWithdrawProps {
     balances: null | IBalancesResponse;

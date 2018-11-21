@@ -109,6 +109,17 @@ button span {
   font-style: normal;
 }
 
+/* Header */
+
+.header {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 10px;
+}
+
+.header img {
+    width: 40px;
+}
+
 /* Banner */
 
 .banner {
@@ -164,13 +175,10 @@ button span {
     margin-top: 5px;
 }
 
-.swaps--details p {
-    font-size: 16px;
-}
-
 .swaps--details > div {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .swaps--details > div:last-child {

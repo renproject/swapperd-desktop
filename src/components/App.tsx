@@ -5,6 +5,7 @@ import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
 import { Balances } from "./Balances";
 import { CreateAccount } from "./CreateAccount";
+import { Header } from "./Header";
 import { Swaps } from "./Swaps";
 
 interface IAppState {
@@ -26,7 +27,7 @@ class App extends React.Component<{}, IAppState> {
             balances: null,
             balancesError: null,
             swaps: null,
-        }
+        };
         this.accountCreated = this.accountCreated.bind(this);
         this.setSwapDetails = this.setSwapDetails.bind(this);
         this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
@@ -82,27 +83,31 @@ class App extends React.Component<{}, IAppState> {
 
         if (!accountExists) {
             return <div className="app">
+                <Header />
                 <CreateAccount resolve={this.accountCreated} />
-            </div>
+            </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
+                <Header />
                 <ApproveSwap swapDetails={swapDetails} setSwapDetails={this.setSwapDetails} />
-            </div>
+            </div>;
         }
 
         if (withdrawRequest) {
             return <div className="app">
+                <Header />
                 <ApproveWithdraw
                     balances={balances}
                     withdrawRequest={withdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
                 />
-            </div>
+            </div>;
         }
 
         return <div className="app">
+            <Header />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={swaps} />
         </div>;
@@ -114,7 +119,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private setSwapDetails(swapDetails: IPartialSwapRequest): void {
-        (window as any).ipcRenderer.send('swap-response', swapDetails);
+        (window as any).ipcRenderer.send("swap-response", swapDetails);
         this.setState({ swapDetails: null });
     }
 

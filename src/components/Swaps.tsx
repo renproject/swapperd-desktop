@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { ISwapsResponse } from '../lib/swapperd';
-import { Banner } from './Banner';
-import { Loading } from './Loading';
-import { SwapItem } from './SwapItem';
+import { ISwapsResponse } from "../lib/swapperd";
+import { Banner } from "./Banner";
+import { Loading } from "./Loading";
+import { SwapItem } from "./SwapItem";
 
 interface ISwapsProps {
     swaps: null | ISwapsResponse;
@@ -14,7 +14,7 @@ export class Swaps extends React.Component<ISwapsProps> {
         super(props);
     }
 
-    public render() {
+    public render(): JSX.Element {
         const { swaps } = this.props;
         return (
             <>

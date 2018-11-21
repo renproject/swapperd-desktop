@@ -1,7 +1,7 @@
 import * as moment from "moment";
-import * as React from 'react';
+import * as React from "react";
 
-import { ISwapItem } from 'src/lib/swapperd';
+import { ISwapItem } from "src/lib/swapperd";
 
 interface ISwapItemProps {
     swapItem: ISwapItem;

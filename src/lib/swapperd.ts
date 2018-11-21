@@ -1,5 +1,5 @@
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
+import axios from "axios";
+import BigNumber from "bignumber.js";
 
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
@@ -11,22 +11,22 @@ export interface IPartialWithdrawRequest {
 }
 
 export interface ISwapRequest extends IPartialSwapRequest {
-    id: string,
-    timeLock: number,
-    secretHash: string,
+    id: string;
+    timeLock: number;
+    secretHash: string;
 }
 
 export interface IPartialSwapRequest {
-    sendToken: string,
-    receiveToken: string,
+    sendToken: string;
+    receiveToken: string;
 
     // SendAmount and ReceiveAmount are hex encoded.
-    sendAmount: string,
-    receiveAmount: string,
+    sendAmount: string;
+    receiveAmount: string;
 
-    sendTo: string,
-    receiveFrom: string,
-    shouldInitiateFirst: boolean,
+    sendTo: string;
+    receiveFrom: string;
+    shouldInitiateFirst: boolean;
 }
 
 export interface IBalanceItem {
@@ -36,7 +36,7 @@ export interface IBalanceItem {
 }
 
 export interface IBalancesResponse {
-    balances: IBalanceItem[]
+    balances: IBalanceItem[];
 }
 
 export interface ISwapItem {
@@ -50,7 +50,7 @@ export interface ISwapItem {
 }
 
 export interface ISwapsResponse {
-    swaps: ISwapItem[]
+    swaps: ISwapItem[];
 }
 
 const decimals = new Map<string, number>()
@@ -60,7 +60,7 @@ const decimals = new Map<string, number>()
 
 export async function getBalances(): Promise<IBalancesResponse> {
     const postResponse = await axios({
-        method: 'GET',
+        method: "GET",
         url: "http://localhost:7927/balances",
     });
 
@@ -78,7 +78,7 @@ export async function getBalances(): Promise<IBalancesResponse> {
 
 export async function getSwaps(): Promise<ISwapsResponse> {
     const postResponse = await axios({
-        method: 'GET',
+        method: "GET",
         url: "http://localhost:7927/swaps",
     });
 
@@ -107,7 +107,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
     }
 
     const postResponse = await axios({
-        method: 'POST',
+        method: "POST",
         url: "http://localhost:7927/withdrawals",
         auth: {
             username: "",
@@ -121,7 +121,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 
 export async function submitSwap(swapRequest: IPartialSwapRequest, password: string) {
     const postResponse = await axios({
-        method: 'POST',
+        method: "POST",
         url: "http://localhost:7927/swaps",
         auth: {
             username: "",

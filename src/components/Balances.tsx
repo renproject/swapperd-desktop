@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { IBalancesResponse, IPartialWithdrawRequest } from '../lib/swapperd';
-import { BalanceItem } from './BalanceItem';
-import { Loading } from './Loading';
+import { IBalancesResponse, IPartialWithdrawRequest } from "../lib/swapperd";
+import { BalanceItem } from "./BalanceItem";
+import { Loading } from "./Loading";
 
 interface IBalancesProps {
     balances: null | IBalancesResponse;

@@ -8,11 +8,12 @@ const { ipcMain, Menu } = require("electron");
 
 const mb = menubar({
     tooltip: "Swapperd",
-    showDockIcon: true,
+    showDockIcon: true, // TODO: Remove this
+    preloadWindow: true,
     webPreferences: {
         nodeIntegration: false,
         preload: __dirname + "/preload.js",
-    }
+    },
 });
 const app = express();
 

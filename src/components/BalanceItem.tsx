@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { getLogo } from 'src/lib/logos';
-import { IBalanceItem, IPartialWithdrawRequest } from 'src/lib/swapperd';
+import { getLogo } from "src/lib/logos";
+import { IBalanceItem, IPartialWithdrawRequest } from "src/lib/swapperd";
 
 interface IBalanceItemProps {
     balanceItem: IBalanceItem;

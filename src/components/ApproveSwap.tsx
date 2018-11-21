@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 
 import { getLogo } from "src/lib/logos";
 import { getBalances, IPartialSwapRequest, submitSwap } from "../lib/swapperd";
-import { Banner } from './Banner';
+import { Banner } from "./Banner";
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
@@ -83,7 +83,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
                 response.receiveFrom = balanceMap[response.receiveToken];
                 response.sendTo = balanceMap[response.sendToken];
-                response.shouldInitiateFirst = false; 
+                response.shouldInitiateFirst = false;
             }
             this.props.setSwapDetails(response);
         } catch (e) {
