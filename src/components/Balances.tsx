@@ -28,8 +28,8 @@ export class Balances extends React.Component<IBalancesProps> {
                         } else {
                             return 1;
                         }
-                    }).map(balance => {
-                        return <BalanceItem key={balance.token} balanceItem={balance} setWithdrawRequest={this.props.setWithdrawRequest} />;
+                    }).map((balance, index) => {
+                        return <BalanceItem key={index} balanceItem={balance} setWithdrawRequest={this.props.setWithdrawRequest} />;
                     })
                     : (
                         balancesError ? <p className="error">{balancesError}</p> : <Loading />

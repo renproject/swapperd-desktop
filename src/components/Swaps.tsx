@@ -30,7 +30,7 @@ export class Swaps extends React.Component<ISwapsProps> {
                                     return -1;
                                 }
                             }).map((swap, index) => {
-                                return <SwapItem key={index} index={index + 1} swapItem={swap} />;
+                                return <SwapItem key={index} swapItem={swap} />;
                             })
                             :
                             <p>You have no transactions.</p>
