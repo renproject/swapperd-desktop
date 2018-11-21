@@ -102,7 +102,7 @@ app.post("/swaps", (req, res) => {
     mb.window.webContents.send("swap", req.body);
     ipcMain.once("swap-response", (event, ...args) => {
         res.status(args[0]);
-        res.send(args[1]);
+        res.send(args[1] === undefined ? "" : args[1]);
     });
 });
 app.listen(7928);
