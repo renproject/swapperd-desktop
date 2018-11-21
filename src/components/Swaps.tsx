@@ -29,7 +29,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
         }
     }
 
-    public componentWillReceiveProps(nextProps: ISwapsProps): void {
+    public componentDidUpdate(): void {
         const { swaps } = this.props;
         if (swaps && swaps.swaps) {
             const pending = this.pendingSwaps(swaps.swaps);
@@ -40,7 +40,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }).length === 0;
                 });
 
-                (window as any).ipcRenderer.sendSync("notify", `Transaction from ${notPending[0].sendAmount} ${notPending[0].sendToken} to ${notPending[0].receiveAmount} ${notPending[0].receiveToken} ${notPending[0].status === 4 ? "confirmed!" : "failed."}`);
+                (window as any).ipcRenderer.sendSync("notify", `Swap from ${notPending[0].sendAmount} ${notPending[0].sendToken} to ${notPending[0].receiveAmount} ${notPending[0].receiveToken} ${notPending[0].status === 4 ? "confirmed!" : "failed."}`);
                 this.setState({ pending });
             }
         }

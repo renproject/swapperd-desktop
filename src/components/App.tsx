@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { getBalances, getSwaps, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
+import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
 import { Balances } from "./Balances";
@@ -9,6 +10,7 @@ import { Header } from "./Header";
 import { Swaps } from "./Swaps";
 
 interface IAppState {
+    mnemonic: string;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
@@ -21,6 +23,7 @@ class App extends React.Component<{}, IAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+            mnemonic: "",
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
@@ -28,6 +31,7 @@ class App extends React.Component<{}, IAppState> {
             balancesError: null,
             swaps: null,
         };
+        this.mnemonicSaved = this.mnemonicSaved.bind(this);
         this.accountCreated = this.accountCreated.bind(this);
         this.setSwapDetails = this.setSwapDetails.bind(this);
         this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
@@ -79,7 +83,14 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+        const { mnemonic, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+
+        if (mnemonic !== "") {
+            return <div className="app">
+                <Header />
+                <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
+            </div>;
+        }
 
         if (!accountExists) {
             return <div className="app">
@@ -113,9 +124,13 @@ class App extends React.Component<{}, IAppState> {
         </div>;
     }
 
-    private accountCreated(): void {
-        this.setState({ accountExists: true });
-        (window as any).ipcRenderer.sendSync("notify", "Account creation successful!");
+    private mnemonicSaved(): void {
+        this.setState({ mnemonic: "" });
+    }
+
+    private accountCreated(mnemonic: string): void {
+        this.setState({ accountExists: true, mnemonic });
+        (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "restored successfully!" : "creation successful!"}`);
     }
 
     private setSwapDetails(swapDetails: IPartialSwapRequest): void {

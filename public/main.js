@@ -2,7 +2,9 @@ const menubar = require("menubar");
 const express = require("express");
 const bodyParser = require("body-parser");
 const shell = require("shelljs");
-const notifier = require('node-notifier');
+const notifier = require("node-notifier");
+const fs = require("fs");
+const os = require("os");
 
 const { ipcMain, Menu } = require("electron");
 
@@ -90,11 +92,11 @@ mb.on("after-create-window", () => {
 });
 
 app.use(bodyParser.json());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-});  
+});
 app.post("/swaps", (req, res) => {
     mb.showWindow();
     mb.window.webContents.send("swap", req.body)
@@ -106,8 +108,15 @@ app.post("/swaps", (req, res) => {
 app.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
-    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]}`, (code) => {
-        event.returnValue = code;
+    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
+        let mnemonic = "";
+        if (code === 0) {
+            const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", { encoding: "utf-8" });
+            if (data) {
+                mnemonic = JSON.parse(data).config.mnemonic;
+            }
+        }
+        event.returnValue = mnemonic;
     });
 });
 
