@@ -15,7 +15,7 @@ export class Balances extends React.Component<IBalancesProps> {
         super(props);
     }
 
-    public render() {
+    public render(): JSX.Element {
         const { balances, balancesError } = this.props;
         return (
 
