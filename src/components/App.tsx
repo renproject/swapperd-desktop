@@ -33,7 +33,7 @@ class App extends React.Component<{}, IAppState> {
         };
         this.mnemonicSaved = this.mnemonicSaved.bind(this);
         this.accountCreated = this.accountCreated.bind(this);
-        this.setSwapDetails = this.setSwapDetails.bind(this);
+        this.resetSwapDetails = this.resetSwapDetails.bind(this);
         this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
     }
 
@@ -102,7 +102,7 @@ class App extends React.Component<{}, IAppState> {
         if (swapDetails) {
             return <div className="app">
                 <Header />
-                <ApproveSwap swapDetails={swapDetails} setSwapDetails={this.setSwapDetails} />
+                <ApproveSwap swapDetails={swapDetails} resetSwapDetails={this.resetSwapDetails} />
             </div>;
         }
 
@@ -133,8 +133,7 @@ class App extends React.Component<{}, IAppState> {
         (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "restored successfully!" : "creation successful!"}`);
     }
 
-    private setSwapDetails(swapDetails: IPartialSwapRequest): void {
-        (window as any).ipcRenderer.send("swap-response", swapDetails);
+    private resetSwapDetails(): void {
         this.setState({ swapDetails: null });
     }
 

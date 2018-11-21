@@ -8,7 +8,7 @@ import { Banner } from "./Banner";
 
 interface IApproveSwapProps {
     swapDetails: IPartialSwapRequest;
-    setSwapDetails: (swapDetails: IPartialSwapRequest | null) => void;
+    resetSwapDetails: () => void;
 }
 
 interface IApproveSwapState {
@@ -85,7 +85,8 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                 response.sendTo = balanceMap[response.sendToken];
                 response.shouldInitiateFirst = false;
             }
-            this.props.setSwapDetails(response);
+            (window as any).ipcRenderer.send("swap-response", 201, response);
+            this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
             this.setState({ error: "There was an error submitting your request. Please try again later." });
@@ -95,6 +96,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject(): void {
-        this.props.setSwapDetails(null);
+        (window as any).ipcRenderer.send("swap-response", 403);
+        this.props.resetSwapDetails();
     }
 }

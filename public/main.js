@@ -99,10 +99,10 @@ app.use(function (req, res, next) {
 });
 app.post("/swaps", (req, res) => {
     mb.showWindow();
-    mb.window.webContents.send("swap", req.body)
-    ipcMain.on("swap-response", (event, ...args) => {
-        res.status(201);
-        res.send(args[0]);
+    mb.window.webContents.send("swap", req.body);
+    ipcMain.once("swap-response", (event, ...args) => {
+        res.status(args[0]);
+        res.send(args[1]);
     });
 });
 app.listen(7928);
