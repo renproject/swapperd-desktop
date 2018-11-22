@@ -121,7 +121,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             this.setState({ error: "There was an error submitting your request. Please try again later." });
         }
 
-        (window as any).ipcRenderer.sendSync("notify", `${amount} ${withdrawRequest.token} transfer successful."}`);
+        (window as any).ipcRenderer.sendSync("notify", `${amount} ${withdrawRequest.token} transfer successful.`);
         this.setState({ loading: false });
     }
 
