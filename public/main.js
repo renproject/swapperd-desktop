@@ -12,6 +12,7 @@ const mb = menubar({
     tooltip: "Swapperd",
     showDockIcon: true, // TODO: Remove this
     preloadWindow: true,
+    resizable: false,
     webPreferences: {
         nodeIntegration: false,
         preload: __dirname + "/preload.js",
