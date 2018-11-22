@@ -59,7 +59,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         const { gettingPassword, available, password, loading, amount, to, error } = this.state;
         return (
             <>
-                <Banner title="Withdraw" reject={this.onReject} />
+                <Banner title="Transfer" reject={this.onReject} />
                 <div className="withdraw">
                     <div className="withdraw--balance">
                         <img src={getLogo(withdrawRequest.token)} />
@@ -74,7 +74,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                 <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
                             </>
                             :
-                            <button onClick={this.onWithdraw} disabled={loading}><span>Withdraw</span></button>
+                            <button onClick={this.onWithdraw} disabled={loading}><span>Transfer</span></button>
                         }
                     </div>
                     {error ? <p className="error">{error}</p> : null}
@@ -90,15 +90,14 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
     private onWithdraw(): void {
         const { available, to, amount } = this.state;
-        if (parseInt(amount, 10) > 0 && parseInt(amount, 10) <= parseInt(available, 10)) {
+        if (to === "") {
+            this.setState({ error: "Please enter an address." });
+            return;
+        }
+        if (parseFloat(amount) > 0 && parseFloat(amount) <= parseFloat(available)) {
             this.setState({ gettingPassword: true });
         } else {
             this.setState({ error: "Please enter a valid amount." });
-            return;
-        }
-
-        if (to.length > 0) {
-            this.setState({ error: "Please enter an address." });
             return;
         }
     }

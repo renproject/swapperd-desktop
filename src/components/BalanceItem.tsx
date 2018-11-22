@@ -20,7 +20,7 @@ export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
             <div className="balances--item">
                 <img src={getLogo(balanceItem.token)} />
                 <div>
-                    <p>{balanceItem.amount} {balanceItem.token} (<a onClick={this.handleWithdraw}>withdraw</a>)</p>
+                    <p>{balanceItem.amount} {balanceItem.token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
                     <p>{balanceItem.address}</p>
                 </div>
             </div>
