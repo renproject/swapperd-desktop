@@ -59,7 +59,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         const { gettingPassword, available, password, loading, amount, to, error } = this.state;
         return (
             <>
-                <Banner title="Transfer" reject={this.onReject} />
+                <Banner title="Transfer" disabled={loading} reject={this.onReject} />
                 <div className="withdraw">
                     <div className="withdraw--balance">
                         <img src={getLogo(withdrawRequest.token)} />
@@ -121,6 +121,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             this.setState({ error: "There was an error submitting your request. Please try again later." });
         }
 
+        (window as any).ipcRenderer.sendSync("notify", `${amount} ${withdrawRequest.token} transfer successful."}`);
         this.setState({ loading: false });
     }
 
