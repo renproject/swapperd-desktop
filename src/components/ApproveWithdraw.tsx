@@ -3,6 +3,7 @@ import * as React from "react";
 import { getLogo } from "src/lib/logos";
 import { IBalancesResponse, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
 import { Banner } from "./Banner";
+import { Loading } from "./Loading";
 
 interface IApproveWithdrawProps {
     balances: null | IBalancesResponse;
@@ -61,23 +62,29 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             <>
                 <Banner title="Transfer" disabled={loading} reject={this.onReject} />
                 <div className="withdraw">
-                    <div className="withdraw--balance">
-                        <img src={getLogo(withdrawRequest.token)} />
-                        <p>Available: {available} {withdrawRequest.token}</p>
-                    </div>
-                    <div className="withdraw--inputs">
-                        <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} disabled={loading} />
-                        <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} disabled={loading} />
-                        {gettingPassword ?
-                            <>
-                                <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
-                                <button onClick={this.onAccept} disabled={loading}><span>Accept</span></button>
-                            </>
-                            :
-                            <button onClick={this.onWithdraw} disabled={loading}><span>Transfer</span></button>
-                        }
-                    </div>
-                    {error ? <p className="error">{error}</p> : null}
+                    {!loading ?
+                        <>
+                            <div className="withdraw--balance">
+                                <img src={getLogo(withdrawRequest.token)} />
+                                <p>Available: {available} {withdrawRequest.token}</p>
+                            </div>
+                            <div className="withdraw--inputs">
+                                <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
+                                <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} />
+                                {gettingPassword ?
+                                    <>
+                                        <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
+                                        <button onClick={this.onAccept}><span>Accept</span></button>
+                                    </>
+                                    :
+                                    <button onClick={this.onWithdraw}><span>Transfer</span></button>
+                                }
+                            </div>
+                            {error ? <p className="error">{error}</p> : null}
+                        </>
+                        :
+                        <Loading />
+                    }
                 </div>
             </>
         );
