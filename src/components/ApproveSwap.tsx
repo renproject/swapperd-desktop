@@ -35,7 +35,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         const { password, loading, error } = this.state;
         return (
             <>
-                <Banner title="Approve swap" reject={this.onReject} />
+                <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
                 <div className="swap">
                     <div className="swap--details">
                         <div>

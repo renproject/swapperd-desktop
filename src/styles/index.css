@@ -145,6 +145,10 @@ button span {
     cursor: pointer;
 }
 
+.banner--cross.disabled:before {
+    cursor: not-allowed;
+}
+
 /* Balances */
 
 .balances--item {
