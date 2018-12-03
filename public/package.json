@@ -25,7 +25,7 @@
     },
     "main": "main.js",
     "scripts": {
-        "start": "XDG_CURRENT_DESKTOP=Unity npx ./node_modules/electron-prebuilt/cli.js .",
+        "start": "npx ./node_modules/electron-prebuilt/cli.js .",
         "build": "electron-packager . ${npm_package_config_appName} --platform=darwin --arch=x64 --icon=Icon.icns",
         "package": "npm run package-mac && npm run create-installer-mac; npm run package-win && && npm run create-installer-win",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",

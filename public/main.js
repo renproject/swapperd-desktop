@@ -1,3 +1,7 @@
+if (process.platform === 'linux') {
+    process.env.XDG_CURRENT_DESKTOP = 'Unity';
+}
+
 const menubar = require("menubar");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -6,7 +10,10 @@ const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
 
-const { ipcMain, Menu } = require("electron");
+const {
+    ipcMain,
+    Menu
+} = require("electron");
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -23,8 +30,7 @@ const app = express();
 mb.on("ready", function ready() {
     const application = {
         label: "Application",
-        submenu: [
-            {
+        submenu: [{
                 label: "About",
                 selector: "orderFrontStandardAboutPanel:"
             },
@@ -43,8 +49,7 @@ mb.on("ready", function ready() {
 
     const edit = {
         label: "Edit",
-        submenu: [
-            {
+        submenu: [{
                 label: "Undo",
                 accelerator: "CmdOrCtrl+Z",
                 selector: "undo:"
@@ -112,7 +117,9 @@ ipcMain.on("create-account", (event, ...args) => {
     shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
         let mnemonic = "";
         if (code === 0) {
-            const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", { encoding: "utf-8" });
+            const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
+                encoding: "utf-8"
+            });
             if (data) {
                 mnemonic = JSON.parse(data).config.mnemonic;
             }
