@@ -65,7 +65,7 @@ class App extends React.Component<{}, IAppState> {
                     this.setState({ balances });
                 } catch (e) {
                     console.error(e);
-                    this.setState({ balancesError: "Unable to retrieve balances. Please try again later." });
+                    this.setState({ balancesError: `Unable to retrieve balances. Error: ${e}` });
                 }
             }
         }, 2000);
