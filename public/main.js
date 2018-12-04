@@ -1,5 +1,5 @@
-if (process.platform === 'linux') {
-    process.env.XDG_CURRENT_DESKTOP = 'Unity';
+if (process.platform === "linux") {
+    process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
 const menubar = require("menubar");
@@ -9,6 +9,7 @@ const shell = require("shelljs");
 const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
+const swapperd = require("../src/lib/swapperd");
 
 const {
     ipcMain,
@@ -31,57 +32,57 @@ mb.on("ready", function ready() {
     const application = {
         label: "Application",
         submenu: [{
-                label: "About",
-                selector: "orderFrontStandardAboutPanel:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Quit",
-                accelerator: "Command+Q",
-                click: () => {
-                    app.quit()
-                }
+            label: "About",
+            selector: "orderFrontStandardAboutPanel:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Quit",
+            accelerator: "Command+Q",
+            click: () => {
+                app.quit()
             }
+        }
         ]
     };
 
     const edit = {
         label: "Edit",
         submenu: [{
-                label: "Undo",
-                accelerator: "CmdOrCtrl+Z",
-                selector: "undo:"
-            },
-            {
-                label: "Redo",
-                accelerator: "Shift+CmdOrCtrl+Z",
-                selector: "redo:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Cut",
-                accelerator: "CmdOrCtrl+X",
-                selector: "cut:"
-            },
-            {
-                label: "Copy",
-                accelerator: "CmdOrCtrl+C",
-                selector: "copy:"
-            },
-            {
-                label: "Paste",
-                accelerator: "CmdOrCtrl+V",
-                selector: "paste:"
-            },
-            {
-                label: "Select All",
-                accelerator: "CmdOrCtrl+A",
-                selector: "selectAll:"
-            }
+            label: "Undo",
+            accelerator: "CmdOrCtrl+Z",
+            selector: "undo:"
+        },
+        {
+            label: "Redo",
+            accelerator: "Shift+CmdOrCtrl+Z",
+            selector: "redo:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Cut",
+            accelerator: "CmdOrCtrl+X",
+            selector: "cut:"
+        },
+        {
+            label: "Copy",
+            accelerator: "CmdOrCtrl+C",
+            selector: "copy:"
+        },
+        {
+            label: "Paste",
+            accelerator: "CmdOrCtrl+V",
+            selector: "paste:"
+        },
+        {
+            label: "Select All",
+            accelerator: "CmdOrCtrl+A",
+            selector: "selectAll:"
+        }
         ]
     };
 
@@ -110,6 +111,16 @@ app.post("/swaps", (req, res) => {
         res.status(args[0]);
         res.send(args[1] === undefined ? "" : args[1]);
     });
+});
+app.get("/balances", (req, res) => {
+    try {
+        const balances = await swapperd.getBalances();
+        res.status(200);
+        res.send(balances);
+    } catch (error) {
+        res.status(500);
+        res.send(error);
+    }
 });
 app.listen(7928);
 
