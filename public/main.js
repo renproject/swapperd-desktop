@@ -1,11 +1,11 @@
 // Fix Electron menubar icons not working in Gnome
 // https://github.com/electron/electron/issues/9046#issuecomment-296169661
 if (
-    process.platform === 'linux' &&
+    process.platform === "linux" &&
     process.env.XDG_CURRENT_DESKTOP &&
     process.env.XDG_CURRENT_DESKTOP.match(/gnome|unity|pantheon/i)
 ) {
-    process.env.XDG_CURRENT_DESKTOP = 'Unity';
+    process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
 const menubar = require("menubar");
@@ -15,6 +15,7 @@ const shell = require("shelljs");
 const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
+const swapperd = require("../src/lib/swapperd");
 
 const {
     ipcMain,
@@ -124,6 +125,16 @@ expressApp.post("/swaps", (req, res) => {
         res.status(args[0]);
         res.send(args[1] === undefined ? "" : args[1]);
     });
+});
+expressApp.get("/balances", (req, res) => {
+    try {
+        const balances = await swapperd.getBalances();
+        res.status(200);
+        res.send(balances);
+    } catch (error) {
+        res.status(500);
+        res.send(error);
+    }
 });
 expressApp.listen(7928);
 
