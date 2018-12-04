@@ -46,57 +46,57 @@ mb.on("ready", function ready() {
     const application = {
         label: "Application",
         submenu: [{
-                label: "About",
-                selector: "orderFrontStandardAboutPanel:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Quit",
-                accelerator: "Command+Q",
-                click: () => {
-                    expressApp.quit()
-                }
+            label: "About",
+            selector: "orderFrontStandardAboutPanel:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Quit",
+            accelerator: "Command+Q",
+            click: () => {
+                expressApp.quit()
             }
+        }
         ]
     };
 
     const edit = {
         label: "Edit",
         submenu: [{
-                label: "Undo",
-                accelerator: "CmdOrCtrl+Z",
-                selector: "undo:"
-            },
-            {
-                label: "Redo",
-                accelerator: "Shift+CmdOrCtrl+Z",
-                selector: "redo:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Cut",
-                accelerator: "CmdOrCtrl+X",
-                selector: "cut:"
-            },
-            {
-                label: "Copy",
-                accelerator: "CmdOrCtrl+C",
-                selector: "copy:"
-            },
-            {
-                label: "Paste",
-                accelerator: "CmdOrCtrl+V",
-                selector: "paste:"
-            },
-            {
-                label: "Select All",
-                accelerator: "CmdOrCtrl+A",
-                selector: "selectAll:"
-            }
+            label: "Undo",
+            accelerator: "CmdOrCtrl+Z",
+            selector: "undo:"
+        },
+        {
+            label: "Redo",
+            accelerator: "Shift+CmdOrCtrl+Z",
+            selector: "redo:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Cut",
+            accelerator: "CmdOrCtrl+X",
+            selector: "cut:"
+        },
+        {
+            label: "Copy",
+            accelerator: "CmdOrCtrl+C",
+            selector: "copy:"
+        },
+        {
+            label: "Paste",
+            accelerator: "CmdOrCtrl+V",
+            selector: "paste:"
+        },
+        {
+            label: "Select All",
+            accelerator: "CmdOrCtrl+A",
+            selector: "selectAll:"
+        }
         ]
     };
 
@@ -145,7 +145,7 @@ expressApp.get("/balances", (req, res) => {
 expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
-    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
+    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
         let mnemonic = "";
         if (code === 0) {
             const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
