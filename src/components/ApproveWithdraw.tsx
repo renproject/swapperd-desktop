@@ -46,11 +46,9 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
     public componentWillReceiveProps(props: IApproveWithdrawProps): void {
         if (props.balances) {
-            for (const balanceItem of props.balances.balances) {
-                if (balanceItem.token === this.props.withdrawRequest.token) {
-                    this.setState({ available: balanceItem.amount });
-                    break;
-                }
+            const available = props.balances.balances.get(this.props.withdrawRequest.token);
+            if (available) {
+                this.setState({ available: available.toString() });
             }
         }
     }

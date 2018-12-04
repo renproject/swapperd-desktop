@@ -17,19 +17,18 @@ export class Balances extends React.Component<IBalancesProps> {
 
     public render(): JSX.Element {
         const { balances, balancesError } = this.props;
+
         return (
 
             <div className="balances">
                 {balances ?
-                    balances.balances.sort((a, b) => {
-                        // Sort by name
-                        if (a.token < b.token) {
-                            return -1;
-                        } else {
-                            return 1;
-                        }
-                    }).map((balance, index) => {
-                        return <BalanceItem key={index} balanceItem={balance} setWithdrawRequest={this.props.setWithdrawRequest} />;
+                    Array.from(balances.balances.keys()).sort().map((token, index) => {
+                        return <BalanceItem
+                            key={index}
+                            token={token}
+                            amount={balances.balances.get(token)}
+                            setWithdrawRequest={this.props.setWithdrawRequest}
+                        />;
                     })
                     : (
                         balancesError ? <p className="error">{balancesError}</p> : <Loading />

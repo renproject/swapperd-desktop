@@ -1,10 +1,14 @@
 import * as React from "react";
 
+import BigNumber from "bignumber.js";
+
 import { getLogo } from "src/lib/logos";
-import { IBalanceItem, IPartialWithdrawRequest } from "src/lib/swapperd";
+import { IPartialWithdrawRequest } from "src/lib/swapperd";
 
 interface IBalanceItemProps {
-    balanceItem: IBalanceItem;
+    token: string;
+    amount: string | BigNumber | undefined;
+    // address: string;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
 }
 
@@ -15,19 +19,19 @@ export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
     }
 
     public render() {
-        const { balanceItem } = this.props;
+        const { token, amount /*, address */ } = this.props;
         return (
             <div className="balances--item">
-                <img src={getLogo(balanceItem.token)} />
+                <img src={getLogo(token)} />
                 <div>
-                    <p>{balanceItem.amount} {balanceItem.token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
-                    <p>{balanceItem.address}</p>
+                    <p>{amount} {token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
+                    {/* <p>{address}</p> */}
                 </div>
             </div>
         );
     }
 
     private handleWithdraw(): void {
-        this.props.setWithdrawRequest({ token: this.props.balanceItem.token });
+        this.props.setWithdrawRequest({ token: this.props.token });
     }
 }

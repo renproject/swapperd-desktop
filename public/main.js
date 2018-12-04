@@ -15,7 +15,7 @@ const shell = require("shelljs");
 const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
-const swapperd = require("../src/lib/swapperd");
+const axios = require("axios");
 
 const {
     ipcMain,
@@ -108,9 +108,9 @@ mb.on("ready", function ready() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 });
 
-/* mb.on("after-create-window", () => {
-    mb.window.openDevTools();
-}); */
+// mb.on("after-create-window", () => {
+//     mb.window.openDevTools();
+// });
 
 expressApp.use(bodyParser.json());
 expressApp.use(function (req, res, next) {
@@ -128,9 +128,15 @@ expressApp.post("/swaps", (req, res) => {
 });
 expressApp.get("/balances", (req, res) => {
     try {
-        const balances = await swapperd.getBalances();
-        res.status(200);
-        res.send(balances);
+        axios({
+                method: "GET",
+                url: "http://localhost:7927/balances",
+            })
+            .then(postResponse => {
+                res.status(200);
+                res.send(postResponse.data);
+            })
+            .catch(reject);
     } catch (error) {
         res.status(500);
         res.send(error);
