@@ -18,8 +18,15 @@ const os = require("os");
 
 const {
     ipcMain,
-    Menu
+    Menu,
+    app
 } = require("electron");
+
+// Set app to auto-launch
+app.setLoginItemSettings({
+    openAtLogin: true,
+    path: app.getPath("exe")
+});
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -31,7 +38,8 @@ const mb = menubar({
         preload: __dirname + "/preload.js",
     },
 });
-const app = express();
+
+const expressApp = express();
 
 mb.on("ready", function ready() {
     const application = {
@@ -47,7 +55,7 @@ mb.on("ready", function ready() {
                 label: "Quit",
                 accelerator: "Command+Q",
                 click: () => {
-                    app.quit()
+                    expressApp.quit()
                 }
             }
         ]
@@ -103,13 +111,13 @@ mb.on("ready", function ready() {
     mb.window.openDevTools();
 }); */
 
-app.use(bodyParser.json());
-app.use(function (req, res, next) {
+expressApp.use(bodyParser.json());
+expressApp.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-app.post("/swaps", (req, res) => {
+expressApp.post("/swaps", (req, res) => {
     mb.showWindow();
     mb.window.webContents.send("swap", req.body);
     ipcMain.once("swap-response", (event, ...args) => {
@@ -117,7 +125,7 @@ app.post("/swaps", (req, res) => {
         res.send(args[1] === undefined ? "" : args[1]);
     });
 });
-app.listen(7928);
+expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
     shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s testnet ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {

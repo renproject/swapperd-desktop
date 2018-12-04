@@ -58,8 +58,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                                 // Sort by timestamp in descending order
                                 if (a.timestamp < b.timestamp) {
                                     return 1;
-                                } else {
+                                } else if (a.timestamp > b.timestamp) {
                                     return -1;
+                                } else {
+                                    return a.id.localeCompare(b.id);
                                 }
                             }).map((swap, index) => {
                                 return <SwapItem key={index} swapItem={swap} />;
