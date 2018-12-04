@@ -29,14 +29,8 @@ export interface IPartialSwapRequest {
     shouldInitiateFirst: boolean;
 }
 
-export interface IBalanceItem {
-    token: string;
-    address: string;
-    amount: string;
-}
-
 export interface IBalancesResponse {
-    balances: IBalanceItem[];
+    balances: Map<string, string | BigNumber>;
 }
 
 export interface ISwapItem {
@@ -64,16 +58,18 @@ export async function getBalances(): Promise<IBalancesResponse> {
         url: "http://localhost:7927/balances",
     });
 
-    const balances: IBalancesResponse = postResponse.data;
-    for (const balance of balances.balances) {
-        const token = balance.token;
-        const decimal = decimals.get(token);
-        if (decimal !== undefined) {
-            balance.amount = new BigNumber(balance.amount).div(new BigNumber(10).pow(decimal)).toFixed();
+    const response: IBalancesResponse = postResponse.data;
+    const balances = response.balances;
+    for (const token in balances) {
+        if (balances.hasOwnProperty(token)) {
+            const decimal = decimals.get(token);
+            if (decimal !== undefined) {
+                balances[token] = new BigNumber(balances[token]).div(new BigNumber(10).pow(decimal)).toFixed();
+            }
         }
     }
 
-    return balances;
+    return response;
 }
 
 export async function getSwaps(): Promise<ISwapsResponse> {
