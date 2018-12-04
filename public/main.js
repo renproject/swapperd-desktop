@@ -1,4 +1,10 @@
-if (process.platform === "linux") {
+// Fix Electron menubar icons not working in Gnome
+// https://github.com/electron/electron/issues/9046#issuecomment-296169661
+if (
+    process.platform === "linux" &&
+    process.env.XDG_CURRENT_DESKTOP &&
+    process.env.XDG_CURRENT_DESKTOP.match(/gnome|unity|pantheon/i)
+) {
     process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
