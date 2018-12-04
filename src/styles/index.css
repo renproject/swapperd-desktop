@@ -43,6 +43,7 @@ button:disabled {
 
 input:focus,
 textarea:focus,
+select:focus,
 button:focus {
     outline: none;
 }
@@ -116,12 +117,29 @@ button span {
 /* Header */
 
 .header {
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid #ccc;
     padding: 5px 10px;
 }
 
 .header img {
     width: 40px;
+}
+
+.header select {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    width: 200px;
+    height: 30px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 10px;
+    -webkit-appearance: none; 
+    -moz-appearance: none;
+    appearance: none;
 }
 
 /* Banner */
