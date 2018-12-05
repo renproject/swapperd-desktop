@@ -1,6 +1,8 @@
 import axios from "axios";
 import BigNumber from "bignumber.js";
 
+import { OrderedMap } from "immutable";
+
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
     amount: string;
@@ -29,8 +31,10 @@ export interface IPartialSwapRequest {
     shouldInitiateFirst: boolean;
 }
 
-export interface IBalancesResponse {
-    balances: Map<string, string | BigNumber>;
+export type IBalances = OrderedMap<string, { address: string, balance: BigNumber }>;
+
+export interface IBalancesResponseRaw {
+    [symbol: string]: { address: string, balance: string };
 }
 
 export interface ISwapItem {
@@ -52,24 +56,35 @@ const decimals = new Map<string, number>()
     .set("BTC", 8)
     .set("ETH", 18);
 
-export async function getBalances(): Promise<IBalancesResponse> {
+export async function getBalances(): Promise<IBalances> {
     const postResponse = await axios({
         method: "GET",
         url: "http://localhost:7927/balances",
     });
 
-    const response: IBalancesResponse = postResponse.data;
-    const balances = response.balances;
-    for (const token in balances) {
-        if (balances.hasOwnProperty(token)) {
-            const decimal = decimals.get(token);
-            if (decimal !== undefined) {
-                balances[token] = new BigNumber(balances[token]).div(new BigNumber(10).pow(decimal)).toFixed();
-            }
+    const response: IBalances = postResponse.data;
+
+    const keys = [];
+
+    for (const token in response) {
+        if (response.hasOwnProperty(token)) {
+            keys.push(token);
         }
     }
 
-    return response;
+    keys.sort();
+
+    let balances: IBalances = OrderedMap();
+
+    for (const token of keys) {
+        const decimal = decimals.get(token) || 0;
+        balances = balances.set(token, {
+            address: response[token].address,
+            balance: new BigNumber(response[token].balance).div(new BigNumber(10).pow(decimal)),
+        });
+    }
+
+    return balances;
 }
 
 export async function getSwaps(): Promise<ISwapsResponse> {

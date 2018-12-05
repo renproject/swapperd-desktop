@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getBalances, getSwaps, IBalancesResponse, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
+import { getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -15,7 +15,7 @@ interface IAppState {
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
-    balances: IBalancesResponse | null;
+    balances: IBalances | null;
     balancesError: string | null;
     swaps: ISwapsResponse | null;
 }

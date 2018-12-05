@@ -7,8 +7,8 @@ import { IPartialWithdrawRequest } from "src/lib/swapperd";
 
 interface IBalanceItemProps {
     token: string;
-    amount: string | BigNumber | undefined;
-    // address: string;
+    amount: BigNumber;
+    address: string;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
 }
 
@@ -19,13 +19,13 @@ export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
     }
 
     public render() {
-        const { token, amount /*, address */ } = this.props;
+        const { token, amount, address } = this.props;
         return (
             <div className="balances--item">
                 <img src={getLogo(token)} />
                 <div>
-                    <p>{amount} {token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
-                    {/* <p>{address}</p> */}
+                    <p>{amount.toFixed()} {token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
+                    <p>{address}</p>
                 </div>
             </div>
         );

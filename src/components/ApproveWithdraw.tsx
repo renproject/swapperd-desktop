@@ -1,12 +1,12 @@
 import * as React from "react";
 
 import { getLogo } from "src/lib/logos";
-import { IBalancesResponse, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
+import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface IApproveWithdrawProps {
-    balances: null | IBalancesResponse;
+    balances: null | IBalances;
     withdrawRequest: IPartialWithdrawRequest;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest | null) => void;
 }
@@ -46,7 +46,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
     public componentWillReceiveProps(props: IApproveWithdrawProps): void {
         if (props.balances) {
-            const available = props.balances.balances.get(this.props.withdrawRequest.token);
+            const available = props.balances[this.props.withdrawRequest.token];
             if (available) {
                 this.setState({ available: available.toString() });
             }

@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { IBalancesResponse, IPartialWithdrawRequest } from "../lib/swapperd";
+import { IBalances, IPartialWithdrawRequest } from "../lib/swapperd";
 import { BalanceItem } from "./BalanceItem";
 import { Loading } from "./Loading";
 
 interface IBalancesProps {
-    balances: null | IBalancesResponse;
+    balances: null | IBalances;
     balancesError: string | null;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
 }
@@ -18,18 +18,20 @@ export class Balances extends React.Component<IBalancesProps> {
     public render(): JSX.Element {
         const { balances, balancesError } = this.props;
 
+        console.log(balances);
         return (
 
             <div className="balances">
                 {balances ?
-                    Array.from(balances.balances.keys()).sort().map((token, index) => {
+                    Array.from(balances.sort().map((details, token) => {
                         return <BalanceItem
-                            key={index}
+                            key={token}
                             token={token}
-                            amount={balances.balances.get(token)}
+                            amount={details.balance}
+                            address={details.address}
                             setWithdrawRequest={this.props.setWithdrawRequest}
                         />;
-                    })
+                    }))
                     : (
                         balancesError ? <p className="error">{balancesError}</p> : <Loading />
                     )
