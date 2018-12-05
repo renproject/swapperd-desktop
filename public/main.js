@@ -11,7 +11,7 @@ if (
 const menubar = require("menubar");
 const express = require("express");
 const bodyParser = require("body-parser");
-const shell = require("shelljs");
+const { exec } = require('child_process');
 const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
@@ -144,28 +144,38 @@ expressApp.get("/balances", (req, res) => {
 });
 expressApp.listen(7928);
 
-
-ipcMain.on("create-account", (event, ...args) => {
+ipcMain.on("create-account", async (event, ...args) => {
     if (process.platform === "win32") {
-        shell.config.execPath = process.execPath;
-        if (args[2] !== "") {
-            shell.exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]} --mnemonic "${args[2]}"`)
-        } else {
-            shell.exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}`)
+        let mnemonic = "";
+        if (args[3] !== "") {
+            mnemonic = ` --mnemonic ${args[3]}`
         }
-        shell.exec(`sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe"`)
-        shell.exec(`sc start swapperd`)
-        shell.exec(`sc create`)
+        exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonic}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+        })
+        exec('service.bat', (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+        });
     } else {
-        shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
+        exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (err, stdout, stderr) => {
             let mnemonic = "";
-            if (code === 0) {
-                const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
-                    encoding: "utf-8"
-                });
-                if (data) {
-                    mnemonic = JSON.parse(data).config.mnemonic;
-                }
+            if (err) {
+                console.error(err);
+                return;
+            }
+            const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
+                encoding: "utf-8"
+            });
+            if (data) {
+                mnemonic = JSON.parse(data).config.mnemonic;
             }
             event.returnValue = mnemonic;
         });
