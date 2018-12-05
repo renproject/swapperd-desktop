@@ -108,9 +108,9 @@ mb.on("ready", function ready() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 });
 
-// mb.on("after-create-window", () => {
-//     mb.window.openDevTools();
-// });
+mb.on("after-create-window", () => {
+    mb.window.openDevTools();
+});
 
 expressApp.use(bodyParser.json());
 expressApp.use(function (req, res, next) {
@@ -144,7 +144,7 @@ expressApp.get("/balances", (req, res) => {
 });
 expressApp.listen(7928);
 
-ipcMain.on("create-account", async (event, ...args) => {
+ipcMain.on("create-account", (event, ...args) => {
     if (process.platform === "win32") {
         let mnemonic = "";
         if (args[3] !== "") {
