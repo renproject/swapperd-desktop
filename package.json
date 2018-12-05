@@ -17,8 +17,8 @@
     "scripts": {
         "start": "react-scripts-ts start",
         "build": "react-scripts-ts build",
-        "build-mac": "npm run clean; npm run build; cd ./electron; npm install; npm run build-mac",
-        "build-win": "npm run clean; npm run build; cd ./electron; npm install; npm run build-win",
+        "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
+        "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
         "test": "react-scripts-ts test --env=jsdom",
         "eject": "react-scripts-ts eject",
         "watch": "npm-watch build",
@@ -36,8 +36,8 @@
         "build": {
             "patterns": [
                 "src",
-		"package.json",
-		"public"
+                "package.json",
+                "public"
             ],
             "ignore": "build",
             "extensions": "*",
