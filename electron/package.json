@@ -31,8 +31,6 @@
     "scripts": {
         "start": "npx ./node_modules/electron-prebuilt/cli.js .",
         "build": "npm run build-mac; npm run build-win",
-        "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
-        "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
         "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
         "build-mac": "npm run package-mac && npm run create-installer-mac",
