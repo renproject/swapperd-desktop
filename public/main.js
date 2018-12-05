@@ -145,12 +145,13 @@ expressApp.get("/balances", (req, res) => {
 expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
+    let mnemonic = args[2];
     if (process.platform === "win32") {
-        let mnemonic = "";
-        if (args[3] !== "") {
-            mnemonic = ` --mnemonic ${args[3]}`
+        let mnemonicFlag = "";
+        if (mnemonic !== "") {
+            mnemonicFlag = ` --mnemonic ${mnemonic}`
         }
-        exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonic}`, (err, stdout, stderr) => {
+        exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
@@ -158,14 +159,7 @@ ipcMain.on("create-account", (event, ...args) => {
             console.log(stdout);
             console.log(stderr);
         })
-        exec('sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe', (err, stdout, stderr) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log(stdout);
-            console.log(stderr);
-        });
+        exec('sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe"')
         exec('sc start swapperd', (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
@@ -174,9 +168,14 @@ ipcMain.on("create-account", (event, ...args) => {
             console.log(stdout);
             console.log(stderr);
         });
+        const data = fs.readFileSync("%windir%\\swapperd\\testnet.json", {
+            encoding: "utf-8"
+        });
+        if (data) {
+            mnemonic = JSON.parse(data).config.mnemonic;
+        }
     } else {
-        exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (err, stdout, stderr) => {
-            let mnemonic = "";
+        exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${mnemonic}"`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
@@ -187,9 +186,9 @@ ipcMain.on("create-account", (event, ...args) => {
             if (data) {
                 mnemonic = JSON.parse(data).config.mnemonic;
             }
-            event.returnValue = mnemonic;
         });
     }
+    event.returnValue = mnemonic;
 });
 
 ipcMain.on("notify", (event, ...args) => {
