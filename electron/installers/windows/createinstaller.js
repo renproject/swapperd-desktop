@@ -30,8 +30,12 @@ var template = fs.readFileSync(templatePath).toString();
 
 function downloadAndUnzip(url, extractPath, cb) {
   request(url)
+    .on("error", (error) => {
+      console.error(`Failed to download ${url}, with error: ${error}. Are you connected to the internet?`);
+    })
     .pipe(unzip.Extract({ path: extractPath }))
     .on("close", () => {
+      console.log(`Downloaded ${url} and unpacked to: ${extractPath}`);
       if (cb) {
         cb();
       }
