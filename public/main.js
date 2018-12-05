@@ -155,12 +155,16 @@ ipcMain.on("create-account", (event, ...args) => {
                 console.error(err);
                 return;
             }
+            console.log(stdout);
+            console.log(stderr);
         })
-        exec('sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe" && sc start swapperd', (err, stdout, stderr) => {
+        exec('sc start swapperd', (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
             }
+            console.log(stdout);
+            console.log(stderr);
         });
     } else {
         exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (err, stdout, stderr) => {
