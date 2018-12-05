@@ -168,7 +168,7 @@ ipcMain.on("create-account", (event, ...args) => {
             console.log(stdout);
             console.log(stderr);
         });
-        const data = fs.readFileSync("%windir%\\swapperd\\testnet.json", {
+        const data = fs.readFileSync(process.env["windir"]+ "\\swapperd\\testnet.json", {
             encoding: "utf-8"
         });
         if (data) {
