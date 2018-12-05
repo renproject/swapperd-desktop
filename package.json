@@ -35,7 +35,9 @@
     "watch": {
         "build": {
             "patterns": [
-                "."
+                "src",
+		"package.json",
+		"public"
             ],
             "ignore": "build",
             "extensions": "*",
