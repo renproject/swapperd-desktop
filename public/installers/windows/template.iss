@@ -17,6 +17,7 @@ LicenseFile={{{licenseFile}}}
 OutputBaseFilename={{outputFilename}}
 Compression=lzma
 SolidCompression=yes
+SetupIconFile=assets/icons/win/icon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
