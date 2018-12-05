@@ -30,33 +30,30 @@ var template = fs.readFileSync(templatePath).toString();
 // Write the template to an actual file
 var output = Mustache.render(template, options);
 var finalISS = "tmp-generated-installer-script.iss";
-fs.writeFile(finalISS, output, (error) => {
+fs.writeFileSync(finalISS, output);
+// Successfully wrote. Now try to compile...
+console.log(`Generated ${finalISS}. Compiling into an installer...`);
+InnoCompiler(finalISS, {
+  O: outPath,
+  gui: false,
+  verbose: false,
+}, (error) => {
   if (error) throw error;
 
-  // Successfully wrote. Now try to compile...
-  console.log(`Generated ${finalISS}. Compiling into an installer...`);
-  InnoCompiler(finalISS, {
-    O: outPath,
-    gui: false,
-    verbose: false,
-  }, (error) => {
+  // Successfully compiled
+  console.log(`Wrote Windows installer to: ${outPath}/${options.outputFilename}.exe`);
+
+  // Remove the ISS file
+  rimraf(finalISS, {}, (error) => {
     if (error) throw error;
-
-    // Successfully compiled
-    console.log(`Wrote Windows installer to: ${outPath}/${options.outputFilename}.exe`);
-
-    // Remove the ISS file
-    rimraf(finalISS, {}, (error) => {
-      if (error) throw error;
-      console.log(`Removed temporary installer script: ${finalISS}`);
-    });
-
-    // Clean up source code if necessary
-    if (argv.clean === true) {
-      rimraf(argv.sourcePath, {}, (error) => {
-        if (error) throw error;
-        console.log(`Removed source directory: ${argv.sourcePath}`);
-      });
-    }
+    console.log(`Removed temporary installer script: ${finalISS}`);
   });
+
+  // Clean up source code if necessary
+  if (argv.clean === true) {
+    rimraf(argv.sourcePath, {}, (error) => {
+      if (error) throw error;
+      console.log(`Removed source directory: ${argv.sourcePath}`);
+    });
+  }
 });
