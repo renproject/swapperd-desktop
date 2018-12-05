@@ -145,7 +145,18 @@ expressApp.get("/balances", (req, res) => {
 expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
-    shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
+    if (process.platform === "win32") {
+        const shell = require("shelljs");
+        if (args[2] !== "") {
+            shell.exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]} --mnemonic "${args[2]}"`)
+        } else {
+            shell.exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}`)
+        }
+        shell.exec(`sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe"`)
+        shell.exec(`sc start swapperd`)
+        shell.exec(`sc create`)
+    } else {
+        shell.exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${args[2]}"`, (code, stdout, stderr) => {
         let mnemonic = "";
         if (code === 0) {
             const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
@@ -156,7 +167,8 @@ ipcMain.on("create-account", (event, ...args) => {
             }
         }
         event.returnValue = mnemonic;
-    });
+        });
+    }
 });
 
 ipcMain.on("notify", (event, ...args) => {
