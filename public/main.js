@@ -146,7 +146,7 @@ expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
     if (process.platform === "win32") {
-        const shell = require("shelljs");
+        shell.config.execPath = process.execPath
         if (args[2] !== "") {
             shell.exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]} --mnemonic "${args[2]}"`)
         } else {
