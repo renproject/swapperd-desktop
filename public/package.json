@@ -1,8 +1,9 @@
 {
-    "name": "Swapperd",
+    "name": "swapperd",
     "config": {
         "appName": "Swapperd",
-        "outputDir": "../release-builds"
+        "outputDir": "../release-builds",
+        "winSwapperBin": "https://s3-ap-southeast-2.amazonaws.com/releases.republicprotocol.com/test/swapper_windows_amd64.zip"
     },
     "homepage": ".",
     "version": "1.0.0",
@@ -12,7 +13,9 @@
         "express": "^4.16.4",
         "menubar": "*",
         "node-notifier": "^5.3.0",
+        "request": "2.88.0",
         "shelljs": "^0.8.3",
+        "unzip": "^0.1.11",
         "ws": "^6.1.0"
     },
     "devDependencies": {
