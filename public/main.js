@@ -158,6 +158,14 @@ ipcMain.on("create-account", (event, ...args) => {
             console.log(stdout);
             console.log(stderr);
         })
+        exec('sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe', (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+            console.log(stderr);
+        });
         exec('sc start swapperd', (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
