@@ -35,6 +35,7 @@ function downloadAndUnzip(url, extractPath, cb) {
     })
     .pipe(unzip.Extract({ path: extractPath }))
     .on("close", () => {
+      console.log(`Downloaded ${url} and unpacked to: ${extractPath}`);
       if (cb) {
         cb();
       }
