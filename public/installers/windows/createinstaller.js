@@ -29,6 +29,7 @@ var templatePath = path.join(path.dirname(__filename), templateFile);
 var template = fs.readFileSync(templatePath).toString();
 
 var tempZipFile = path.resolve(path.join("./", "swapper.zip"))
+var finalISS = path.resolve(path.join("./", "tmp-generated-installer-script.iss"));
 
 function downloadAndUnzip(url, extractPath, cb) {
   console.log(`Downloading ${url} to ${tempZipFile}`);
@@ -75,7 +76,6 @@ function cleanUp() {
 function main() {
   // Write the template to an actual file
   var output = Mustache.render(template, options);
-  var finalISS = "tmp-generated-installer-script.iss";
   fs.writeFileSync(finalISS, output);
   // Successfully wrote. Now try to compile...
   console.log(`Generated ${finalISS}. Compiling into an installer...`);
