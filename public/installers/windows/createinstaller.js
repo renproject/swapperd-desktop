@@ -4,7 +4,7 @@ const Mustache = require("mustache");
 const InnoCompiler = require("innosetup-compiler");
 const request = require("request");
 const rimraf = require("rimraf");
-const unzip = require("unzip");
+const extract = require("extract-zip");
 
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -28,18 +28,25 @@ var templateFile = "./template.iss";
 var templatePath = path.join(path.dirname(__filename), templateFile);
 var template = fs.readFileSync(templatePath).toString();
 
+var tempZipFile = path.resolve(path.join("./", "swapper.zip"))
+
 function downloadAndUnzip(url, extractPath, cb) {
+  console.log(`Downloading ${url} to ${tempZipFile}`);
   request(url)
     .on("error", (error) => {
       console.error(`Failed to download ${url}, with error: ${error}. Are you connected to the internet?`);
     })
-    .pipe(unzip.Extract({ path: extractPath }))
-    .on("close", () => {
-      console.log(`Downloaded ${url} and unpacked to: ${extractPath}`);
-      if (cb) {
-        cb();
-      }
-    });
+    .on("end", () => {
+      console.log(`Finished downloading. Extracting ${tempZipFile} to ${extractPath}`);
+      extract(tempZipFile, { dir: extractPath }, (error) => {
+        if (error) throw error;
+        console.log(`Finished extracting.`);
+        if (cb) {
+          cb();
+        }
+      });
+    })
+    .pipe(fs.createWriteStream(tempZipFile));
 }
 
 function main() {
@@ -63,6 +70,12 @@ function main() {
     rimraf(finalISS, {}, (error) => {
       if (error) throw error;
       console.log(`Removed temporary installer script: ${finalISS}`);
+    });
+
+    // Remove the temporary zip file
+    rimraf(tempZipFile, {}, (error) => {
+      if (error) throw error;
+      console.log(`Removed swapper zip download: ${tempZipFile}`);
     });
 
     // Clean up source code if necessary
