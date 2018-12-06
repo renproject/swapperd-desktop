@@ -151,7 +151,7 @@ ipcMain.on("create-account", (event, ...args) => {
         if (mnemonic !== "") {
             mnemonicFlag = ` --mnemonic ${mnemonic}`
         }
-        exec(`%programfiles(x86)%\\Swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
+        exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe" --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
