@@ -155,12 +155,12 @@ ipcMain.on("create-account", (event, ...args) => {
             if (err) {
                 return;
             }
-            exec('sc create swapperd binpath= "%programfiles(x86)%\\swapperd\\bin\\swapperd.exe"', () => {
+            exec('sc create swapperd binpath= "%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe"', () => {
                 exec('sc start swapperd', (err, stdout, stderr) => {
                     if (err) {
                         return;
                     }
-                    const data = fs.readFileSync(process.env["programfiles(x86)"]+ "\\swapperd\\testnet.json", {
+                    const data = fs.readFileSync(process.env["programfiles(x86)"]+ "\\Swapperd\\testnet.json", {
                         encoding: "utf-8"
                     });
                     if (data) {
