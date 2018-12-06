@@ -168,6 +168,7 @@ ipcMain.on("create-account", (event, ...args) => {
                     if (data) {
                         mnemonic = JSON.parse(data).config.mnemonic;
                     }
+                      event.returnValue = mnemonic;
                 });
             })
         })
@@ -183,9 +184,9 @@ ipcMain.on("create-account", (event, ...args) => {
             if (data) {
                 mnemonic = JSON.parse(data).config.mnemonic;
             }
+              event.returnValue = mnemonic;
         });
     }
-    event.returnValue = mnemonic;
 });
 
 ipcMain.on("notify", (event, ...args) => {
