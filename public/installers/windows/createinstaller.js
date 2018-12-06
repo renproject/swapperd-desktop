@@ -49,6 +49,29 @@ function downloadAndUnzip(url, extractPath, cb) {
     .pipe(fs.createWriteStream(tempZipFile));
 }
 
+function cleanUp() {
+  console.log("Cleaning up...");
+  // Remove the ISS file
+  rimraf(finalISS, {}, (error) => {
+    if (error) throw error;
+    console.log(`Removed temporary installer script: ${finalISS}`);
+  });
+
+  // Remove the temporary zip file
+  rimraf(tempZipFile, {}, (error) => {
+    if (error) throw error;
+    console.log(`Removed swapper zip download: ${tempZipFile}`);
+  });
+
+  // Clean up source code if necessary
+  if (argv.clean === true) {
+    rimraf(argv.sourcePath, {}, (error) => {
+      if (error) throw error;
+      console.log(`Removed source directory: ${argv.sourcePath}`);
+    });
+  }
+}
+
 function main() {
   // Write the template to an actual file
   var output = Mustache.render(template, options);
@@ -62,29 +85,10 @@ function main() {
     verbose: false,
   }, (error) => {
     if (error) throw error;
+    cleanUp();
 
     // Successfully compiled
-    console.log(`Wrote Windows installer to: ${outPath}/${options.outputFilename}.exe`);
-
-    // Remove the ISS file
-    rimraf(finalISS, {}, (error) => {
-      if (error) throw error;
-      console.log(`Removed temporary installer script: ${finalISS}`);
-    });
-
-    // Remove the temporary zip file
-    rimraf(tempZipFile, {}, (error) => {
-      if (error) throw error;
-      console.log(`Removed swapper zip download: ${tempZipFile}`);
-    });
-
-    // Clean up source code if necessary
-    if (argv.clean === true) {
-      rimraf(argv.sourcePath, {}, (error) => {
-        if (error) throw error;
-        console.log(`Removed source directory: ${argv.sourcePath}`);
-      });
-    }
+    console.log(`\nSuccessfully wrote Windows installer to: ${outPath}/${options.outputFilename}.exe`);
   });
 }
 
