@@ -151,29 +151,24 @@ ipcMain.on("create-account", (event, ...args) => {
         if (mnemonic !== "") {
             mnemonicFlag = ` --mnemonic ${mnemonic}`
         }
-        exec(`%windir%\\swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
+        exec(`%programfiles(x86)%\\Swapperd\\bin\\installer.exe --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
             if (err) {
-                console.error(err);
                 return;
             }
-            console.log(stdout);
-            console.log(stderr);
+            exec('sc create swapperd binpath= "%programfiles(x86)%\\swapperd\\bin\\swapperd.exe"', () => {
+                exec('sc start swapperd', (err, stdout, stderr) => {
+                    if (err) {
+                        return;
+                    }
+                    const data = fs.readFileSync(process.env["programfiles(x86)"]+ "\\swapperd\\testnet.json", {
+                        encoding: "utf-8"
+                    });
+                    if (data) {
+                        mnemonic = JSON.parse(data).config.mnemonic;
+                    }
+                });
+            })
         })
-        exec('sc create swapperd binpath= "%windir%\\swapperd\\bin\\swapperd.exe"')
-        exec('sc start swapperd', (err, stdout, stderr) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log(stdout);
-            console.log(stderr);
-        });
-        const data = fs.readFileSync(process.env["windir"]+ "\\swapperd\\testnet.json", {
-            encoding: "utf-8"
-        });
-        if (data) {
-            mnemonic = JSON.parse(data).config.mnemonic;
-        }
     } else {
         exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${mnemonic}"`, (err, stdout, stderr) => {
             if (err) {
