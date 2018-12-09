@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
+import { checkAccountExists, getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -42,14 +42,8 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Check if user has an account set-up
-        const xhr = new XMLHttpRequest();
-        try {
-            xhr.open("GET", "http://localhost:7927/whoami", false);
-            xhr.send("");
-            this.setState({ accountExists: true });
-        } catch (e) {
-            console.error(e);
-        }
+        const accountExists = checkAccountExists();
+        this.setState({ accountExists });
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {

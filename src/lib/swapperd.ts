@@ -87,6 +87,19 @@ export async function getBalances(): Promise<IBalances> {
     return balances;
 }
 
+export function checkAccountExists(): boolean {
+    // Check if user has an account set-up
+    const xhr = new XMLHttpRequest();
+    try {
+        xhr.open("GET", "http://localhost:7927/whoami", false);
+        xhr.send("");
+        return true;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
+
 export async function getSwaps(): Promise<ISwapsResponse> {
     const postResponse = await axios({
         method: "GET",
