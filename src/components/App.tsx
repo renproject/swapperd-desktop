@@ -84,21 +84,21 @@ class App extends React.Component<{}, IAppState> {
 
         if (mnemonic !== "") {
             return <div className="app">
-                <Header hideNetwork={true} setNetwork={this.setNetwork} />;
+                <Header hideNetwork={true} setNetwork={this.setNetwork} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header hideNetwork={true} setNetwork={this.setNetwork} />;
+                <Header hideNetwork={true} setNetwork={this.setNetwork} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header setNetwork={this.setNetwork} />;
+                <Header setNetwork={this.setNetwork} />
                 <ApproveSwap
                     network={this.state.network}
                     swapDetails={swapDetails}
@@ -109,7 +109,7 @@ class App extends React.Component<{}, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header setNetwork={this.setNetwork} />;
+                <Header setNetwork={this.setNetwork} />
                 <ApproveWithdraw
                     network={this.state.network}
                     balances={balances}
@@ -120,7 +120,7 @@ class App extends React.Component<{}, IAppState> {
         }
 
         return <div className="app">
-            <Header setNetwork={this.setNetwork} />;
+            <Header setNetwork={this.setNetwork} />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={swaps} />
         </div>;
