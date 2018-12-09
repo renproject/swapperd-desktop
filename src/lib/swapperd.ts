@@ -3,8 +3,15 @@ import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
 
+const MAINNET_ENDPOINT = "http://localhost:7927";
+const TESTNET_ENDPOINT = "http://localhost:17927";
+
 export const MAINNET_REF = "mainnet";
 export const TESTNET_REF = "testnet";
+
+export interface IOptions {
+    network: string;
+}
 
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
@@ -59,10 +66,21 @@ const decimals = new Map<string, number>()
     .set("BTC", 8)
     .set("ETH", 18);
 
-export async function getBalances(): Promise<IBalances> {
+function swapperEndpoint(network: string) {
+    switch (network) {
+        case MAINNET_REF:
+            return MAINNET_ENDPOINT;
+        case TESTNET_REF:
+            return TESTNET_ENDPOINT;
+        default:
+            throw new Error(`Invalid network: ${network}`);
+    }
+}
+
+export async function getBalances(options: IOptions): Promise<IBalances> {
     const postResponse = await axios({
         method: "GET",
-        url: "http://localhost:7927/balances",
+        url: `${swapperEndpoint(options.network)}/balances`,
     });
 
     const response: IBalances = postResponse.data;
@@ -90,11 +108,11 @@ export async function getBalances(): Promise<IBalances> {
     return balances;
 }
 
-export function checkAccountExists(): boolean {
+export function checkAccountExists(options: IOptions): boolean {
     // Check if user has an account set-up
     const xhr = new XMLHttpRequest();
     try {
-        xhr.open("GET", "http://localhost:7927/whoami", false);
+        xhr.open("GET", `${swapperEndpoint(options.network)}/whoami`, false);
         xhr.send("");
         return true;
     } catch (e) {
@@ -103,10 +121,10 @@ export function checkAccountExists(): boolean {
     }
 }
 
-export async function getSwaps(): Promise<ISwapsResponse> {
+export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
     const postResponse = await axios({
         method: "GET",
-        url: "http://localhost:7927/swaps",
+        url: `${swapperEndpoint(options.network)}/swaps`,
     });
 
     const swaps: ISwapsResponse = postResponse.data;
@@ -127,7 +145,7 @@ export async function getSwaps(): Promise<ISwapsResponse> {
     return swaps;
 }
 
-export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password: string) {
+export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password: string, options: IOptions) {
     const decimal = decimals.get(withdrawRequest.token);
     if (decimal !== undefined) {
         withdrawRequest.amount = new BigNumber(withdrawRequest.amount).times(new BigNumber(10).pow(decimal)).toFixed();
@@ -135,7 +153,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 
     const postResponse = await axios({
         method: "POST",
-        url: "http://localhost:7927/withdrawals",
+        url: `${swapperEndpoint(options.network)}/withdrawals`,
         auth: {
             username: "",
             password,
@@ -146,10 +164,10 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
     return postResponse.data;
 }
 
-export async function submitSwap(swapRequest: IPartialSwapRequest, password: string) {
+export async function submitSwap(swapRequest: IPartialSwapRequest, password: string, options: IOptions) {
     const postResponse = await axios({
         method: "POST",
-        url: "http://localhost:7927/swaps",
+        url: `${swapperEndpoint(options.network)}/swaps`,
         auth: {
             username: "",
             password,

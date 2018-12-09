@@ -42,7 +42,7 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Check if user has an account set-up
-        const accountExists = checkAccountExists();
+        const accountExists = checkAccountExists({ network: this.state.network });
         this.setState({ accountExists });
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
@@ -58,7 +58,7 @@ class App extends React.Component<{}, IAppState> {
         setInterval(async () => {
             if (this.state.accountExists) {
                 try {
-                    const balances = await getBalances();
+                    const balances = await getBalances({ network: this.state.network });
                     this.setState({ balances });
                 } catch (e) {
                     console.error(e);
@@ -70,7 +70,7 @@ class App extends React.Component<{}, IAppState> {
         setInterval(async () => {
             if (this.state.accountExists) {
                 try {
-                    const swaps = await getSwaps();
+                    const swaps = await getSwaps({ network: this.state.network });
                     this.setState({ swaps });
                 } catch (e) {
                     console.error(e);
@@ -99,7 +99,11 @@ class App extends React.Component<{}, IAppState> {
         if (swapDetails) {
             return <div className="app">
                 <Header setNetwork={this.setNetwork} />;
-                <ApproveSwap swapDetails={swapDetails} resetSwapDetails={this.resetSwapDetails} />
+                <ApproveSwap
+                    network={this.state.network}
+                    swapDetails={swapDetails}
+                    resetSwapDetails={this.resetSwapDetails}
+                />
             </div>;
         }
 
@@ -107,6 +111,7 @@ class App extends React.Component<{}, IAppState> {
             return <div className="app">
                 <Header setNetwork={this.setNetwork} />;
                 <ApproveWithdraw
+                    network={this.state.network}
                     balances={balances}
                     withdrawRequest={withdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
