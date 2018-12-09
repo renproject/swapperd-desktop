@@ -3,6 +3,9 @@ import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
 
+export const MAINNET_REF = "mainnet";
+export const TESTNET_REF = "testnet";
+
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
     amount: string;

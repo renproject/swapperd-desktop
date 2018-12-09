@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { MAINNET_REF, TESTNET_REF } from "../lib/swapperd";
+
 import logo from "../styles/images/logo.png";
 
 interface IHeaderProps {
@@ -15,7 +17,7 @@ export class Header extends React.Component<IHeaderProps, IHeaderState> {
     constructor(props: IHeaderProps) {
         super(props);
         this.state = {
-            network: "mainnet"
+            network: MAINNET_REF
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -31,8 +33,8 @@ export class Header extends React.Component<IHeaderProps, IHeaderState> {
                 <img src={logo} alt="Swapperd" />
                 {!hideNetwork &&
                     <select value={this.state.network} onChange={this.handleChange}>
-                        <option value="mainnet" selected={true}>Main Network</option>
-                        <option value="testnet">Test Network</option>
+                        <option value={MAINNET_REF} selected={true}>Main Network</option>
+                        <option value={TESTNET_REF}>Test Network</option>
                     </select>
                 }
             </div>
