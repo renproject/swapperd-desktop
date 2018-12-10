@@ -64,25 +64,25 @@ function main() {
     if (error) throw error;
 
     // Successfully compiled
-    console.log(`Wrote Windows installer to: ${outPath}/${options.outputFilename}.exe`);
+    console.log(`Wrote Windows installer to: ${path.resolve(`${outPath}/${options.outputFilename}.exe`)}`);
 
     // Remove the ISS file
     rimraf(finalISS, {}, (error) => {
       if (error) throw error;
-      console.log(`Removed temporary installer script: ${finalISS}`);
+      console.log(`Removed temporary installer script: ${path.resolve(finalISS)}`);
     });
 
     // Remove the temporary zip file
     rimraf(tempZipFile, {}, (error) => {
       if (error) throw error;
-      console.log(`Removed swapper zip download: ${tempZipFile}`);
+      console.log(`Removed swapper zip download: ${path.resolve(tempZipFile)}`);
     });
 
     // Clean up source code if necessary
     if (argv.clean === true) {
       rimraf(argv.sourcePath, {}, (error) => {
         if (error) throw error;
-        console.log(`Removed source directory: ${argv.sourcePath}`);
+        console.log(`Removed source directory: ${path.resolve(argv.sourcePath)}`);
       });
     }
   });
