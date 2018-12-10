@@ -46,57 +46,57 @@ mb.on("ready", function ready() {
     const application = {
         label: "Application",
         submenu: [{
-                label: "About",
-                selector: "orderFrontStandardAboutPanel:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Quit",
-                accelerator: "Command+Q",
-                click: () => {
-                    expressApp.quit()
-                }
+            label: "About",
+            selector: "orderFrontStandardAboutPanel:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Quit",
+            accelerator: "Command+Q",
+            click: () => {
+                expressApp.quit()
             }
+        }
         ]
     };
 
     const edit = {
         label: "Edit",
         submenu: [{
-                label: "Undo",
-                accelerator: "CmdOrCtrl+Z",
-                selector: "undo:"
-            },
-            {
-                label: "Redo",
-                accelerator: "Shift+CmdOrCtrl+Z",
-                selector: "redo:"
-            },
-            {
-                type: "separator"
-            },
-            {
-                label: "Cut",
-                accelerator: "CmdOrCtrl+X",
-                selector: "cut:"
-            },
-            {
-                label: "Copy",
-                accelerator: "CmdOrCtrl+C",
-                selector: "copy:"
-            },
-            {
-                label: "Paste",
-                accelerator: "CmdOrCtrl+V",
-                selector: "paste:"
-            },
-            {
-                label: "Select All",
-                accelerator: "CmdOrCtrl+A",
-                selector: "selectAll:"
-            }
+            label: "Undo",
+            accelerator: "CmdOrCtrl+Z",
+            selector: "undo:"
+        },
+        {
+            label: "Redo",
+            accelerator: "Shift+CmdOrCtrl+Z",
+            selector: "redo:"
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "Cut",
+            accelerator: "CmdOrCtrl+X",
+            selector: "cut:"
+        },
+        {
+            label: "Copy",
+            accelerator: "CmdOrCtrl+C",
+            selector: "copy:"
+        },
+        {
+            label: "Paste",
+            accelerator: "CmdOrCtrl+V",
+            selector: "paste:"
+        },
+        {
+            label: "Select All",
+            accelerator: "CmdOrCtrl+A",
+            selector: "selectAll:"
+        }
         ]
     };
 
@@ -129,14 +129,16 @@ expressApp.post("/swaps", (req, res) => {
 expressApp.get("/balances", (req, res) => {
     try {
         axios({
-                method: "GET",
-                url: "http://localhost:7927/balances",
-            })
+            method: "GET",
+            url: "http://localhost:7927/balances",
+        })
             .then(postResponse => {
                 res.status(200);
                 res.send(postResponse.data);
             })
-            .catch(reject);
+            .catch(err => {
+                throw err;
+            });
     } catch (error) {
         res.status(500);
         res.send(error);
@@ -162,13 +164,13 @@ ipcMain.on("create-account", (event, ...args) => {
                         console.error(err);
                         return;
                     }
-                    const data = fs.readFileSync(process.env["programfiles(x86)"]+ "\\Swapperd\\testnet.json", {
+                    const data = fs.readFileSync(process.env["programfiles(x86)"] + "\\Swapperd\\testnet.json", {
                         encoding: "utf-8"
                     });
                     if (data) {
                         mnemonic = JSON.parse(data).config.mnemonic;
                     }
-                      event.returnValue = mnemonic;
+                    event.returnValue = mnemonic;
                 });
             })
         })
@@ -184,7 +186,7 @@ ipcMain.on("create-account", (event, ...args) => {
             if (data) {
                 mnemonic = JSON.parse(data).config.mnemonic;
             }
-              event.returnValue = mnemonic;
+            event.returnValue = mnemonic;
         });
     }
 });
