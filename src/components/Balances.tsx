@@ -23,7 +23,7 @@ export class Balances extends React.Component<IBalancesProps> {
 
             <div className="balances">
                 {balances ?
-                    Array.from(balances.sort().map((details, token) => {
+                    balances.sort().map((details, token) => {
                         return <BalanceItem
                             key={token}
                             token={token}
@@ -31,7 +31,7 @@ export class Balances extends React.Component<IBalancesProps> {
                             address={details.address}
                             setWithdrawRequest={this.props.setWithdrawRequest}
                         />;
-                    }))
+                    }).valueSeq().toArray()
                     : (
                         balancesError ? <p className="error">{balancesError}</p> : <Loading />
                     )
