@@ -5,25 +5,15 @@ import { MAINNET_REF, TESTNET_REF } from "../lib/swapperd";
 import logo from "../styles/images/logo.png";
 
 interface IHeaderProps {
+    network: string;
     hideNetwork?: boolean;
     setNetwork: (network: string) => void;
 }
 
-interface IHeaderState {
-    network: string;
-}
-
-export class Header extends React.Component<IHeaderProps, IHeaderState> {
+export class Header extends React.Component<IHeaderProps, {}> {
     constructor(props: IHeaderProps) {
         super(props);
-        this.state = {
-            network: MAINNET_REF
-        };
         this.handleChange = this.handleChange.bind(this);
-    }
-
-    public componentDidMount(): void {
-        this.props.setNetwork(this.state.network);
     }
 
     public render(): JSX.Element {
@@ -32,8 +22,8 @@ export class Header extends React.Component<IHeaderProps, IHeaderState> {
             <div className="header">
                 <img src={logo} alt="Swapperd" />
                 {!hideNetwork &&
-                    <select value={this.state.network} onChange={this.handleChange}>
-                        <option value={MAINNET_REF} selected={true}>Main Network</option>
+                    <select value={this.props.network} onChange={this.handleChange}>
+                        <option value={MAINNET_REF}>Main Network</option>
                         <option value={TESTNET_REF}>Test Network</option>
                     </select>
                 }
@@ -43,7 +33,6 @@ export class Header extends React.Component<IHeaderProps, IHeaderState> {
 
     private handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const network = event.target.value;
-        this.setState({ network });
         this.props.setNetwork(network);
     }
 }
