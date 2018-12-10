@@ -15,7 +15,7 @@
         "shelljs": "^0.8.2"
     },
     "scripts": {
-        "start": "react-scripts-ts start",
+        "start": "npm run clean; npm run build; cd ./build; npm install; npm run start",
         "build": "react-scripts-ts build",
         "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
         "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
