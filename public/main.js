@@ -112,6 +112,20 @@ mb.on("after-create-window", () => {
     mb.window.openDevTools();
 });
 
+const swapperdEndpoint = (network) => {
+    if (!network) {
+        network = "mainnet";
+    }
+    switch (network) {
+        case "mainnet":
+            return "http://localhost:7927";
+        case "testnet":
+            return "http://localhost:17927";
+        default:
+            throw new Error(`Invalid network query parameter: ${network}`);
+    }
+}
+
 expressApp.use(bodyParser.json());
 expressApp.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -126,11 +140,12 @@ expressApp.post("/swaps", (req, res) => {
         res.send(args[1] === undefined ? "" : args[1]);
     });
 });
-expressApp.get("/balances", (req, res) => {
+expressApp.get("/:endpoint", (req, res) => {
+    // console.log(JSON.stringify(req));
     try {
         axios({
             method: "GET",
-            url: "http://localhost:7927/balances",
+            url: `${swapperdEndpoint(req.query.network)}/${req.params.endpoint}`,
         })
             .then(postResponse => {
                 res.status(200);
