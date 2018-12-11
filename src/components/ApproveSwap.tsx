@@ -18,6 +18,16 @@ interface IApproveSwapState {
     error: null | string;
 }
 
+function digits(token: string): BigNumber {
+    switch (token) {
+        case "BTC":
+        case "WBTC":
+            return new BigNumber(10).pow(8);
+        default:
+            return new BigNumber(10).pow(18);
+    }
+}
+
 export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
     constructor(props: IApproveSwapProps) {
         super(props);
@@ -41,11 +51,11 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                     <div className="swap--details">
                         <div>
                             <img src={getLogo(swapDetails.sendToken)} />
-                            <p>{new BigNumber(swapDetails.sendAmount).dividedBy(100000000).toString()} {swapDetails.sendToken}</p>
+                            <p>{new BigNumber(swapDetails.sendAmount).dividedBy(digits(swapDetails.sendToken)).toString()} {swapDetails.sendToken}</p>
                         </div>
                         <div>
                             <img src={getLogo(swapDetails.receiveToken)} />
-                            <p>{new BigNumber(swapDetails.receiveAmount).dividedBy(100000000).toString()} {swapDetails.receiveToken}</p>
+                            <p>{new BigNumber(swapDetails.receiveAmount).dividedBy(digits(swapDetails.receiveToken)).toString()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
                     <div className="swap--inputs">
