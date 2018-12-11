@@ -134,7 +134,7 @@ expressApp.use(function (req, res, next) {
 });
 expressApp.post("/swaps", (req, res) => {
     mb.showWindow();
-    mb.window.webContents.send("swap", req.body);
+    mb.window.webContents.send("swap", req.body, req.query.network);
     ipcMain.once("swap-response", (event, ...args) => {
         res.status(args[0]);
         res.send(args[1] === undefined ? "" : args[1]);
