@@ -207,5 +207,8 @@ export async function bootload(password: string): Promise<boolean> {
             console.log(`bootload for ${network}: ${resp.status}`);
             return resp.status === 200;
         });
-    })).then((results) => results.every(status => status));
+    })).then((results) => results.every(status => status)).catch(err => {
+        console.error(err);
+        return false;
+    });
 }
