@@ -9,6 +9,8 @@ const TESTNET_ENDPOINT = "http://localhost:17927";
 export const MAINNET_REF = "mainnet";
 export const TESTNET_REF = "testnet";
 
+const NETWORKS = [MAINNET_REF, TESTNET_REF];
+
 export interface IOptions {
     network: string;
 }
@@ -190,4 +192,20 @@ export async function submitSwap(swapRequest: IPartialSwapRequest, password: str
     });
 
     return postResponse.data;
+}
+
+export async function bootload(password: string): Promise<boolean> {
+    return Promise.all(NETWORKS.map((network) => {
+        return axios({
+            method: "POST",
+            url: `${swapperEndpoint(network)}/bootload`,
+            auth: {
+                username: "",
+                password,
+            },
+        }).then(resp => {
+            console.log(`bootload for ${network}: ${resp.status}`);
+            return resp.status === 200;
+        });
+    })).then((results) => results.every(status => status));
 }
