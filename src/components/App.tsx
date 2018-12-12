@@ -7,6 +7,7 @@ import { ApproveWithdraw } from "./ApproveWithdraw";
 import { Balances } from "./Balances";
 import { CreateAccount } from "./CreateAccount";
 import { Header } from "./Header";
+import { Login } from "./Login";
 import { Swaps } from "./Swaps";
 
 interface IAppState {
@@ -44,11 +45,7 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Check if user has an account set-up
-        const accountStatus = await fetchAccountStatus({ network: this.state.network });
-        this.setState({
-            accountExists: accountStatus !== "none",
-            locked: accountStatus !== "unlocked",
-        });
+        await this.updateAccountState();
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
@@ -74,14 +71,10 @@ class App extends React.Component<{}, IAppState> {
         }, 2000);
 
         setInterval(async () => {
-            if (this.state.accountExists && this.state.locked) {
-                try {
-                    const status = await fetchAccountStatus({ network: this.state.network });
-                    this.setState({ locked: status !== "unlocked" });
-                } catch (e) {
-                    console.error(e);
-                    this.setState({ balancesError: `Unable to retrieve balances. Error: ${e}` });
-                }
+            try {
+                await this.updateAccountState();
+            } catch (e) {
+                console.error(e);
             }
         }, 2000);
 
@@ -117,7 +110,7 @@ class App extends React.Component<{}, IAppState> {
         if (accountExists && locked) {
             return <div className="app">
                 <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
-                Your account is locked.
+                <Login resolve={this.setLocked} />
             </div>;
         }
 
@@ -151,6 +144,10 @@ class App extends React.Component<{}, IAppState> {
         </div>;
     }
 
+    private setLocked(locked: boolean): void {
+        this.setState({ locked });
+    }
+
     private setNetwork(network: string): void {
         this.setState({ network });
     }
@@ -170,6 +167,14 @@ class App extends React.Component<{}, IAppState> {
 
     private setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void {
         this.setState({ withdrawRequest });
+    }
+
+    private async updateAccountState() {
+        const status = await fetchAccountStatus({ network: this.state.network });
+        this.setState({
+            accountExists: status !== "none",
+            locked: status !== "unlocked",
+        });
     }
 }
 
