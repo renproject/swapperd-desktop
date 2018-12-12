@@ -140,20 +140,19 @@ expressApp.post("/swaps", (req, res) => {
         res.send(args[1] === undefined ? "" : args[1]);
     });
 });
-expressApp.get("/:endpoint", (req, res) => {
-    // console.log(JSON.stringify(req));
+expressApp.get("/*", (req, res) => {
     try {
+        const swapperdUrl = `${swapperdEndpoint(req.query.network)}${req.path}`;
+        console.log(`requesting: ${swapperdUrl}`);
         axios({
             method: "GET",
-            url: `${swapperdEndpoint(req.query.network)}/${req.params.endpoint}`,
-        })
-            .then(postResponse => {
-                res.status(200);
-                res.send(postResponse.data);
-            })
-            .catch(err => {
-                throw err;
-            });
+            url: swapperdUrl,
+        }).then(postResponse => {
+            res.status(200);
+            res.send(postResponse.data);
+        }).catch(err => {
+            throw err;
+        });
     } catch (error) {
         res.status(500);
         res.send(error);
