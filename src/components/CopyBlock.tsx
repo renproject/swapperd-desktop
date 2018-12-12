@@ -40,6 +40,6 @@ export class CopyBlock extends React.Component<ICopyBlockProps, ICopyBlockState>
         this.setState({ copied: true });
         setTimeout(() => {
             this.setState({ copied: false });
-        }, 5000);
+        }, 1000);
     }
 }
