@@ -13,7 +13,7 @@ import { Swaps } from "./Swaps";
 interface IAppState {
     network: string;
     mnemonic: string;
-    locked: boolean;
+    unlocked: boolean;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
@@ -28,7 +28,7 @@ class App extends React.Component<{}, IAppState> {
         this.state = {
             network: MAINNET_REF,
             mnemonic: "",
-            locked: false,
+            unlocked: false,
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
@@ -59,7 +59,7 @@ class App extends React.Component<{}, IAppState> {
 
         // Check balances and swaps on an interval
         setInterval(async () => {
-            if (this.state.accountExists) {
+            if (this.state.accountExists && this.state.unlocked) {
                 try {
                     const balances = await getBalances({ network: this.state.network });
                     this.setState({ balances });
@@ -79,7 +79,7 @@ class App extends React.Component<{}, IAppState> {
         }, 2000);
 
         setInterval(async () => {
-            if (this.state.accountExists) {
+            if (this.state.accountExists && this.state.unlocked) {
                 try {
                     const swaps = await getSwaps({ network: this.state.network });
                     this.setState({ swaps });
@@ -91,7 +91,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { mnemonic, locked, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+        const { mnemonic, unlocked, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -107,10 +107,10 @@ class App extends React.Component<{}, IAppState> {
             </div>;
         }
 
-        if (accountExists && locked) {
+        if (accountExists && !unlocked) {
             return <div className="app">
                 <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
-                <Login resolve={this.setLocked} />
+                <Login resolve={this.setUnlocked} />
             </div>;
         }
 
@@ -144,8 +144,8 @@ class App extends React.Component<{}, IAppState> {
         </div>;
     }
 
-    private setLocked(locked: boolean): void {
-        this.setState({ locked });
+    private setUnlocked(unlocked: boolean): void {
+        this.setState({ unlocked });
     }
 
     private setNetwork(network: string): void {
@@ -156,8 +156,8 @@ class App extends React.Component<{}, IAppState> {
         this.setState({ mnemonic: "" });
     }
 
-    private accountCreated(mnemonic: string): void {
-        this.setState({ accountExists: true, mnemonic });
+    private accountCreated(mnemonic: string, unlocked: boolean): void {
+        this.setState({ accountExists: true, mnemonic, unlocked });
         (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "restored successfully!" : "creation successful!"}`);
     }
 
@@ -173,7 +173,7 @@ class App extends React.Component<{}, IAppState> {
         const status = await fetchAccountStatus({ network: this.state.network });
         this.setState({
             accountExists: status !== "none",
-            locked: status !== "unlocked",
+            unlocked: status === "unlocked",
         });
     }
 }

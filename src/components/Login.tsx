@@ -5,7 +5,7 @@ import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface ILoginProps {
-    resolve: (locked: boolean) => void;
+    resolve: (unlocked: boolean) => void;
 }
 
 interface ILoginState {
@@ -56,8 +56,15 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
     private async handleSubmit(): Promise<void> {
         const { password } = this.state;
         this.setState({ submitting: true });
-        const res = await bootload(password);
-        this.props.resolve(res);
-        this.setState({ submitting: false });
+        const unlocked = await bootload(password);
+        let error = "";
+        if (!unlocked) {
+            error = "Invalid password";
+        }
+        this.setState({
+            submitting: false,
+            error,
+        });
+        this.props.resolve(unlocked);
     }
 }
