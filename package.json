@@ -10,6 +10,7 @@
         "menubar": "*",
         "moment": "^2.22.2",
         "react": "^16.6.1",
+        "react-copy-to-clipboard": "^5.0.1",
         "react-dom": "^16.6.1",
         "react-scripts-ts": "3.1.0",
         "shelljs": "^0.8.2"

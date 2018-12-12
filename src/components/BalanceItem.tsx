@@ -5,6 +5,8 @@ import BigNumber from "bignumber.js";
 import { getLogo } from "src/lib/logos";
 import { IPartialWithdrawRequest } from "src/lib/swapperd";
 
+import { CopyBlock } from "./CopyBlock";
+
 interface IBalanceItemProps {
     token: string;
     amount: BigNumber;
@@ -25,7 +27,7 @@ export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
                 <img src={getLogo(token)} />
                 <div>
                     <p>{amount.toFixed()} {token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
-                    <p>{address}</p>
+                    <CopyBlock value={address} />
                 </div>
             </div>
         );
