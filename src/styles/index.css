@@ -170,6 +170,10 @@ button span {
     padding: 10px;
 }
 
+.balances--item > div {
+    width: 100%;
+}
+
 .balances--item img {
     width: 30px;
     height: auto;
@@ -182,6 +186,21 @@ button span {
 
 .balances .error {
     padding: 0 10px;
+}
+
+/* CopyBlock*/
+
+.copy-block {
+    display: flex;
+}
+.copy-block input {
+    flex-grow: 1;
+}
+.copy-block button {
+    position: relative;
+    left: -1px;
+    min-width: initial;
+    width: 70px;
 }
 
 /* Swaps */
