@@ -137,11 +137,15 @@ class App extends React.Component<{}, IAppState> {
             </div>;
         }
 
-        return <div className="app">
-            <Header network={this.state.network} setNetwork={this.setNetwork} />
-            <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
-            <Swaps swaps={swaps} />
-        </div>;
+        if (accountExists && unlocked) {
+            return <div className="app">
+                <Header network={this.state.network} setNetwork={this.setNetwork} />
+                <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
+                <Swaps swaps={swaps} />
+            </div>;
+        }
+
+        return <div className="app">An error occurred.</div>;
     }
 
     private setUnlocked(unlocked: boolean): void {
