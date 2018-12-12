@@ -112,6 +112,20 @@ mb.on("after-create-window", () => {
     mb.window.openDevTools();
 });
 
+const swapperdEndpoint = (network) => {
+    if (!network) {
+        network = "mainnet";
+    }
+    switch (network) {
+        case "mainnet":
+            return "http://localhost:7927";
+        case "testnet":
+            return "http://localhost:17927";
+        default:
+            throw new Error(`Invalid network query parameter: ${network}`);
+    }
+}
+
 expressApp.use(bodyParser.json());
 expressApp.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -120,25 +134,25 @@ expressApp.use(function (req, res, next) {
 });
 expressApp.post("/swaps", (req, res) => {
     mb.showWindow();
-    mb.window.webContents.send("swap", req.body);
+    mb.window.webContents.send("swap", req.body, req.query.network);
     ipcMain.once("swap-response", (event, ...args) => {
         res.status(args[0]);
         res.send(args[1] === undefined ? "" : args[1]);
     });
 });
-expressApp.get("/balances", (req, res) => {
+expressApp.get("/*", (req, res) => {
     try {
+        const swapperdUrl = `${swapperdEndpoint(req.query.network)}${req.path}`;
+        console.log(`requesting: ${swapperdUrl}`);
         axios({
             method: "GET",
-            url: "http://localhost:7927/balances",
-        })
-            .then(postResponse => {
-                res.status(200);
-                res.send(postResponse.data);
-            })
-            .catch(err => {
-                throw err;
-            });
+            url: swapperdUrl,
+        }).then(postResponse => {
+            res.status(200);
+            res.send(postResponse.data);
+        }).catch(err => {
+            throw err;
+        });
     } catch (error) {
         res.status(500);
         res.send(error);

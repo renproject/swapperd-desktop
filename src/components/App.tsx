@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse } from "../lib/swapperd";
+import { checkAccountExists, getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, MAINNET_REF } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -24,7 +24,7 @@ class App extends React.Component<{}, IAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            network: "",
+            network: MAINNET_REF,
             mnemonic: "",
             accountExists: false,
             swapDetails: null,
@@ -42,19 +42,14 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Check if user has an account set-up
-        const xhr = new XMLHttpRequest();
-        try {
-            xhr.open("GET", "http://localhost:7927/whoami", false);
-            xhr.send("");
-            this.setState({ accountExists: true });
-        } catch (e) {
-            console.error(e);
-        }
+        const accountExists = checkAccountExists({ network: this.state.network });
+        this.setState({ accountExists });
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
                 console.log(args[0]);
-                this.setState({ swapDetails: args[0] });
+                const network = args[1] ? args[1] : this.state.network;
+                this.setState({ swapDetails: args[0], network });
             } catch (e) {
                 console.log(e);
             }
@@ -64,7 +59,7 @@ class App extends React.Component<{}, IAppState> {
         setInterval(async () => {
             if (this.state.accountExists) {
                 try {
-                    const balances = await getBalances();
+                    const balances = await getBalances({ network: this.state.network });
                     this.setState({ balances });
                 } catch (e) {
                     console.error(e);
@@ -76,7 +71,7 @@ class App extends React.Component<{}, IAppState> {
         setInterval(async () => {
             if (this.state.accountExists) {
                 try {
-                    const swaps = await getSwaps();
+                    const swaps = await getSwaps({ network: this.state.network });
                     this.setState({ swaps });
                 } catch (e) {
                     console.error(e);
@@ -90,29 +85,34 @@ class App extends React.Component<{}, IAppState> {
 
         if (mnemonic !== "") {
             return <div className="app">
-                <Header hideNetwork={true} setNetwork={this.setNetwork} />;
+                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header hideNetwork={true} setNetwork={this.setNetwork} />;
+                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header setNetwork={this.setNetwork} />;
-                <ApproveSwap swapDetails={swapDetails} resetSwapDetails={this.resetSwapDetails} />
+                <Header network={this.state.network} setNetwork={this.setNetwork} />
+                <ApproveSwap
+                    network={this.state.network}
+                    swapDetails={swapDetails}
+                    resetSwapDetails={this.resetSwapDetails}
+                />
             </div>;
         }
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header setNetwork={this.setNetwork} />;
+                <Header network={this.state.network} setNetwork={this.setNetwork} />
                 <ApproveWithdraw
+                    network={this.state.network}
                     balances={balances}
                     withdrawRequest={withdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
@@ -121,7 +121,7 @@ class App extends React.Component<{}, IAppState> {
         }
 
         return <div className="app">
-            <Header setNetwork={this.setNetwork} />;
+            <Header network={this.state.network} setNetwork={this.setNetwork} />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={swaps} />
         </div>;

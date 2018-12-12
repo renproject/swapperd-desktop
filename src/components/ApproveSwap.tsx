@@ -7,6 +7,7 @@ import { getBalances, IPartialSwapRequest, submitSwap } from "../lib/swapperd";
 import { Banner } from "./Banner";
 
 interface IApproveSwapProps {
+    network: string;
     swapDetails: IPartialSwapRequest;
     resetSwapDetails: () => void;
 }
@@ -73,14 +74,14 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private async onAccept(): Promise<void> {
-        const { swapDetails } = this.props;
+        const { swapDetails, network } = this.props;
         const { password } = this.state;
         this.setState({ error: null, loading: true });
 
         try {
-            const response = await submitSwap(swapDetails, password);
+            const response = await submitSwap(swapDetails, password, { network });
             if (swapDetails.shouldInitiateFirst) {
-                const balances = (await getBalances());
+                const balances = (await getBalances({ network }));
 
                 // Swap details
                 [response.receiveToken, response.sendToken] = [response.sendToken, response.receiveToken];

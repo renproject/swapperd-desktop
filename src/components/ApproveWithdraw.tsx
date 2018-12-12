@@ -6,6 +6,7 @@ import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface IApproveWithdrawProps {
+    network: string;
     balances: null | IBalances;
     withdrawRequest: IPartialWithdrawRequest;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest | null) => void;
@@ -108,7 +109,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
     }
 
     private async onAccept(): Promise<void> {
-        const { withdrawRequest } = this.props;
+        const { withdrawRequest, network } = this.props;
         const { password, to, amount } = this.state;
         this.setState({ error: null, loading: true });
 
@@ -119,7 +120,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         };
 
         try {
-            await submitWithdraw(request, password);
+            await submitWithdraw(request, password, { network });
             this.props.setWithdrawRequest(null);
         } catch (e) {
             console.error(e);
