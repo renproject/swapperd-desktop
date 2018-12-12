@@ -7,8 +7,8 @@ import { ApproveWithdraw } from "./ApproveWithdraw";
 import { Balances } from "./Balances";
 import { CreateAccount } from "./CreateAccount";
 import { Header } from "./Header";
-import { Login } from "./Login";
 import { Swaps } from "./Swaps";
+import { UnlockScreen } from "./UnlockScreen";
 
 interface IAppState {
     network: string;
@@ -110,7 +110,7 @@ class App extends React.Component<{}, IAppState> {
         if (accountExists && !unlocked) {
             return <div className="app">
                 <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
-                <Login resolve={this.setUnlocked} />
+                <UnlockScreen resolve={this.setUnlocked} />
             </div>;
         }
 

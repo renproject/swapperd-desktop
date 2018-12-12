@@ -4,19 +4,19 @@ import { bootload } from "src/lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
-interface ILoginProps {
+interface IUnlockScreenProps {
     resolve: (unlocked: boolean) => void;
 }
 
-interface ILoginState {
+interface IUnlockScreenState {
     submitting: boolean;
     password: string;
     loading: boolean;
     error: null | string;
 }
 
-export class Login extends React.Component<ILoginProps, ILoginState> {
-    constructor(props: ILoginProps) {
+export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScreenState> {
+    constructor(props: IUnlockScreenProps) {
         super(props);
         this.state = {
             submitting: false,
@@ -32,12 +32,12 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
         const { loading, error, submitting } = this.state;
         return (
             <>
-                <Banner title="Login" />
+                <Banner title="Wallet is locked" />
                 <div className="account">
                     {!loading ?
                         <>
                             <input type="password" name="password" placeholder="Password" onChange={this.handleInput} />
-                            <button disabled={submitting} onClick={this.handleSubmit}><span>Login</span></button>
+                            <button disabled={submitting} onClick={this.handleSubmit}><span>Unlock</span></button>
                             {error ? <p className="error">{error}</p> : null}
                         </>
                         :
