@@ -3,11 +3,12 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { getLogo } from "src/lib/logos";
-import { getBalances, IPartialSwapRequest, submitSwap } from "../lib/swapperd";
+import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap } from "../lib/swapperd";
 import { Banner } from "./Banner";
 
 interface IApproveSwapProps {
     network: string;
+    origin: string;
     swapDetails: IPartialSwapRequest;
     resetSwapDetails: () => void;
 }
@@ -42,12 +43,13 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     public render(): JSX.Element {
-        const { swapDetails } = this.props;
+        const { swapDetails, origin, network } = this.props;
         const { password, loading, error } = this.state;
         return (
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
                 <div className="swap">
+                    <p>The website &lt;<a href={origin} rel="noopener noreferrer" target="_blank">{origin}</a>&gt; is proposing the following swap on {NETWORKS[network]}:</p>
                     <div className="swap--details">
                         <div>
                             <img src={getLogo(swapDetails.sendToken)} />

@@ -12,6 +12,7 @@ import { UnlockScreen } from "./UnlockScreen";
 
 interface IAppState {
     network: string;
+    origin: string;
     mnemonic: string;
     unlocked: boolean;
     accountExists: boolean;
@@ -27,6 +28,7 @@ class App extends React.Component<{}, IAppState> {
         super(props);
         this.state = {
             network: MAINNET_REF,
+            origin: "",
             mnemonic: "",
             unlocked: false,
             accountExists: false,
@@ -47,11 +49,13 @@ class App extends React.Component<{}, IAppState> {
         // Check if user has an account set-up
         await this.updateAccountState();
 
+        // Attach event to swap
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
                 console.log(args[0]);
                 const network = args[1] ? args[1] : this.state.network;
-                this.setState({ swapDetails: args[0], network });
+                const origin = args[2] ? args[2] : this.state.origin;
+                this.setState({ swapDetails: args[0], network, origin });
             } catch (e) {
                 console.log(e);
             }
@@ -118,6 +122,7 @@ class App extends React.Component<{}, IAppState> {
             return <div className="app">
                 <Header network={this.state.network} setNetwork={this.setNetwork} />
                 <ApproveSwap
+                    origin={this.state.origin}
                     network={this.state.network}
                     swapDetails={swapDetails}
                     resetSwapDetails={this.resetSwapDetails}
@@ -166,7 +171,10 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private resetSwapDetails(): void {
-        this.setState({ swapDetails: null });
+        this.setState({
+            swapDetails: null,
+            origin: "",
+        });
     }
 
     private setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void {
