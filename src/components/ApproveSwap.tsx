@@ -79,7 +79,8 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState({ error: null, loading: true });
 
         try {
-            const response = await submitSwap(swapDetails, password, { network });
+            const mainResponse = await submitSwap(swapDetails, password, { network });
+            const response = mainResponse.data;
             if (swapDetails.shouldInitiateFirst) {
                 const balances = (await getBalances({ network }));
 
@@ -92,7 +93,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                 response.sendTo = balances[response.sendToken];
                 response.shouldInitiateFirst = false;
             }
-            (window as any).ipcRenderer.send("swap-response", 201, response);
+            (window as any).ipcRenderer.send("swap-response", mainResponse.status, response);
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);

@@ -181,7 +181,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 }
 
 export async function submitSwap(swapRequest: IPartialSwapRequest, password: string, options: IOptions) {
-    const postResponse = await axios({
+    return axios({
         method: "POST",
         url: `${swapperEndpoint(options.network)}/swaps`,
         auth: {
@@ -190,8 +190,6 @@ export async function submitSwap(swapRequest: IPartialSwapRequest, password: str
         },
         data: swapRequest,
     });
-
-    return postResponse.data;
 }
 
 export async function bootload(password: string): Promise<boolean> {
