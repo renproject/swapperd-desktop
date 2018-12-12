@@ -41,7 +41,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
     }
 
     public render(): JSX.Element {
-        const { balances, withdrawRequest } = this.props;
+        const { withdrawRequest } = this.props;
         const { gettingPassword, password, loading, amount, to, error } = this.state;
         return (
             <>
