@@ -19,9 +19,9 @@
         "ws": "^6.1.0"
     },
     "devDependencies": {
+        "electron": "^3.0.11",
         "electron-installer-dmg": "^2.0.0",
         "electron-packager": "^12.2.0",
-        "electron-prebuilt": "^1.4.13",
         "innosetup-compiler": "^5.5.9",
         "minimalist": "^1.0.0",
         "mustache": "^3.0.1",
@@ -29,7 +29,7 @@
     },
     "main": "main.js",
     "scripts": {
-        "start": "npx ./node_modules/electron-prebuilt/cli.js .",
+        "start": "npx ./node_modules/electron/cli.js .",
         "build": "npm run build-mac; npm run build-win",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
         "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
