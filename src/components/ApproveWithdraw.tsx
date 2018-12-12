@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import * as React from "react";
 
 import { getLogo } from "src/lib/logos";
@@ -17,7 +18,6 @@ interface IApproveWithdrawState {
     password: string;
     to: string;
     amount: string;
-    available: string;
     loading: boolean;
     error: null | string;
 }
@@ -27,7 +27,6 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         super(props);
         this.state = {
             gettingPassword: false,
-            available: "-",
             amount: "",
             to: "",
             password: "",
@@ -41,22 +40,9 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         this.onReject = this.onReject.bind(this);
     }
 
-    public componentDidMount(): void {
-        this.componentWillReceiveProps(this.props);
-    }
-
-    public componentWillReceiveProps(props: IApproveWithdrawProps): void {
-        if (props.balances) {
-            const available = props.balances[this.props.withdrawRequest.token];
-            if (available) {
-                this.setState({ available: available.toString() });
-            }
-        }
-    }
-
     public render(): JSX.Element {
-        const { withdrawRequest } = this.props;
-        const { gettingPassword, available, password, loading, amount, to, error } = this.state;
+        const { balances, withdrawRequest } = this.props;
+        const { gettingPassword, password, loading, amount, to, error } = this.state;
         return (
             <>
                 <Banner title="Transfer" disabled={loading} reject={this.onReject} />
@@ -65,7 +51,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                         <>
                             <div className="withdraw--balance">
                                 <img src={getLogo(withdrawRequest.token)} />
-                                <p>Available: {available} {withdrawRequest.token}</p>
+                                <p>Available: {this.getAvailable().toString()} {withdrawRequest.token}</p>
                             </div>
                             <div className="withdraw--inputs">
                                 <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
@@ -94,13 +80,27 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
+    private getAvailable(): BigNumber {
+        const { balances, withdrawRequest } = this.props;
+        if (balances === null) {
+            return new BigNumber(0);
+        }
+        const available = balances.get(withdrawRequest.token);
+        if (!available) {
+            return new BigNumber(0);
+        }
+        return available.balance;
+    }
+
     private onWithdraw(): void {
-        const { available, to, amount } = this.state;
+        const { amount, to } = this.state;
+        const available = this.getAvailable();
+        const amountBN = new BigNumber(amount);
         if (to === "") {
             this.setState({ error: "Please enter an address." });
             return;
         }
-        if (parseFloat(amount) > 0 && parseFloat(amount) <= parseFloat(available)) {
+        if (amountBN.gt(0) && amountBN.lte(available)) {
             this.setState({ gettingPassword: true });
         } else {
             this.setState({ error: "Please enter a valid amount." });
