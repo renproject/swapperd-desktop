@@ -61,6 +61,13 @@ export interface ISwapsResponse {
     swaps: ISwapItem[];
 }
 
+export interface IInfoResponse {
+    version: string;
+    bootloaded: boolean;
+    supportedBlockchains: Array<{ name: string, address: string }>;
+    supportedTokens: Array<{ name: string, blockchain: string }>;
+}
+
 const decimals = new Map<string, number>()
     .set("WBTC", 8)
     .set("BTC", 8)
@@ -108,16 +115,23 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     return balances;
 }
 
-export function checkAccountExists(options: IOptions): boolean {
+export async function fetchAccountStatus(options: IOptions): Promise<string> {
     // Check if user has an account set-up
-    const xhr = new XMLHttpRequest();
     try {
-        xhr.open("GET", `${swapperEndpoint(options.network)}/whoami`, false);
-        xhr.send("");
-        return true;
+        const response = await axios({
+            method: "GET",
+            url: `${swapperEndpoint(options.network)}/info`,
+        });
+        const info: IInfoResponse = response.data;
+        console.log(JSON.stringify(info));
+        if (info.bootloaded) {
+            return "unlocked";
+        } else {
+            return "locked";
+        }
     } catch (e) {
         console.error(e);
-        return false;
+        return "none";
     }
 }
 

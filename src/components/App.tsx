@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { checkAccountExists, getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, MAINNET_REF } from "../lib/swapperd";
+import { fetchAccountStatus, getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, MAINNET_REF } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -12,6 +12,7 @@ import { Swaps } from "./Swaps";
 interface IAppState {
     network: string;
     mnemonic: string;
+    locked: boolean;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
@@ -26,6 +27,7 @@ class App extends React.Component<{}, IAppState> {
         this.state = {
             network: MAINNET_REF,
             mnemonic: "",
+            locked: false,
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
@@ -42,8 +44,11 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Check if user has an account set-up
-        const accountExists = checkAccountExists({ network: this.state.network });
-        this.setState({ accountExists });
+        const accountStatus = await fetchAccountStatus({ network: this.state.network });
+        this.setState({
+            accountExists: accountStatus !== "none",
+            locked: accountStatus !== "unlocked",
+        });
 
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
@@ -69,6 +74,18 @@ class App extends React.Component<{}, IAppState> {
         }, 2000);
 
         setInterval(async () => {
+            if (this.state.accountExists && this.state.locked) {
+                try {
+                    const status = await fetchAccountStatus({ network: this.state.network });
+                    this.setState({ locked: status !== "unlocked" });
+                } catch (e) {
+                    console.error(e);
+                    this.setState({ balancesError: `Unable to retrieve balances. Error: ${e}` });
+                }
+            }
+        }, 2000);
+
+        setInterval(async () => {
             if (this.state.accountExists) {
                 try {
                     const swaps = await getSwaps({ network: this.state.network });
@@ -81,7 +98,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+        const { mnemonic, locked, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -94,6 +111,13 @@ class App extends React.Component<{}, IAppState> {
             return <div className="app">
                 <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <CreateAccount resolve={this.accountCreated} />
+            </div>;
+        }
+
+        if (accountExists && locked) {
+            return <div className="app">
+                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                Your account is locked.
             </div>;
         }
 
