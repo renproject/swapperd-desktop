@@ -9,6 +9,11 @@ const TESTNET_ENDPOINT = "http://localhost:17927";
 export const MAINNET_REF = "mainnet";
 export const TESTNET_REF = "testnet";
 
+export const NETWORKS = {
+    [MAINNET_REF]: "Main Network",
+    [TESTNET_REF]: "Test Network",
+};
+
 export interface IOptions {
     network: string;
 }
@@ -61,6 +66,13 @@ export interface ISwapsResponse {
     swaps: ISwapItem[];
 }
 
+export interface IInfoResponse {
+    version: string;
+    bootloaded: boolean;
+    supportedBlockchains: Array<{ name: string, address: string }>;
+    supportedTokens: Array<{ name: string, blockchain: string }>;
+}
+
 const decimals = new Map<string, number>()
     .set("WBTC", 8)
     .set("BTC", 8)
@@ -108,16 +120,23 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     return balances;
 }
 
-export function checkAccountExists(options: IOptions): boolean {
+export async function fetchAccountStatus(options: IOptions): Promise<string> {
     // Check if user has an account set-up
-    const xhr = new XMLHttpRequest();
     try {
-        xhr.open("GET", `${swapperEndpoint(options.network)}/whoami`, false);
-        xhr.send("");
-        return true;
+        const response = await axios({
+            method: "GET",
+            url: `${swapperEndpoint(options.network)}/info`,
+        });
+        const info: IInfoResponse = response.data;
+        console.log(JSON.stringify(info));
+        if (info.bootloaded) {
+            return "unlocked";
+        } else {
+            return "locked";
+        }
     } catch (e) {
         console.error(e);
-        return false;
+        return "none";
     }
 }
 
@@ -165,7 +184,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 }
 
 export async function submitSwap(swapRequest: IPartialSwapRequest, password: string, options: IOptions) {
-    const postResponse = await axios({
+    return axios({
         method: "POST",
         url: `${swapperEndpoint(options.network)}/swaps`,
         auth: {
@@ -174,6 +193,23 @@ export async function submitSwap(swapRequest: IPartialSwapRequest, password: str
         },
         data: swapRequest,
     });
+}
 
-    return postResponse.data;
+export async function bootload(password: string): Promise<boolean> {
+    return Promise.all(Object.keys(NETWORKS).map((network) => {
+        return axios({
+            method: "POST",
+            url: `${swapperEndpoint(network)}/bootload`,
+            auth: {
+                username: "",
+                password,
+            },
+        }).then(resp => {
+            console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
+            return resp.status === 200;
+        });
+    })).then((results) => results.every(status => status)).catch(err => {
+        console.error(err);
+        return false;
+    });
 }

@@ -1,10 +1,11 @@
 import * as React from "react";
 
+import { bootload } from "src/lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface ICreateAccountProps {
-    resolve: (mnemonic: string) => void;
+    resolve: (mnemonic: string, unlocked: boolean) => void;
 }
 
 interface ICreateAccountState {
@@ -71,18 +72,18 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private handleSubmit(): void {
+    private async handleSubmit(): Promise<void> {
         // Ensure username does not contain any whitespace
         if (/\s/.test(this.state.username)) {
             this.setState({ error: "Please enter a valid username." });
         }
         this.setState({ loading: true });
-        setTimeout(() => {
+        setTimeout(async () => {
             const { mnemonic, username, password } = this.state;
             const newMnemonic = (window as any).ipcRenderer.sendSync("create-account", username, password, mnemonic);
-
+            const unlocked = await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent
-            this.props.resolve(mnemonic === "" ? newMnemonic : "");
+            this.props.resolve(mnemonic === "" ? newMnemonic : "", unlocked);
         });
     }
 

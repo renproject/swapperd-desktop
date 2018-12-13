@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { MAINNET_REF, TESTNET_REF } from "../lib/swapperd";
+import { NETWORKS } from "../lib/swapperd";
 
 import logo from "../styles/images/logo.png";
 
@@ -23,8 +23,9 @@ export class Header extends React.Component<IHeaderProps, {}> {
                 <img src={logo} alt="Swapperd" />
                 {!hideNetwork &&
                     <select value={this.props.network} onChange={this.handleChange}>
-                        <option value={MAINNET_REF}>Main Network</option>
-                        <option value={TESTNET_REF}>Test Network</option>
+                        {
+                            Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)
+                        }
                     </select>
                 }
             </div>
