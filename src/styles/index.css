@@ -379,6 +379,12 @@ button span {
 .swap--inputs button {
     margin-top: 10px;
 }
+
+.swap--fee {
+    padding-bottom: 20px;
+    font-style: italic;
+}
+
 /* Loading */
 
 .loading {

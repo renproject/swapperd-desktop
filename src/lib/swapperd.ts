@@ -44,6 +44,7 @@ export interface IPartialSwapRequest {
     sendTo: string;
     receiveFrom: string;
     shouldInitiateFirst: boolean;
+    brokerFee?: number;
 }
 
 export type IBalances = OrderedMap<string, { address: string, balance: BigNumber }>;

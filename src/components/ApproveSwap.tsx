@@ -45,6 +45,11 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     public render(): JSX.Element {
         const { swapDetails, origin, network } = this.props;
         const { password, loading, error } = this.state;
+        const readableSendAmount = new BigNumber(swapDetails.sendAmount).dividedBy(digits(swapDetails.sendToken));
+        const readableReceiveAmount = new BigNumber(swapDetails.receiveAmount).dividedBy(digits(swapDetails.receiveToken));
+        const feeBips = new BigNumber(swapDetails.brokerFee ? swapDetails.brokerFee : 0);
+        const feePercent = feeBips.div(10000);
+        const fees = readableReceiveAmount.times(feePercent);
         return (
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
@@ -53,13 +58,14 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                     <div className="swap--details">
                         <div>
                             <img src={getLogo(swapDetails.sendToken)} />
-                            <p>{new BigNumber(swapDetails.sendAmount).dividedBy(digits(swapDetails.sendToken)).toString()} {swapDetails.sendToken}</p>
+                            <p>{readableSendAmount.toString()} {swapDetails.sendToken}</p>
                         </div>
                         <div>
                             <img src={getLogo(swapDetails.receiveToken)} />
-                            <p>{new BigNumber(swapDetails.receiveAmount).dividedBy(digits(swapDetails.receiveToken)).toString()} {swapDetails.receiveToken}</p>
+                            <p>{(readableReceiveAmount.minus(fees)).toString()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
+                    {swapDetails.brokerFee && <p className="swap--fee">{`Includes a fee of ${fees.toString()} ${swapDetails.receiveToken} (${feePercent.times(100).toString()}%)`}</p>}
                     <div className="swap--inputs">
                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                         <button onClick={this.onAccept} disabled={loading}><span>Swap</span></button>
