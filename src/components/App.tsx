@@ -153,7 +153,7 @@ class App extends React.Component<{}, IAppState> {
         return <div className="app">An error occurred.</div>;
     }
 
-    private setUnlocked(unlocked: boolean): void {
+    private setUnlocked = (unlocked: boolean): void => {
         this.setState({ unlocked });
     }
 
