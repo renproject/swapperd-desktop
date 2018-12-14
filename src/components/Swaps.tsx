@@ -40,7 +40,9 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }).length === 0;
                 });
 
-                (window as any).ipcRenderer.sendSync("notify", `Swap from ${notPending[0].sendAmount} ${notPending[0].sendToken} to ${notPending[0].receiveAmount} ${notPending[0].receiveToken} ${notPending[0].status === 4 ? "confirmed!" : "failed."}`);
+                const notificationMessage = `Swap from ${notPending[0].sendAmount} ${notPending[0].sendToken} to ${notPending[0].receiveAmount} ${notPending[0].receiveToken} ${notPending[0].status === 4 ? "confirmed!" : "failed."}`;
+                console.log(`Trying to send: ${notificationMessage}`);
+                (window as any).ipcRenderer.sendSync("notify", notificationMessage);
                 this.setState({ pending });
             }
         }
