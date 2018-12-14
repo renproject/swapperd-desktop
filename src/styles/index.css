@@ -9,6 +9,7 @@ body {
   font-family: 'PingFangSC';
   background-color: white;
   margin: 0;
+  margin-top: 50px;
 }
 
 a {
@@ -121,6 +122,12 @@ button span {
     align-items: center;
     border-bottom: 1px solid #ccc;
     padding: 5px 10px;
+    width: 100%;
+    background-color: white;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
 .header img {
