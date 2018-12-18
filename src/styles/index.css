@@ -180,6 +180,7 @@ button span {
     align-items: center;
     padding: 10px;
     position: relative;
+    cursor: pointer;
 }
 
 .balances--item:hover {
@@ -210,6 +211,10 @@ button span {
 .balances--address {
     margin-left: 10px;
     cursor: pointer;
+}
+
+.balances--address:hover p.address {
+    text-decoration: underline;
 }
 
 .balances--transfer {
