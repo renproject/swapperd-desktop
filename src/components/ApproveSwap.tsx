@@ -105,7 +105,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
-            this.setState({ error: `There was an error submitting your request. Error: ${e}` });
+            this.setState({ error: `There was an error submitting your request. ${e}` });
         }
 
         this.setState({ loading: false });
