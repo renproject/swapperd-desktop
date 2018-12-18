@@ -173,7 +173,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
 
     const postResponse = await axios({
         method: "POST",
-        url: `${swapperEndpoint(options.network)}/withdrawals`,
+        url: `${swapperEndpoint(options.network)}/transfers`,
         auth: {
             username: "",
             password,
