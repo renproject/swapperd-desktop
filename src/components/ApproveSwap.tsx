@@ -65,7 +65,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                             <p>{(readableReceiveAmount.minus(fees)).toString()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
-                    {swapDetails.brokerFee && <p className="swap--fee">{`Includes a fee of ${fees.toString()} ${swapDetails.receiveToken} (${feePercent.times(100).toString()}%)`}</p>}
+                    {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toString()}%)`}</p>}
                     <div className="swap--inputs">
                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                         <button onClick={this.onAccept} disabled={loading}><span>Swap</span></button>

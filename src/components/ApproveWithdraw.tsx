@@ -127,7 +127,6 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             console.error(e);
             this.setState({ error: `There was an error submitting your request. ${e}` });
         }
-
         this.setState({ loading: false });
     }
 
