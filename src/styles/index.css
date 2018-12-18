@@ -7,7 +7,6 @@
 body {
   font-size: 12px;
   font-family: 'PingFangSC';
-  background-color: white;
   margin: 0;
   margin-top: 50px;
 }
@@ -171,47 +170,70 @@ button span {
 
 /* Balances */
 
-.balances--item {
-    display: flex;
-    align-items: center;
+.balances {
     border-bottom: 1px solid #ccc;
-    padding: 10px;
-}
-
-.balances--item > div {
     width: 100%;
 }
 
-.balances--item img {
-    width: 30px;
+.balances--item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+}
+
+.balances--item:hover {
+    background-color: #fafafa;
+}
+
+.balances--token {
+    display: flex;
+    align-items: center;
+    width: 75px;
+}
+
+.balances--token img {
+    width: 20px;
     height: auto;
     margin-right: 10px;
 }
 
-.balances--item p + p {
-    margin-top: 5px;
+.balances--amount {
+    width: 100px;
+    overflow-x: scroll;
+}
+
+.balances--amount p {
+    font-weight: 500;
+}
+
+.balances--address {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.balances--transfer {
+    background-image: url(images/arrow.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 10px;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 
 .balances .error {
     padding: 0 10px;
 }
 
-/* CopyBlock*/
-
-.copy-block {
-    display: flex;
-}
-.copy-block input {
-    flex-grow: 1;
-}
-.copy-block button {
-    position: relative;
-    left: -1px;
-    min-width: initial;
-    width: 70px;
-}
-
 /* Swaps */
+
+.swaps {
+    position: relative;
+}
 
 .swaps > p {
     padding: 0 10px;
@@ -383,13 +405,12 @@ button span {
     margin-top: 5px;
 }
 
-.swap--inputs button {
+.swap--input {
     margin-top: 10px;
 }
 
-.swap--fee {
-    padding-bottom: 20px;
-    font-style: italic;
+.swap--inputs button {
+    margin-top: 10px;
 }
 
 /* Loading */

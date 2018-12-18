@@ -17,12 +17,14 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
         const timestamp = moment.unix(swapItem.timestamp).format("MMM DD, YYYY [at] HH:mm");
         let status;
         switch (swapItem.status) {
+            case 0:
             case 1:
             case 2:
                 status = "Pending";
                 break;
             case 3:
             case 5:
+            case 6:
                 status = "Failed";
                 break;
             case 4:

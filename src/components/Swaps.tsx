@@ -34,15 +34,20 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
         if (swaps && swaps.swaps) {
             const pending = this.pendingSwaps(swaps.swaps);
             if (pending.length < this.state.pending.length) {
-                const notPending = pending.filter((current) => {
-                    return this.state.pending.filter((other) => {
+                const notPending = this.state.pending.filter((current) => {
+                    return pending.filter((other) => {
                         return other.id === current.id;
                     }).length === 0;
                 });
-
-                const notificationMessage = `Swap from ${notPending[0].sendAmount} ${notPending[0].sendToken} to ${notPending[0].receiveAmount} ${notPending[0].receiveToken} ${notPending[0].status === 4 ? "confirmed!" : "failed."}`;
-                console.log(`Trying to send: ${notificationMessage}`);
-                (window as any).ipcRenderer.sendSync("notify", notificationMessage);
+                for (const swap of notPending) {
+                    console.log("----------");
+                    console.log(swap);
+                    console.log("----------");
+                    const notificationMessage = `Swap from ${swap.sendAmount} ${swap.sendToken} to ${swap.receiveAmount} ${swap.receiveToken} ${swap.status === 4 ? "confirmed!" : "failed."}`;
+                    (window as any).ipcRenderer.sendSync("notify", notificationMessage);
+                }
+            }
+            if (pending !== this.state.pending) {
                 this.setState({ pending });
             }
         }
@@ -81,7 +86,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
     private pendingSwaps(swaps: ISwapItem[]): ISwapItem[] {
         const pending = [];
         for (const swap of swaps) {
-            if (swap.status === 1 || swap.status === 2) {
+            if (swap.status === 0 || swap.status === 1 || swap.status === 2) {
                 pending.push(swap);
             }
         }

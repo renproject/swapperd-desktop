@@ -24,6 +24,10 @@ interface IAppState {
 }
 
 class App extends React.Component<{}, IAppState> {
+    private callGetBalancesTimeout: NodeJS.Timer | undefined;
+    private callGetAccountTimeout: NodeJS.Timer | undefined;
+    private callGetSwapsTimeout: NodeJS.Timer | undefined;
+
     constructor(props: {}) {
         super(props);
         this.state = {
@@ -45,10 +49,14 @@ class App extends React.Component<{}, IAppState> {
         this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
     }
 
-    public async componentDidMount() {
-        // Check if user has an account set-up
-        await this.updateAccountState();
+    public componentWillUnmount() {
+        // Clear timeouts
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
+        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
+        if (this.callGetSwapsTimeout) { clearTimeout(this.callGetSwapsTimeout); }
+    }
 
+    public async componentDidMount() {
         // Attach event to swap
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
@@ -61,28 +69,40 @@ class App extends React.Component<{}, IAppState> {
             }
         });
 
+        // Check if user has an account set-up
+        const callGetAccount = async () => {
+            try {
+                const status = await fetchAccountStatus({ network: this.state.network });
+                const accountExists = status !== "none";
+                const unlocked = status === "unlocked";
+                if (accountExists !== this.state.accountExists || unlocked !== this.state.unlocked) {
+                    this.setState({ accountExists, unlocked, });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            this.callGetAccountTimeout = setTimeout(callGetAccount, 2 * 1000);
+        };
+        callGetAccount().catch(console.error);
+
         // Check balances and swaps on an interval
-        setInterval(async () => {
+        const callGetBalances = async () => {
             if (this.state.accountExists && this.state.unlocked) {
                 try {
                     const balances = await getBalances({ network: this.state.network });
-                    this.setState({ balances });
+                    if (!balances.equals(this.state.balances)) {
+                        this.setState({ balances });
+                    }
                 } catch (e) {
                     console.error(e);
                     this.setState({ balancesError: `Unable to retrieve balances. Error: ${e}` });
                 }
             }
-        }, 2000);
+            this.callGetBalancesTimeout = setTimeout(callGetBalances, 2 * 1000);
+        };
+        callGetBalances().catch(console.error);
 
-        setInterval(async () => {
-            try {
-                await this.updateAccountState();
-            } catch (e) {
-                console.error(e);
-            }
-        }, 2000);
-
-        setInterval(async () => {
+        const callGetSwaps = async () => {
             if (this.state.accountExists && this.state.unlocked) {
                 try {
                     const swaps = await getSwaps({ network: this.state.network });
@@ -91,7 +111,9 @@ class App extends React.Component<{}, IAppState> {
                     console.error(e);
                 }
             }
-        }, 5000);
+            this.callGetSwapsTimeout = setTimeout(callGetSwaps, 5 * 1000);
+        };
+        callGetSwaps().catch(console.error);
     }
 
     public render(): JSX.Element {
@@ -179,14 +201,6 @@ class App extends React.Component<{}, IAppState> {
 
     private setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void {
         this.setState({ withdrawRequest });
-    }
-
-    private async updateAccountState() {
-        const status = await fetchAccountStatus({ network: this.state.network });
-        this.setState({
-            accountExists: status !== "none",
-            unlocked: status === "unlocked",
-        });
     }
 }
 

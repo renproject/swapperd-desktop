@@ -1,11 +1,10 @@
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import { getLogo } from "src/lib/logos";
 import { IPartialWithdrawRequest } from "src/lib/swapperd";
-
-import { CopyBlock } from "./CopyBlock";
 
 interface IBalanceItemProps {
     token: string;
@@ -14,23 +13,48 @@ interface IBalanceItemProps {
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
 }
 
-export class BalanceItem extends React.Component<IBalanceItemProps, {}> {
+interface IBalanceItemState {
+    copied: string;
+}
+
+export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItemState> {
     constructor(props: IBalanceItemProps) {
         super(props);
+        this.state = {
+            copied: "",
+        };
         this.handleWithdraw = this.handleWithdraw.bind(this);
     }
 
     public render() {
         const { token, amount, address } = this.props;
+        const { copied } = this.state;
         return (
             <div className="balances--item">
-                <img src={getLogo(token)} />
-                <div>
-                    <p>{amount.toFixed()} {token} (<a onClick={this.handleWithdraw}>transfer</a>)</p>
-                    <CopyBlock value={address} />
+                <div className="balances--token">
+                    <img src={getLogo(token)} />
+                    <p>{token}</p>
                 </div>
-            </div>
+                <div className="balances--amount">
+                    {/* Show at least 2 decimal places */}
+                    <p>{amount.toFixed(Math.max(2, (amount.toString().split(".")[1] || []).length))}</p>
+                </div>
+                <div className="balances--address">
+                    <CopyToClipboard text={address} onCopy={this.handleCopy.bind(this, address)}>
+                        <p>{copied === address ? "Copied" : `${address.substring(0, 8)}...${address.slice(-5)}`}</p>
+                    </CopyToClipboard>
+                </div>
+                <div className="balances--transfer" onClick={this.handleWithdraw} />
+            </div >
         );
+    }
+
+    private handleCopy(address: string): void {
+        console.log(address);
+        this.setState({ copied: address });
+        setTimeout(() => {
+            this.setState({ copied: "" });
+        }, 1000);
     }
 
     private handleWithdraw(): void {
