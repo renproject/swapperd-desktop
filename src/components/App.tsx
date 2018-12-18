@@ -180,7 +180,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private setNetwork(network: string): void {
-        this.setState({ network });
+        this.setState({ network, balances: null, swaps: null });
     }
 
     private mnemonicSaved(): void {
