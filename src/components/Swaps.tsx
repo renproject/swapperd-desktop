@@ -43,7 +43,19 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     console.log("----------");
                     console.log(swap);
                     console.log("----------");
-                    const notificationMessage = `Swap from ${swap.sendAmount} ${swap.sendToken} to ${swap.receiveAmount} ${swap.receiveToken} ${swap.status === 4 ? "confirmed!" : "failed."}`;
+                    let status;
+                    switch (swap.status) {
+                        case 4:
+                            status = "confirmed!";
+                            break;
+                        case 6:
+                            status = "canceled.";
+                            break;
+                        default:
+                            status = "failed.";
+                            break;
+                    }
+                    const notificationMessage = `Swap from ${swap.sendAmount} ${swap.sendToken} to ${swap.receiveAmount} ${swap.receiveToken} ${status}`;
                     (window as any).ipcRenderer.sendSync("notify", notificationMessage);
                 }
             }

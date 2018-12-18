@@ -283,7 +283,8 @@ button span {
     color: #ca954a;
 }
 
-.swaps--status.failed {
+.swaps--status.failed,
+.swaps--status.canceled {
     background-color: #fdf1f2;
     color: #bf2827;
 }
@@ -291,6 +292,11 @@ button span {
 .swaps--status.confirmed {
     background-color: #edf9da;
     color: #6d9835;
+}
+
+.swaps--status.unknown {
+    background-color: #f5f5f5;
+    color: #666;
 }
 
 .swaps .error {
@@ -405,7 +411,7 @@ button span {
     margin-top: 5px;
 }
 
-.swap--input {
+.swap--inputs {
     margin-top: 10px;
 }
 

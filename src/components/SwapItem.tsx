@@ -24,11 +24,16 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
                 break;
             case 3:
             case 5:
-            case 6:
                 status = "Failed";
                 break;
             case 4:
                 status = "Confirmed";
+                break;
+            case 6:
+                status = "Canceled";
+                break;
+            default:
+                status = "Unknown";
                 break;
         }
         return (
