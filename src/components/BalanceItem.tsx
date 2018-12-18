@@ -30,7 +30,7 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
         const { token, amount, address } = this.props;
         const { copied } = this.state;
         return (
-            <div className="balances--item">
+            <div className="balances--item" onClick={this.handleWithdraw}>
                 <div className="balances--token">
                     <img src={getLogo(token)} />
                     <p>{token}</p>
@@ -39,9 +39,12 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
                     {/* Show at least 2 decimal places */}
                     <p>{amount.toFixed(Math.max(2, (amount.toString().split(".")[1] || []).length))}</p>
                 </div>
-                <div className="balances--address">
+                <div className="balances--address" onClick={this.consumeClick}>
                     <CopyToClipboard text={address} onCopy={this.handleCopy.bind(this, address)}>
-                        <p>{copied === address ? "Copied" : `${address.substring(0, 8)}...${address.slice(-5)}`}</p>
+                        {copied === address ?
+                            <p>Copied!</p> :
+                            <p className="address">{`${address.substring(0, 8)}...${address.slice(-8)}`}</p>
+                        }
                     </CopyToClipboard>
                 </div>
                 <div className="balances--transfer" onClick={this.handleWithdraw} />
@@ -55,6 +58,10 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
         setTimeout(() => {
             this.setState({ copied: "" });
         }, 1000);
+    }
+
+    private consumeClick(e: React.MouseEvent<HTMLDivElement>): void {
+        e.stopPropagation();
     }
 
     private handleWithdraw(): void {
