@@ -122,12 +122,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         try {
             await submitWithdraw(request, password, { network });
             this.props.setWithdrawRequest(null);
+            (window as any).ipcRenderer.sendSync("notify", `${amount} ${withdrawRequest.token} transfer successful.`);
         } catch (e) {
             console.error(e);
             this.setState({ error: `There was an error submitting your request. ${e}` });
         }
-
-        (window as any).ipcRenderer.sendSync("notify", `${amount} ${withdrawRequest.token} transfer successful.`);
         this.setState({ loading: false });
     }
 
