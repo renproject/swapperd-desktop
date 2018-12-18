@@ -53,7 +53,6 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
     }
 
     private handleCopy(address: string): void {
-        console.log(address);
         this.setState({ copied: address });
         setTimeout(() => {
             this.setState({ copied: "" });

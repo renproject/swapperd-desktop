@@ -40,11 +40,13 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }).length === 0;
                 });
                 for (const swap of notPending) {
-                    console.log("----------");
-                    console.log(swap);
-                    console.log("----------");
+                    // Retrieve the new status of the swap.
+                    const newSwap = swaps.swaps.find(x => x.id === swap.id);
+                    if (!newSwap) {
+                        continue;
+                    }
                     let status;
-                    switch (swap.status) {
+                    switch (newSwap.status) {
                         case 4:
                             status = "confirmed!";
                             break;
@@ -55,7 +57,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                             status = "failed.";
                             break;
                     }
-                    const notificationMessage = `Swap from ${swap.sendAmount} ${swap.sendToken} to ${swap.receiveAmount} ${swap.receiveToken} ${status}`;
+                    const notificationMessage = `Swap from ${newSwap.sendAmount} ${newSwap.sendToken} to ${newSwap.receiveAmount} ${newSwap.receiveToken} ${status}`;
                     (window as any).ipcRenderer.sendSync("notify", notificationMessage);
                 }
             }

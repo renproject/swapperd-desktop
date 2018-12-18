@@ -60,7 +60,6 @@ class App extends React.Component<{}, IAppState> {
         // Attach event to swap
         (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
             try {
-                console.log(args[0]);
                 const network = args[1] ? args[1] : this.state.network;
                 const origin = args[2] ? args[2] : this.state.origin;
                 this.setState({ swapDetails: args[0], network, origin });

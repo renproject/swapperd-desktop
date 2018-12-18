@@ -129,7 +129,6 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
             url: `${swapperEndpoint(options.network)}/info`,
         });
         const info: IInfoResponse = response.data;
-        console.log(JSON.stringify(info));
         if (info.bootloaded) {
             return "unlocked";
         } else {
