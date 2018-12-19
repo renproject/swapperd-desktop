@@ -257,6 +257,12 @@ button span {
     background-color: #fafafa;
 }
 
+.swaps--item .time-indicator {
+    background-color: #ca954a;
+    height: 2px;
+    margin-left: auto;
+}
+
 .swaps--details {
     display: flex;
     justify-content: space-between;

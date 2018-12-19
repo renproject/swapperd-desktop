@@ -89,11 +89,25 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                         {status === "Pending" && swapItem.timeLock !== undefined && <div>Expires on {moment.unix(swapItem.timeLock).format("MMM DD, YYYY [at] HH:mm")}</div>}
                     </div>}
                 </div>
+                {status === "Pending" && <div className="time-indicator" style={{ width: `${this.percentageUntilExpired()}%` }} />}
             </div>
         );
     }
 
     private handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
         this.setState({ expanded: !this.state.expanded });
+    }
+
+    private percentageUntilExpired = (): number => {
+        const { swapItem } = this.props;
+        if (swapItem.timeLock === undefined) {
+            return 0;
+        }
+        const now = Date.now() / 1000;
+        const past = now - swapItem.timestamp;
+        const future = swapItem.timeLock - now;
+        const percent = Math.floor(past / (past + future) * 100);
+        const remaining = 100 - percent;
+        return remaining;
     }
 }
