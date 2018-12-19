@@ -51,7 +51,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                         <>
                             <div className="withdraw--balance">
                                 <img src={getLogo(withdrawRequest.token)} />
-                                <p>Available: {this.getAvailable().toString()} {withdrawRequest.token}</p>
+                                <p>Available: {this.getAvailable().toFixed()} {withdrawRequest.token}</p>
                             </div>
                             <div className="withdraw--inputs">
                                 <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
