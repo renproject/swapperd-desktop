@@ -35,11 +35,12 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
                 <Banner title="Wallet is locked" />
                 <div className="account">
                     {!loading ?
-                        <>
+                        <form onSubmit={this.handleSubmit}>
                             <input type="password" name="password" placeholder="Password" onChange={this.handleInput} />
-                            <button disabled={submitting} onClick={this.handleSubmit}><span>Unlock</span></button>
+                            <input type="submit" style={{ display: "none", visibility: "hidden" }} />
+                            <button type="submit" disabled={submitting}><span>Unlock</span></button>
                             {error ? <p className="error">{error}</p> : null}
-                        </>
+                        </form>
                         :
                         <Loading />
                     }
@@ -53,7 +54,8 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private async handleSubmit(): Promise<void> {
+    private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault();
         const { password } = this.state;
         this.setState({ submitting: true });
         const unlocked = await bootload(password);

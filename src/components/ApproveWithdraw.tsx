@@ -57,10 +57,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                 <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
                                 <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} />
                                 {gettingPassword ?
-                                    <>
+                                    <form onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
-                                        <button onClick={this.onAccept}><span>Accept</span></button>
-                                    </>
+                                        <input type="submit" style={{ display: "none", visibility: "hidden" }} />
+                                        <button type="submit"><span>Accept</span></button>
+                                    </form>
                                     :
                                     <button onClick={this.onWithdraw}><span>Transfer</span></button>
                                 }
@@ -108,7 +109,9 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         }
     }
 
-    private async onAccept(): Promise<void> {
+    private async onAccept(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault();
+
         const { withdrawRequest, network } = this.props;
         const { password, to, amount } = this.state;
         this.setState({ error: null, loading: true });

@@ -67,8 +67,11 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                     </div>
                     {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toFixed()}%)`}</p>}
                     <div className="swap--inputs">
-                        <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
-                        <button onClick={this.onAccept} disabled={loading}><span>Swap</span></button>
+                        <form onSubmit={this.onAccept}>
+                            <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
+                            <input type="submit" style={{ display: "none", visibility: "hidden" }} />
+                            <button type="submit" disabled={loading}><span>Swap</span></button>
+                        </form>
                     </div>
                     {error ? <p className="error">{error}</p> : null}
                 </div>
@@ -81,7 +84,9 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private async onAccept(): Promise<void> {
+    private async onAccept(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+        event.preventDefault();
+
         const { swapDetails, network } = this.props;
         const { password } = this.state;
         this.setState({ error: null, loading: true });
