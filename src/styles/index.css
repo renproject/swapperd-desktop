@@ -246,6 +246,9 @@ button span {
 
 .swaps--item {
     border-bottom: 1px solid #ccc;
+}
+
+.swaps--item .swaps--block {
     padding: 10px;
 }
 
