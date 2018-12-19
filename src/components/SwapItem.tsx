@@ -86,6 +86,7 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                     </div>
                     {this.state.expanded && <div className="swaps--extra">
                         <p>Swap ID: {swapItem.id}</p>
+                        {status === "Pending" && swapItem.timeLock !== undefined && <div>Expires on {moment.unix(swapItem.timeLock).format("MMM DD, YYYY [at] HH:mm")}</div>}
                     </div>}
                 </div>
             </div>
