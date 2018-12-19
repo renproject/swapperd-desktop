@@ -54,7 +54,7 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
                             <>
                                 {Object.keys(swapItem.receiveCost).map((key) => {
                                     if (key === swapItem.receiveToken) {
-                                        const receiveAmount = new BigNumber(swapItem.receiveAmount).plus(new BigNumber(swapItem.receiveCost[key])).toFixed();
+                                        const receiveAmount = new BigNumber(swapItem.receiveAmount).minus(new BigNumber(swapItem.receiveCost[key])).toFixed();
                                         return <p key={key}>+{receiveAmount} {key}</p>;
                                     }
                                     return;
