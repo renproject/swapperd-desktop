@@ -37,7 +37,7 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
                 </div>
                 <div className="balances--amount">
                     {/* Show at least 2 decimal places */}
-                    <p>{amount.toFixed(Math.max(2, (amount.toString().split(".")[1] || []).length))}</p>
+                    <p>{amount.toFixed(Math.max(2, (amount.toFixed().split(".")[1] || []).length))}</p>
                 </div>
                 <div className="balances--address" onClick={this.consumeClick}>
                     <CopyToClipboard text={address} onCopy={this.handleCopy.bind(this, address)}>

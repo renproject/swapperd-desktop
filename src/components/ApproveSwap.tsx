@@ -58,14 +58,14 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                     <div className="swap--details">
                         <div>
                             <img src={getLogo(swapDetails.sendToken)} />
-                            <p>{readableSendAmount.toString()} {swapDetails.sendToken}</p>
+                            <p>{readableSendAmount.toFixed()} {swapDetails.sendToken}</p>
                         </div>
                         <div>
                             <img src={getLogo(swapDetails.receiveToken)} />
-                            <p>{(readableReceiveAmount.minus(fees)).toString()} {swapDetails.receiveToken}</p>
+                            <p>{(readableReceiveAmount.minus(fees)).toFixed()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
-                    {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toString()}%)`}</p>}
+                    {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toFixed()}%)`}</p>}
                     <div className="swap--inputs">
                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                         <button onClick={this.onAccept} disabled={loading}><span>Swap</span></button>
