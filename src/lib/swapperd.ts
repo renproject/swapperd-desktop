@@ -59,6 +59,8 @@ export interface ISwapItem {
     receiveToken: string;
     sendAmount: string;
     receiveAmount: string;
+    sendCost: Map<string, string>;
+    receiveCost: Map<string, string>;
     timestamp: number;
     status: number;
 }
@@ -152,11 +154,27 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
             if (swap.sendToken === undefined || swap.receiveToken === undefined) {
                 continue;
             }
-            const sendDecimal = decimals.get(swap.sendToken);
-            const receiveDecimal = decimals.get(swap.receiveToken);
+            let sendDecimal = decimals.get(swap.sendToken);
+            let receiveDecimal = decimals.get(swap.receiveToken);
             if (sendDecimal !== undefined && receiveDecimal !== undefined) {
                 swap.sendAmount = new BigNumber(swap.sendAmount).div(new BigNumber(10).pow(sendDecimal)).toFixed();
                 swap.receiveAmount = new BigNumber(swap.receiveAmount).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
+            }
+            for (const sendToken in swap.sendCost) {
+                if (swap.sendCost.hasOwnProperty(sendToken)) {
+                    sendDecimal = decimals.get(sendToken);
+                    if (sendDecimal) {
+                        swap.sendCost[sendToken] = new BigNumber(swap.sendCost[sendToken]).div(new BigNumber(10).pow(sendDecimal)).toFixed();
+                    }
+                }
+            }
+            for (const receiveToken in swap.receiveCost) {
+                if (swap.receiveCost.hasOwnProperty(receiveToken)) {
+                    receiveDecimal = decimals.get(receiveToken);
+                    if (receiveDecimal) {
+                        swap.receiveCost[receiveToken] = new BigNumber(swap.receiveCost[receiveToken]).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
+                    }
+                }
             }
         }
     }

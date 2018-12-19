@@ -37,7 +37,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         const { useMnemonic, loading, error } = this.state;
         return (
             <>
-                <Banner title={useMnemonic ? "Restore account" : "Create account"} />
+                <Banner title={useMnemonic ? "Import account" : "Create account"} />
                 <div className="account">
                     {!loading ?
                         <>
@@ -46,9 +46,9 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             }
                             <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                             <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
-                            <button onClick={this.handleSubmit}><span>{useMnemonic ? "Restore" : "Create"} account</span></button>
+                            <button onClick={this.handleSubmit}><span>{useMnemonic ? "Import" : "Create"} account</span></button>
                             {!useMnemonic ?
-                                <a onClick={this.restoreUsingMnemonic.bind(this, true)}>Restore using a mnemonic instead</a>
+                                <a onClick={this.restoreUsingMnemonic.bind(this, true)}>Import using a mnemonic instead</a>
                                 :
                                 <a onClick={this.restoreUsingMnemonic.bind(this, false)}>Create new account instead</a>
                             }

@@ -1,6 +1,7 @@
 import * as moment from "moment";
 import * as React from "react";
 
+import BigNumber from "bignumber.js";
 import { ISwapItem } from "src/lib/swapperd";
 
 interface ISwapItemProps {
@@ -44,8 +45,35 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
                         <span className={`swaps--status ${status ? status.toLowerCase() : ""}`}>{status}</span>
                     </div>
                     <div>
-                        <p>+{swapItem.receiveAmount} {swapItem.receiveToken}</p>
-                        <p>-{swapItem.sendAmount} {swapItem.sendToken}</p>
+                        {status === "Pending" ?
+                            <>
+                                <p>+{swapItem.receiveAmount} {swapItem.receiveToken}</p>
+                                <p>-{swapItem.sendAmount} {swapItem.sendToken}</p>
+                            </>
+                            :
+                            <>
+                                {Object.keys(swapItem.receiveCost).map((key) => {
+                                    if (key === swapItem.receiveToken) {
+                                        const receiveAmount = new BigNumber(swapItem.receiveAmount).plus(new BigNumber(swapItem.receiveCost[key])).toFixed();
+                                        return <p key={key}>+{receiveAmount} {key}</p>;
+                                    }
+                                    return;
+                                })}
+                                {Object.keys(swapItem.sendCost).map((key) => {
+                                    if (key === swapItem.sendToken) {
+                                        const sendAmount = new BigNumber(swapItem.sendAmount).plus(new BigNumber(swapItem.sendCost[key])).toFixed();
+                                        return <p key={key}>-{sendAmount} {key}</p>;
+                                    }
+                                    return <p key={key}>-{swapItem.sendCost[key]} {key}</p>;
+                                })}
+                                {Object.keys(swapItem.receiveCost).map((key) => {
+                                    if (key !== swapItem.receiveToken) {
+                                        return <p key={key}>-{swapItem.receiveCost[key]} {key}</p>;
+                                    }
+                                    return;
+                                })}
+                            </>
+                        }
                     </div>
                 </div>
             </div>

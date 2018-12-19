@@ -141,7 +141,7 @@ class App extends React.Component<{}, IAppState> {
 
         if (swapDetails) {
             return <div className="app">
-                <Header network={this.state.network} setNetwork={this.setNetwork} />
+                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <ApproveSwap
                     origin={this.state.origin}
                     network={this.state.network}
@@ -188,7 +188,7 @@ class App extends React.Component<{}, IAppState> {
 
     private accountCreated(mnemonic: string, unlocked: boolean): void {
         this.setState({ accountExists: true, mnemonic, unlocked });
-        (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "restored successfully!" : "creation successful!"}`);
+        (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`);
     }
 
     private resetSwapDetails(): void {

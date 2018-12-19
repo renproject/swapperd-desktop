@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import BigNumber from "bignumber.js";
 import { ISwapItem, ISwapsResponse } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
@@ -57,7 +58,9 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                             status = "failed.";
                             break;
                     }
-                    const notificationMessage = `Swap from ${newSwap.sendAmount} ${newSwap.sendToken} to ${newSwap.receiveAmount} ${newSwap.receiveToken} ${status}`;
+                    const sendAmount = new BigNumber(newSwap.sendAmount).plus(new BigNumber(newSwap.sendCost[newSwap.sendToken])).toFixed();
+                    const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(newSwap.receiveCost[newSwap.receiveToken])).toFixed();
+                    const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}`;
                     (window as any).ipcRenderer.sendSync("notify", notificationMessage);
                 }
             }
