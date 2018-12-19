@@ -8,9 +8,16 @@ interface ISwapItemProps {
     swapItem: ISwapItem;
 }
 
-export class SwapItem extends React.Component<ISwapItemProps, {}> {
+interface ISwapItemState {
+    expanded: boolean;
+}
+
+export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
     constructor(props: ISwapItemProps) {
         super(props);
+        this.state = {
+            expanded: false,
+        };
     }
 
     public render(): JSX.Element {
@@ -38,7 +45,7 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
                 break;
         }
         return (
-            <div className="swaps--item">
+            <div className="swaps--item" onClick={this.handleClick}>
                 <div className="swaps--block">
                     <div className="swaps--details">
                         <div>
@@ -77,8 +84,15 @@ export class SwapItem extends React.Component<ISwapItemProps, {}> {
                             }
                         </div>
                     </div>
+                    {this.state.expanded && <div className="swaps--extra">
+                        <p>Swap ID: {swapItem.id}</p>
+                    </div>}
                 </div>
             </div>
         );
+    }
+
+    private handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        this.setState({ expanded: !this.state.expanded });
     }
 }
