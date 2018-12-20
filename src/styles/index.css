@@ -277,7 +277,7 @@ button span {
     align-items: flex-end;
 }
 
-.swaps--details > div:last-child > p:first-child {
+.swaps--details > div:last-child > p.large {
     font-size: 16px;
 }
 

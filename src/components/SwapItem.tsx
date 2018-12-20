@@ -58,28 +58,46 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                                 <p>-{swapItem.sendAmount} {swapItem.sendToken}</p>
                             </>
                             :
-                            <>
-                                {Object.keys(swapItem.receiveCost).map((key) => {
-                                    if (key === swapItem.receiveToken) {
-                                        const receiveAmount = new BigNumber(swapItem.receiveAmount).minus(new BigNumber(swapItem.receiveCost[key])).toFixed();
-                                        return <p key={key}>+{receiveAmount} {key}</p>;
-                                    }
-                                    return;
-                                })}
-                                {Object.keys(swapItem.sendCost).map((key) => {
+                            status === "Failed" ?
+                                Object.keys(swapItem.sendCost).map((key) => {
                                     if (key === swapItem.sendToken) {
-                                        const sendAmount = new BigNumber(swapItem.sendAmount).plus(new BigNumber(swapItem.sendCost[key])).toFixed();
-                                        return <p key={key}>-{sendAmount} {key}</p>;
+                                        const sendAmount = new BigNumber(swapItem.sendAmount).plus(new BigNumber(swapItem.sendCost[key]));
+                                        if (sendAmount.isZero()) {
+                                            return;
+                                        }
+                                        return <p key={key}>-{sendAmount.toFixed()} {key}</p>;
                                     }
                                     return <p key={key}>-{swapItem.sendCost[key]} {key}</p>;
-                                })}
-                                {Object.keys(swapItem.receiveCost).map((key) => {
-                                    if (key !== swapItem.receiveToken) {
-                                        return <p key={key}>-{swapItem.receiveCost[key]} {key}</p>;
-                                    }
-                                    return;
-                                })}
-                            </>
+                                })
+                                :
+                                <>
+                                    {Object.keys(swapItem.receiveCost).map((key) => {
+                                        if (key === swapItem.receiveToken) {
+                                            const receiveAmount = new BigNumber(swapItem.receiveAmount).minus(new BigNumber(swapItem.receiveCost[key]));
+                                            if (receiveAmount.isZero()) {
+                                                return;
+                                            }
+                                            return <p className="large" key={key}>+{receiveAmount.toFixed()} {key}</p>;
+                                        }
+                                        return;
+                                    })}
+                                    {Object.keys(swapItem.sendCost).map((key) => {
+                                        if (key === swapItem.sendToken) {
+                                            const sendAmount = new BigNumber(swapItem.sendAmount).plus(new BigNumber(swapItem.sendCost[key]));
+                                            if (sendAmount.isZero()) {
+                                                return;
+                                            }
+                                            return <p key={key}>-{sendAmount.toFixed()} {key}</p>;
+                                        }
+                                        return <p key={key}>-{swapItem.sendCost[key]} {key}</p>;
+                                    })}
+                                    {Object.keys(swapItem.receiveCost).map((key) => {
+                                        if (key !== swapItem.receiveToken) {
+                                            return <p key={key}>-{swapItem.receiveCost[key]} {key}</p>;
+                                        }
+                                        return;
+                                    })}
+                                </>
                         }
                     </div>
                 </div>
