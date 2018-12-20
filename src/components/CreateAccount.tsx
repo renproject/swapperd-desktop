@@ -78,6 +78,10 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             this.setState({ error: "Please enter a valid username." });
         }
         this.setState({ loading: true });
+        this.createAccount();
+    }
+
+    private createAccount = async (): Promise<void> => {
         setTimeout(async () => {
             const { mnemonic, username, password } = this.state;
             const newMnemonic = (window as any).ipcRenderer.sendSync("create-account", username, password, mnemonic);
@@ -88,6 +92,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             }
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(mnemonic === "" ? newMnemonic : "", unlocked);
+            this.setState({ loading: false });
         });
     }
 
