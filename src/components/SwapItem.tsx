@@ -2,7 +2,9 @@ import * as moment from "moment";
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
-import { ISwapItem } from "src/lib/swapperd";
+
+import { naturalTime } from "../lib/naturalTime";
+import { ISwapItem } from "../lib/swapperd";
 
 interface ISwapItemProps {
     swapItem: ISwapItem;
@@ -90,7 +92,10 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                         <h3>Details</h3>
                         <p>Swap ID: {swapItem.id}</p>
                         {status === "Pending" && swapItem.timeLock !== undefined &&
-                            <p>Expiry: {moment.unix(swapItem.timeLock).format("MMM DD, YYYY [at] HH:mm")}</p>
+                            <p>Expires in {naturalTime(swapItem.timeLock, { showingSeconds: true, message: "", suffix: "", countDown: true })}</p>
+                        }
+                        {status === "Expired" && swapItem.timeLock !== undefined &&
+                            <p>Expired {naturalTime(swapItem.timeLock, { showingSeconds: true, message: "", suffix: "ago", countDown: false })}</p>
                         }
                     </div>
                 }
