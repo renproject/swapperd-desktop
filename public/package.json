@@ -30,13 +30,14 @@
     "main": "main.js",
     "scripts": {
         "start": "npx ./node_modules/electron/cli.js .",
-        "build": "npm run build-mac; npm run build-win",
+        "build": "npm run build-mac; npm run build-win; npm run build-linux",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
         "create-installer-mac": "node installers/mac/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-darwin-x64 --icon=assets/icons/mac/icon.icns --clean",
         "build-mac": "npm run package-mac && npm run create-installer-mac",
         "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --out=${npm_package_config_outputDir} --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"${npm_package_name}\"",
         "create-installer-win": "node installers/windows/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-win32-x64 --licenseFile ../LICENSE --publisher \"Ren Inc.\" --clean",
         "build-win": "npm run package-win && npm run create-installer-win",
-        "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns"
+        "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns --out=${npm_package_config_outputDir}",
+        "build-linux": "zip -r ${npm_package_config_outputDir}/${npm_package_config_appName}Linux.zip ${npm_package_config_outputDir}/${npm_package_config_appName}-linux-x64; rm -rf ${npm_package_config_outputDir}/${npm_package_config_appName}-linux-x64"
     }
 }
