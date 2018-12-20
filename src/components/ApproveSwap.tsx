@@ -54,7 +54,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
                 <div className="swap">
-                    <p>{origin.replace(/(^\w+:|^)\/\//, "")} is proposing the following swap on {NETWORKS[network]}:</p>
+                    <p>{origin} is proposing the following swap on {NETWORKS[network]}:</p>
                     <div className="swap--details">
                         <div>
                             <img src={getLogo(swapDetails.sendToken)} />
