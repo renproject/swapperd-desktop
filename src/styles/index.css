@@ -209,7 +209,6 @@ button span {
 
 .balances--amount {
     width: 100px;
-    overflow-x: scroll;
 }
 
 .balances--amount p {
