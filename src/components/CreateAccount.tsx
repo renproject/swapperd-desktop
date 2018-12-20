@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { bootload } from "src/lib/swapperd";
+import { bootload, swapperdReady } from "src/lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
@@ -81,7 +81,11 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         setTimeout(async () => {
             const { mnemonic, username, password } = this.state;
             const newMnemonic = (window as any).ipcRenderer.sendSync("create-account", username, password, mnemonic);
+            await swapperdReady();
             const unlocked = await bootload(password);
+            if (!unlocked) {
+                throw new Error("Bootloading failed");
+            }
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(mnemonic === "" ? newMnemonic : "", unlocked);
         });

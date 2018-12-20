@@ -3,6 +3,8 @@ import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
 
+import { sleep } from "./sleep";
+
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
 
@@ -141,6 +143,18 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
         console.error(e);
         return "none";
     }
+}
+
+export async function swapperdReady(): Promise<boolean> {
+    let status;
+    do {
+        status = await fetchAccountStatus({ network: MAINNET_REF });
+        if (status !== "none") {
+            return true;
+        }
+        sleep(1000);
+    } while (status === "none");
+    return false;
 }
 
 export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
