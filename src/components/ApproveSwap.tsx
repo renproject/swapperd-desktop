@@ -62,7 +62,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                         </div>
                         <div>
                             <img src={getLogo(swapDetails.receiveToken)} />
-                            <p>{(readableReceiveAmount.minus(fees)).toFixed()} {swapDetails.receiveToken}</p>
+                            <p>{readableReceiveAmount.toFixed()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
                     {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toFixed()}%)`}</p>}
