@@ -139,6 +139,9 @@ button span {
 }
 
 .header select {
+    font-size: 12px;
+    font-weight: 500;
+    text-align-last: center;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 15px;
