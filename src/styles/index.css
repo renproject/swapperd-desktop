@@ -17,8 +17,13 @@ a {
 }
 
 p,
-h1 {
+h1,
+h3 {
     margin: 0;
+}
+
+h3 {
+    font-weight: 500;
 }
 
 input,
@@ -249,24 +254,14 @@ button span {
     cursor: pointer;
 }
 
-.swaps--item .swaps--block {
-    padding: 10px;
-}
-
 .swaps--item:hover {
     background-color: #fafafa;
-}
-
-.swaps--item .time-indicator {
-    background-color: #ca954a;
-    height: 2px;
-    margin-left: auto;
 }
 
 .swaps--details {
     display: flex;
     justify-content: space-between;
-    margin-top: 5px;
+    padding: 10px;
 }
 
 .swaps--details > div {
@@ -287,9 +282,19 @@ button span {
     margin-top: 5px;
 }
 
-.swaps--item .swaps--extra {
-    padding-top: 10px;
-    font-size: 11px;
+.swaps--extra {
+    background-color: #fafafa;
+    padding: 10px;
+}
+
+.swaps--extra h3 {
+    margin-bottom: 10px;
+}
+
+.swaps--expiry {
+    background-color: #ca954a;
+    height: 2px;
+    margin-left: auto;
 }
 
 .swaps--status {

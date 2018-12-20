@@ -78,7 +78,7 @@ class App extends React.Component<{}, IAppState> {
                     this.setState({ accountExists, unlocked, });
                 }
             } catch (e) {
-                console.error(e);
+                console.error(e.response.data.error || e);
             }
             this.callGetAccountTimeout = setTimeout(callGetAccount, 2 * 1000);
         };
@@ -107,7 +107,7 @@ class App extends React.Component<{}, IAppState> {
                     const swaps = await getSwaps({ network: this.state.network });
                     this.setState({ swaps });
                 } catch (e) {
-                    console.error(e);
+                    console.error(e.response.data.error || e);
                 }
             }
             this.callGetSwapsTimeout = setTimeout(callGetSwaps, 5 * 1000);
