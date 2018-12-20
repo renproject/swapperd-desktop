@@ -63,6 +63,7 @@ export interface ISwapItem {
     receiveCost: Map<string, string>;
     timestamp: number;
     status: number;
+    timeLock?: number;
 }
 
 export interface ISwapsResponse {

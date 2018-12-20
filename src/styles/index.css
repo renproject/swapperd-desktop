@@ -246,11 +246,21 @@ button span {
 
 .swaps--item {
     border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.swaps--item .swaps--block {
     padding: 10px;
 }
 
-.swaps--item:first-child {
-    padding-top: 0;
+.swaps--item:hover {
+    background-color: #fafafa;
+}
+
+.swaps--item .time-indicator {
+    background-color: #ca954a;
+    height: 2px;
+    margin-left: auto;
 }
 
 .swaps--details {
@@ -275,6 +285,11 @@ button span {
 
 .swaps--details > div > * + * {
     margin-top: 5px;
+}
+
+.swaps--item .swaps--extra {
+    padding-top: 10px;
+    font-size: 11px;
 }
 
 .swaps--status {
