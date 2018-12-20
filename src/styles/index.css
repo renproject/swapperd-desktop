@@ -312,7 +312,8 @@ button span {
 }
 
 .swaps--status.failed,
-.swaps--status.canceled {
+.swaps--status.canceled,
+.swaps--status.expired {
     background-color: #fdf1f2;
     color: #bf2827;
 }
