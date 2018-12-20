@@ -59,7 +59,7 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                     <div>
                         {status === "Pending" ?
                             <>
-                                <p>+{swapItem.receiveAmount} {swapItem.receiveToken}</p>
+                                <p className="large">+{swapItem.receiveAmount} {swapItem.receiveToken}</p>
                                 <p>-{swapItem.sendAmount} {swapItem.sendToken}</p>
                             </>
                             :
