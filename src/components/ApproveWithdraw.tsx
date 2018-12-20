@@ -54,8 +54,8 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                 <p>Available: {this.getAvailable().toFixed()} {withdrawRequest.token}</p>
                             </div>
                             <div className="withdraw--inputs">
-                                <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
                                 <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} />
+                                <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
                                 {gettingPassword ?
                                     <form onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
