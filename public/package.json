@@ -38,6 +38,7 @@
         "create-installer-win": "node installers/windows/createinstaller.js --sourcePath=${npm_package_config_outputDir}/${npm_package_name}-win32-x64 --licenseFile ../LICENSE --publisher \"Ren Inc.\" --clean",
         "build-win": "npm run package-win && npm run create-installer-win",
         "package-linux": "electron-packager . ${npm_package_config_appName} --platform=linux --arch=x64 --icon=Icon.icns --out=${npm_package_config_outputDir}",
-        "build-linux": "zip -r ${npm_package_config_outputDir}/${npm_package_config_appName}Linux.zip ${npm_package_config_outputDir}/${npm_package_config_appName}-linux-x64; rm -rf ${npm_package_config_outputDir}/${npm_package_config_appName}-linux-x64"
+        "build-linux": "npm run package-linux && npm run create-installer-linux",
+        "create-installer-linux": "cd ${npm_package_config_outputDir}/${npm_package_config_appName}-linux-x64/; zip -r ../${npm_package_config_appName}Linux.zip *; cd ..; rm -rf ${npm_package_config_appName}-linux-x64"
     }
 }
