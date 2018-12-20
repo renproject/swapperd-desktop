@@ -55,7 +55,7 @@ mb.on("ready", function ready() {
             label: "Quit",
             accelerator: "Command+Q",
             click: () => {
-                app.quit();
+                mb.app.quit();
             }
         }
         ]
@@ -113,11 +113,18 @@ mb.on("ready", function ready() {
     });
 });
 
-if (process.env.NODE_ENV == "development") {
-    mb.on("after-create-window", () => {
+mb.on("after-create-window", function () {
+    if (process.env.NODE_ENV == "development") {
         mb.window.openDevTools();
-    });
-}
+    }
+    const contextMenu = Menu.buildFromTemplate([
+        { type: "separator" },
+        { label: "Quit Swapperd", click: () => { mb.app.quit(); } }
+    ])
+    mb.tray.on("right-click", () => {
+        mb.tray.popUpContextMenu(contextMenu);
+    })
+});
 
 const swapperdEndpoint = (network) => {
     if (!network) {
