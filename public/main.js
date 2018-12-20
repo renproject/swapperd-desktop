@@ -56,7 +56,7 @@ mb.on("ready", function ready() {
             label: "Quit",
             accelerator: "Command+Q",
             click: () => {
-                expressApp.quit()
+                app.quit();
             }
         }
         ]
@@ -114,9 +114,11 @@ mb.on("ready", function ready() {
     });
 });
 
-mb.on("after-create-window", () => {
-    mb.window.openDevTools();
-});
+if (process.env.NODE_ENV == "development") {
+    mb.on("after-create-window", () => {
+        mb.window.openDevTools();
+    });
+}
 
 const swapperdEndpoint = (network) => {
     if (!network) {
