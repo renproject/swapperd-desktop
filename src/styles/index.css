@@ -264,17 +264,17 @@ button:hover {
 
 .swaps--item {
     border-bottom: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.swaps--item:hover {
-    background-color: #fafafa;
 }
 
 .swaps--details {
     display: flex;
     justify-content: space-between;
     padding: 10px;
+    cursor: pointer;
+}
+
+.swaps--details:hover {
+    background-color: #fafafa;
 }
 
 .swaps--details > div {

@@ -50,8 +50,8 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                 break;
         }
         return (
-            <div className="swaps--item" onClick={this.handleClick}>
-                <div className="swaps--details">
+            <div className="swaps--item">
+                <div className="swaps--details" onClick={this.handleClick}>
                     <div>
                         <p>{timestamp}</p>
                         <span className={`swaps--status ${status ? status.toLowerCase() : ""}`}>{status}</span>
@@ -113,10 +113,10 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                     <div className="swaps--extra">
                         <h3>Details</h3>
                         <p>Swap ID: {swapItem.id}</p>
-                        {status === "Pending" && swapItem.timeLock !== undefined &&
+                        {status === "Pending" && swapItem.timeLock !== undefined && swapItem.timeLock !== 0 &&
                             <p>Expires in {naturalTime(swapItem.timeLock, { showingSeconds: true, message: "", suffix: "", countDown: true })}</p>
                         }
-                        {status === "Expired" && swapItem.timeLock !== undefined &&
+                        {status === "Expired" && swapItem.timeLock !== undefined && swapItem.timeLock !== 0 &&
                             <p>Expired {naturalTime(swapItem.timeLock, { showingSeconds: true, message: "", suffix: "ago", countDown: false })}</p>
                         }
                     </div>

@@ -25,8 +25,8 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
         const status = transferItem.confirmations < 1 ? "Pending" : "Confirmed";
         const feeToken = transferItem.token.blockchain === "bitcoin" ? "BTC" : "ETH";
         return (
-            <div className="swaps--item" onClick={this.handleClick}>
-                <div className="swaps--details">
+            <div className="swaps--item">
+                <div className="swaps--details" onClick={this.handleClick}>
                     <div>
                         <p>{timestamp}</p>
                         <span className={`swaps--status ${status ? status.toLowerCase() : ""}`}>{status}</span>
