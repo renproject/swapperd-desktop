@@ -15,7 +15,11 @@ const debInstallerOptions = {
     "64x64": "./assets/icons/png/64x64.png",
     "128x128": "./assets/icons/png/128x128.png",
     "256x256": "./assets/icons/png/256x256.png",
-  }
+  },
+  "categories": [
+    "Utility",
+    "Development"
+  ],
 };
 
 console.log(`Building from source directory: ${path.resolve(debInstallerOptions.src)}`);
