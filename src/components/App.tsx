@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { fetchAccountStatus, getBalances, getSwaps, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, MAINNET_REF } from "../lib/swapperd";
+import { fetchAccountStatus, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, MAINNET_REF } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -21,12 +21,13 @@ interface IAppState {
     balances: IBalances | null;
     balancesError: string | null;
     swaps: ISwapsResponse | null;
+    transfers: ITransfersResponse | null;
 }
 
 class App extends React.Component<{}, IAppState> {
     private callGetBalancesTimeout: NodeJS.Timer | undefined;
     private callGetAccountTimeout: NodeJS.Timer | undefined;
-    private callGetSwapsTimeout: NodeJS.Timer | undefined;
+    private callGetTransactionsTimeout: NodeJS.Timer | undefined;
 
     constructor(props: {}) {
         super(props);
@@ -41,6 +42,7 @@ class App extends React.Component<{}, IAppState> {
             balances: null,
             balancesError: null,
             swaps: null,
+            transfers: null,
         };
         this.setNetwork = this.setNetwork.bind(this);
         this.mnemonicSaved = this.mnemonicSaved.bind(this);
@@ -53,7 +55,7 @@ class App extends React.Component<{}, IAppState> {
         // Clear timeouts
         if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
         if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
-        if (this.callGetSwapsTimeout) { clearTimeout(this.callGetSwapsTimeout); }
+        if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
     }
 
     public async componentDidMount() {
@@ -78,7 +80,7 @@ class App extends React.Component<{}, IAppState> {
                     this.setState({ accountExists, unlocked, });
                 }
             } catch (e) {
-                console.error(e.response.data.error || e);
+                console.error(e.response && e.response.data.error || e);
             }
             this.callGetAccountTimeout = setTimeout(callGetAccount, 2 * 1000);
         };
@@ -101,22 +103,28 @@ class App extends React.Component<{}, IAppState> {
         };
         callGetBalances().catch(console.error);
 
-        const callGetSwaps = async () => {
+        const callGetTransactions = async () => {
             if (this.state.accountExists && this.state.unlocked) {
                 try {
                     const swaps = await getSwaps({ network: this.state.network });
                     this.setState({ swaps });
                 } catch (e) {
-                    console.error(e.response.data.error || e);
+                    console.error(e.response && e.response.data.error || e);
+                }
+                try {
+                    const transfers = await getTransfers({ network: this.state.network });
+                    this.setState({ transfers });
+                } catch (e) {
+                    console.error(e.response && e.response.data.error || e);
                 }
             }
-            this.callGetSwapsTimeout = setTimeout(callGetSwaps, 5 * 1000);
+            this.callGetTransactionsTimeout = setTimeout(callGetTransactions, 5 * 1000);
         };
-        callGetSwaps().catch(console.error);
+        callGetTransactions().catch(console.error);
     }
 
     public render(): JSX.Element {
-        const { mnemonic, unlocked, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps } = this.state;
+        const { mnemonic, unlocked, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps, transfers } = this.state;
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -167,7 +175,7 @@ class App extends React.Component<{}, IAppState> {
             return <div className="app">
                 <Header network={this.state.network} setNetwork={this.setNetwork} />
                 <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
-                <Swaps swaps={swaps} />
+                <Swaps swaps={swaps} transfers={transfers} />
             </div>;
         }
 
