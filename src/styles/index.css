@@ -245,7 +245,7 @@ button:hover {
 .tabs li.active {
     font-weight: 500;
     color: black;
-    border-bottom: 3px solid #001B3A;
+    border-bottom: 3px solid #006FE8;
 }
 
 .tabs li:not(.active) {
