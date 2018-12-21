@@ -68,8 +68,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                             status = "failed";
                             break;
                     }
-                    const sendAmount = new BigNumber(newSwap.sendAmount).plus(new BigNumber(newSwap.sendCost[newSwap.sendToken])).toFixed();
-                    const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(newSwap.receiveCost[newSwap.receiveToken])).toFixed();
+                    const sendCost = newSwap.sendCost[newSwap.sendToken] ? newSwap.sendCost[newSwap.sendToken] : 0;
+                    const receiveCost = newSwap.receiveCost[newSwap.receiveToken] ? newSwap.receiveCost[newSwap.receiveToken] : 0;
+                    const sendAmount = new BigNumber(newSwap.sendAmount).plus(new BigNumber(sendCost)).toFixed();
+                    const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(receiveCost)).toFixed();
                     const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}.`;
                     (window as any).ipcRenderer.sendSync("notify", notificationMessage);
                 }
