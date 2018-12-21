@@ -21,7 +21,7 @@ const debInstallerOptions = {
 console.log(`Building from source directory: ${path.resolve(debInstallerOptions.src)}`);
 
 console.log("Creating package (this may take a while)")
-const outputPackage = `${debInstallerOptions.dest}/${process.env.npm_package_name}_${process.env.npm_package_version}_${debInstallerOptions.arch}.deb`;
+const outputPackage = `${debInstallerOptions.dest}/${process.env.npm_package_productName}_${process.env.npm_package_version}_${debInstallerOptions.arch}.deb`;
 
 installer(debInstallerOptions)
   .then(() => {
