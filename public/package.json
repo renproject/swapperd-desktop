@@ -1,5 +1,6 @@
 {
     "name": "swapperd",
+    "description": "Swapperd Native Application for conducting Atomic Swaps.",
     "config": {
         "appName": "Swapperd",
         "outputDir": "../release-builds",

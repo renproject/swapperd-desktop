@@ -1,5 +1,6 @@
 {
     "name": "swapperd-native",
+    "description": "Swapperd Native Application for conducting Atomic Swaps.",
     "homepage": ".",
     "version": "0.1.0",
     "private": true,
