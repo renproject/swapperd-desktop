@@ -187,7 +187,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     private setNetwork(network: string): void {
-        this.setState({ network, balances: null, balancesError: "", swaps: null });
+        this.setState({ network, balances: null, balancesError: "", swaps: null, transfers: null });
     }
 
     private mnemonicSaved(): void {

@@ -60,10 +60,10 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                     <form onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
                                         <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                                        <button type="submit"><span>Accept</span></button>
+                                        <button type="submit">Accept</button>
                                     </form>
                                     :
-                                    <button onClick={this.onWithdraw}><span>Transfer</span></button>
+                                    <button onClick={this.onWithdraw}>Transfer</button>
                                 }
                             </div>
                             {error ? <p className="error">{error}</p> : null}

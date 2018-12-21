@@ -21,7 +21,7 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, {}> {
                 <div className="mnemonic">
                     <p>Please back-up the following 12 words securely. You can restore your account using these words and the account details you used to sign-up.</p>
                     <textarea disabled={true}>{mnemonic}</textarea>
-                    <button onClick={this.onAccept}><span>Continue</span></button>
+                    <button onClick={this.onAccept}>Continue</button>
                 </div>
             </>
         );

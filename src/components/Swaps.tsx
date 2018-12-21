@@ -129,9 +129,9 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                         }
                     </div>
                     :
-                    <div className="transfers">
+                    <div className="swaps">
                         {transfers !== null ?
-                            transfers.transfers !== null ?
+                            transfers.transfers !== null && transfers.transfers.length > 0 ?
                                 transfers.transfers.sort((a, b) => {
                                     // Sort by timestamp in descending order
                                     if (a.timestamp < b.timestamp) {

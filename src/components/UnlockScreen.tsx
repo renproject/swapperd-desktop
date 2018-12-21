@@ -38,7 +38,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
                         <form onSubmit={this.handleSubmit}>
                             <input type="password" name="password" placeholder="Password" onChange={this.handleInput} />
                             <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                            <button type="submit" disabled={submitting}><span>Unlock</span></button>
+                            <button type="submit" disabled={submitting}>Unlock</button>
                             {error ? <p className="error">{error}</p> : null}
                         </form>
                         :

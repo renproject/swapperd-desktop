@@ -46,7 +46,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             }
                             <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                             <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
-                            <button onClick={this.handleSubmit}><span>{useMnemonic ? "Import" : "Create"} account</span></button>
+                            <button onClick={this.handleSubmit}>{useMnemonic ? "Import" : "Create"} account</button>
                             {!useMnemonic ?
                                 <a onClick={this.restoreUsingMnemonic.bind(this, true)}>Import using a mnemonic instead</a>
                                 :
