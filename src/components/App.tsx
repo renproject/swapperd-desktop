@@ -161,7 +161,7 @@ class App extends React.Component<{}, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header network={this.state.network} setNetwork={this.setNetwork} />
+                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <ApproveWithdraw
                     network={this.state.network}
                     balances={balances}
