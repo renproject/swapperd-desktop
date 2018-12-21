@@ -8,7 +8,7 @@ const extract = require("extract-zip");
 
 var argv = require('minimist')(process.argv.slice(2));
 
-const appName = process.env.npm_package_config_appName;
+const appName = process.env.npm_package_productName;
 const appVersion = process.env.npm_package_version;
 const outputDir = process.env.npm_package_config_outputDir;
 const rootPath = path.join("./")

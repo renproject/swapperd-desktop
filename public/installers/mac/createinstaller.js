@@ -5,7 +5,7 @@ const path = require("path");
 var argv = require("minimist")(process.argv.slice(2));
 var outputDir = process.env.npm_package_config_outputDir;
 var name = process.env.npm_package_name;
-var appName = process.env.npm_package_config_appName;
+var appName = process.env.npm_package_productName;
 var appPath = `${argv.sourcePath}/${name}.app`;
 var outputDir = process.env.npm_package_config_outputDir;
 
