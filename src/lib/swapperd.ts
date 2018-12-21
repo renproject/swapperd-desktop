@@ -72,6 +72,24 @@ export interface ISwapsResponse {
     swaps: ISwapItem[];
 }
 
+export interface ITransferItem {
+    to: string;
+    from: string;
+    token: {
+        name: string;
+        blockchain: string;
+    };
+    value: string;
+    fee: string;
+    txHash: string;
+    confirmations: number;
+    timestamp: number;
+}
+
+export interface ITransfersResponse {
+    transfers: ITransferItem[];
+}
+
 export interface IInfoResponse {
     version: string;
     bootloaded: boolean;
@@ -195,6 +213,39 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
     }
 
     return swaps;
+}
+
+export async function getTransfers(options: IOptions): Promise<ITransfersResponse> {
+    const postResponse = await axios({
+        method: "GET",
+        url: `${swapperEndpoint(options.network)}/transfers`,
+    });
+
+    const transfers: ITransfersResponse = postResponse.data;
+    if (transfers.transfers !== null) {
+        for (const transfer of transfers.transfers) {
+            if (transfer.token.name === undefined) {
+                continue;
+            }
+            let decimal = decimals.get(transfer.token.name);
+            if (decimal !== undefined) {
+                transfer.value = new BigNumber(transfer.value).div(new BigNumber(10).pow(decimal)).toFixed();
+            }
+            switch (transfer.token.blockchain) {
+                case "bitcoin":
+                    decimal = decimals.get("BTC");
+                    break;
+                case "ethereum":
+                    decimal = decimals.get("ETH");
+                    break;
+            }
+            if (decimal !== undefined) {
+                transfer.fee = new BigNumber(transfer.fee).div(new BigNumber(10).pow(decimal)).toFixed();
+            }
+        }
+    }
+
+    return transfers;
 }
 
 export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password: string, options: IOptions) {

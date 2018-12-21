@@ -29,10 +29,12 @@ app.setLoginItemSettings({
     path: app.getPath("exe")
 });
 
+const devMode = process.env.NODE_ENV == "development";
+
 const mb = menubar({
     tooltip: "Swapperd",
     preloadWindow: true,
-    resizable: false,
+    resizable: devMode,
     webPreferences: {
         nodeIntegration: false,
         preload: __dirname + "/preload.js",
@@ -114,7 +116,7 @@ mb.on("ready", function ready() {
 });
 
 mb.on("after-create-window", function () {
-    if (process.env.NODE_ENV == "development") {
+    if (devMode) {
         mb.window.openDevTools();
     }
     const contextMenu = Menu.buildFromTemplate([
