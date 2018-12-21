@@ -304,6 +304,10 @@ button:hover {
     margin-bottom: 10px;
 }
 
+.swaps--extra p {
+    line-height: 2;
+}
+
 .swaps--expiry {
     background-color: #ca954a;
     height: 2px;
