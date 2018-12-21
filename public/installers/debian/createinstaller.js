@@ -9,7 +9,13 @@ const outputDir = process.env.npm_package_config_outputDir;
 const debInstallerOptions = {
   src: argv.sourcePath,
   dest: outputDir,
-  arch: "amd64"
+  arch: "amd64",
+  icon: {
+    "48x48": "./assets/icons/png/48x48.png",
+    "64x64": "./assets/icons/png/64x64.png",
+    "128x128": "./assets/icons/png/128x128.png",
+    "256x256": "./assets/icons/png/256x256.png",
+  }
 };
 
 console.log(`Building from source directory: ${path.resolve(debInstallerOptions.src)}`);
