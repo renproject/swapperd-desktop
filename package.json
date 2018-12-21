@@ -1,5 +1,6 @@
 {
     "name": "swapperd-native",
+    "description": "Swapperd Native Application for conducting Atomic Swaps.",
     "homepage": ".",
     "version": "0.1.0",
     "private": true,
@@ -21,6 +22,7 @@
         "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
         "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
         "build-linux": "npm run clean; npm run build; cd ./build; npm install; npm run build-linux",
+        "build-debian": "npm run clean; npm run build; cd ./build; npm install; npm run build-debian",
         "test": "react-scripts-ts test --env=jsdom",
         "eject": "react-scripts-ts eject",
         "watch": "npm-watch build",
