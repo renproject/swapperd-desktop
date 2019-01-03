@@ -205,7 +205,7 @@ ipcMain.on("create-account", (event, ...args) => {
             })
         })
     } else {
-        exec(`curl https://releases.republicprotocol.com/test/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${mnemonic}"`, (err, stdout, stderr) => {
+        exec(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${mnemonic}"`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;

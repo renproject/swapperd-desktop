@@ -4,7 +4,7 @@
     "description": "Swapperd Native Application for conducting Atomic Swaps.",
     "config": {
         "outputDir": "../release-builds",
-        "winSwapperBin": "https://s3-ap-southeast-2.amazonaws.com/releases.republicprotocol.com/test/swapper_windows_amd64.zip"
+        "winSwapperBin": "https://s3-ap-southeast-2.amazonaws.com/releases.republicprotocol.com/swapperd/swapper_windows_amd64.zip"
     },
     "homepage": ".",
     "version": "1.0.0",

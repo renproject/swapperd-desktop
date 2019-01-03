@@ -100,6 +100,11 @@ export interface IInfoResponse {
 const decimals = new Map<string, number>()
     .set("WBTC", 8)
     .set("BTC", 8)
+    .set("REN", 18)
+    .set("TUSD", 18)
+    .set("OMG", 18)
+    .set("ZRX", 18)
+    .set("DGX", 9)
     .set("ETH", 18);
 
 function swapperEndpoint(network: string) {
