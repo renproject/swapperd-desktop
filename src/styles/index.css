@@ -161,7 +161,7 @@ button:hover {
 
 .balances {
     border-bottom: 1px solid #ccc;
-    height: 140px;
+    max-height: 140px;
     width: 100%;
     overflow-y: scroll;
 }
