@@ -49,7 +49,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         const readableReceiveAmount = new BigNumber(swapDetails.receiveAmount).dividedBy(digits(swapDetails.receiveToken));
         const feeBips = new BigNumber(swapDetails.brokerFee ? swapDetails.brokerFee : 0);
         const feePercent = feeBips.div(10000);
-        const fees = readableReceiveAmount.times(feePercent);
+        const fees = readableSendAmount.times(feePercent);
         return (
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
@@ -65,7 +65,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                             <p>{readableReceiveAmount.toFixed()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
-                    {fees.gt(0) && <p className="swap--fee">{`Includes a fee of ${fees.toFixed()} ${swapDetails.receiveToken} (${feePercent.times(100).toFixed()}%)`}</p>}
+                    {fees.gt(0) && <p className="swap--fee">{`Additional fee of ${fees.toFixed()} ${swapDetails.sendToken} (${feePercent.times(100).toFixed()}%)`}</p>}
                     <div className="swap--inputs">
                         <form onSubmit={this.onAccept}>
                             <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
