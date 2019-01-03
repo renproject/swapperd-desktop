@@ -161,7 +161,9 @@ button:hover {
 
 .balances {
     border-bottom: 1px solid #ccc;
+    height: 140px;
     width: 100%;
+    overflow-y: scroll;
 }
 
 .balances--item {
@@ -188,12 +190,11 @@ button:hover {
     margin-right: 10px;
 }
 
-.balances--amount {
-    width: 100px;
-}
-
 .balances--amount p {
     font-weight: 500;
+    width: 130px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .balances--address {
