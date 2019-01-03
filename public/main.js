@@ -225,7 +225,7 @@ ipcMain.on("notify", (event, ...args) => {
     notifier.notify({
         title: "Swapperd",
         message: args[0],
-        icon: __dirname + "/resources/Icon.icns",
+        icon: __dirname + "/Icon.icns",
         wait: true,
     });
     event.returnValue = "";
