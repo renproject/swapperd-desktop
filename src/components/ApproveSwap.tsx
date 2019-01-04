@@ -2,7 +2,7 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
-import { getLogo } from "src/lib/logos";
+import { getLogo } from "../lib/logos";
 import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap } from "../lib/swapperd";
 import { Banner } from "./Banner";
 

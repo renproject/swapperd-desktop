@@ -1,51 +1,56 @@
 {
-    "name": "swapperd-native",
-    "description": "Swapperd Native Application for conducting Atomic Swaps.",
-    "homepage": ".",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "axios": "^0.18.0",
-        "bignumber.js": "^7.2.1",
-        "immutable": "^4.0.0-rc.12",
-        "menubar": "*",
-        "moment": "^2.22.2",
-        "react": "^16.6.1",
-        "react-copy-to-clipboard": "^5.0.1",
-        "react-dom": "^16.6.1",
-        "react-scripts-ts": "3.1.0",
-        "shelljs": "^0.8.2"
-    },
-    "scripts": {
-        "start": "npm run clean; npm run build; cd ./build; npm install; NODE_ENV=development npm run start",
-        "build": "react-scripts-ts build",
-        "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
-        "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
-        "build-linux": "npm run clean; npm run build; cd ./build; npm install; npm run build-linux",
-        "build-debian": "npm run clean; npm run build; cd ./build; npm install; npm run build-debian",
-        "test": "react-scripts-ts test --env=jsdom",
-        "eject": "react-scripts-ts eject",
-        "watch": "npm-watch build",
-        "clean": "rm -rf release-builds build"
-    },
-    "devDependencies": {
-        "@types/jest": "^23.3.9",
-        "@types/node": "^10.12.2",
-        "@types/react": "^16.4.18",
-        "@types/react-dom": "^16.0.9",
-        "npm-watch": "^0.5.0",
-        "typescript": "^3.1.6"
-    },
-    "watch": {
-        "build": {
-            "patterns": [
-                "src",
-                "package.json",
-                "public"
-            ],
-            "ignore": "build",
-            "extensions": "*",
-            "quiet": false
-        }
+  "name": "swapperd-native",
+  "description": "Swapperd Native Application for conducting Atomic Swaps.",
+  "homepage": ".",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bignumber.js": "^7.2.1",
+    "immutable": "^4.0.0-rc.12",
+    "menubar": "*",
+    "moment": "^2.22.2",
+    "react": "^16.6.1",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-dom": "^16.6.1"
+  },
+  "scripts": {
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "watch": "react-scripts start",
+    "clean": "rm -rf release-builds build",
+    "start": "npm run clean; npm run build; cd ./build; npm install; NODE_ENV=development npm run start",
+    "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
+    "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
+    "build-linux": "npm run clean; npm run build; cd ./build; npm install; npm run build-linux",
+    "build-debian": "npm run clean; npm run build; cd ./build; npm install; npm run build-debian"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.11",
+    "@types/node": "^10.12.18",
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
+    "node-sass": "^4.11.0",
+    "react-scripts": "^2.1.2",
+    "typescript": "^3.2.2"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src",
+        "package.json",
+        "public"
+      ],
+      "ignore": "build",
+      "extensions": "*",
+      "quiet": false
     }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { bootload } from "src/lib/swapperd";
+import { bootload } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 

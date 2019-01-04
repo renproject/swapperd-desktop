@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment";
 
 export interface INaturalTimeOptions {
     message: string;  // The default string to return for current time

@@ -3,8 +3,8 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import { getLogo } from "src/lib/logos";
-import { IPartialWithdrawRequest } from "src/lib/swapperd";
+import { getLogo } from "../lib/logos";
+import { IPartialWithdrawRequest } from "../lib/swapperd";
 
 interface IBalanceItemProps {
     token: string;

@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import * as React from "react";
 
-import { getLogo } from "src/lib/logos";
+import { getLogo } from "../lib/logos";
 import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
