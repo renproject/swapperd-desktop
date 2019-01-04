@@ -79,10 +79,7 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                                     <>
                                         {Object.keys(swapItem.receiveCost).map((key) => {
                                             if (key === swapItem.receiveToken) {
-                                                const receiveAmount = new BigNumber(swapItem.receiveAmount).minus(new BigNumber(swapItem.receiveCost[key]));
-                                                if (receiveAmount.isZero()) {
-                                                    return;
-                                                }
+                                                const receiveAmount = new BigNumber(swapItem.receiveAmount);
                                                 return <p className="large" key={key}>+{receiveAmount.toFixed()} {key}</p>;
                                             }
                                             return;
@@ -98,10 +95,11 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                                             return <p key={key}>-{swapItem.sendCost[key]} {key}</p>;
                                         })}
                                         {Object.keys(swapItem.receiveCost).map((key) => {
-                                            if (key !== swapItem.receiveToken) {
-                                                return <p key={key}>-{swapItem.receiveCost[key]} {key}</p>;
+                                            const receiveCost = new BigNumber(swapItem.receiveCost[key]);
+                                            if (receiveCost.isZero()) {
+                                                return;
                                             }
-                                            return;
+                                            return <p key={key}>-{swapItem.receiveCost[key]} {key}</p>;
                                         })}
                                     </>
                                     :
