@@ -3,31 +3,7 @@
   "productName": "Swapperd",
   "description": "Swapperd Native Application for conducting Atomic Swaps.",
   "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "my_app"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    },
+    "forge": "./forge.config.js",
     "outputDir": "../release-builds",
     "winSwapperBin": "https://s3-ap-southeast-2.amazonaws.com/releases.republicprotocol.com/swapperd/swapper_windows_amd64.zip"
   },
