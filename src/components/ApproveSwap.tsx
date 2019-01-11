@@ -24,6 +24,14 @@ function digits(token: string): BigNumber {
         case "BTC":
         case "WBTC":
             return new BigNumber(10).pow(8);
+        case "REN":
+        case "TUSD":
+        case "OMG":
+        case "ZRX":
+        case "ETH":
+            return new BigNumber(10).pow(18)
+        case "DGX":
+            return new BigNumber(10).pow(9)
         default:
             return new BigNumber(10).pow(18);
     }
