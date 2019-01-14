@@ -123,7 +123,7 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps, transfers } = this.state;
+        const { mnemonic, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps, transfers, password } = this.state;
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -139,7 +139,7 @@ class App extends React.Component<{}, IAppState> {
             </div>;
         }
 
-        if (accountExists && this.state.password === "") {
+        if (accountExists && password === "") {
             return <div className="app">
                 <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <UnlockScreen resolve={this.setUnlocked} />
@@ -170,7 +170,7 @@ class App extends React.Component<{}, IAppState> {
             </div>;
         }
 
-        if (accountExists && this.state.password !== "") {
+        if (accountExists && password !== "") {
             return <div className="app">
                 <Header network={this.state.network} setNetwork={this.setNetwork} />
                 <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
