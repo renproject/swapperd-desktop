@@ -26,8 +26,6 @@ const {
     app
 } = require("electron");
 
-let db;
-
 // Set app to auto-launch
 app.setLoginItemSettings({
     openAtLogin: true,
@@ -276,7 +274,7 @@ function uninstall() {
     }
 }
 
-function storePasswordHash(account, password, nonce) {
+function storePasswordHash(db, account, password, nonce) {
     bcrypt.hash(password, 10, function(err, hash) {
         if (err) {
             console.error(err);
@@ -298,16 +296,9 @@ function swapperdHome() {
 
 async function getPasswordHash(account) {
     let nonce, passwordHash = "";
-    db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-        console.error(`Failed to connect to the SQLite database: ${err.message}`);
-        return;
-        }
-        console.log('Connected to the SQLite database.');
-    });
 
-
-
+    const db = connectToDB();
+    
     try {
         const row = await new Promise((resolve, reject) => {
             db.get(`SELECT * FROM accounts WHERE account="${account}"`, (err, row) => {
@@ -323,26 +314,36 @@ async function getPasswordHash(account) {
     } catch (err) {
         console.error(err);
     }
-    
+
+    db.close();
+
     return { nonce, passwordHash };
 }
 
 function handleAccountCreation(password) {
     fs.writeFileSync(path.join(swapperdHome(), "sqlite.db"), "");
 
-    db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-        console.error(`Failed to connect to the SQLite database: ${err.message}`);
-        return;
-        }
-        console.log('Connected to the SQLite database.');
-    });
+    const db = connectToDB();
+
     db.run('CREATE TABLE IF NOT EXISTS accounts(account TEXT, passwordHash TEXT, nonce TEXT)');
 
     const data = fs.readFileSync(path.join(swapperdHome(), "testnet.json"), {
         encoding: "utf-8"
     });
 
-    storePasswordHash("master", password, "")
+    storePasswordHash(db, "master", password, "");
+
+    db.close();
+
     return JSON.parse(data).mnemonic
+}
+
+function connectToDB() {
+    return new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
+        if (err) {
+        console.error(`Failed to connect to the SQLite database: ${err.message}`);
+        return;
+        }
+        console.log('Connected to the SQLite database.');
+    });
 }
