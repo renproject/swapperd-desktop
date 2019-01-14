@@ -15,13 +15,18 @@ const { exec } = require('child_process');
 const notifier = require("node-notifier");
 const fs = require("fs");
 const os = require("os");
+const path = require("path");
+const sqlite3 = require('sqlite3').verbose();
 const axios = require("axios");
+const bcrypt = require('bcrypt');
 
 const {
     ipcMain,
     Menu,
     app
 } = require("electron");
+
+let db;
 
 // Set app to auto-launch
 app.setLoginItemSettings({
@@ -178,6 +183,62 @@ expressApp.listen(7928);
 
 ipcMain.on("create-account", (event, ...args) => {
     let mnemonic = args[2];
+    let mnemonicFlag = "";
+    if (process.platform === "win32") {
+        if (mnemonic !== "") {
+            mnemonicFlag = ` --mnemonic ${mnemonic}`
+        }
+        exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe"${mnemonicFlag}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            exec('sc create swapperd binpath= "%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe"', () => {
+                exec('sc start swapperd', (err, stdout, stderr) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    event.returnValue = handleAccountCreation(args[1]);
+                });
+            })
+        })
+    } else {
+        if (mnemonic !== "") {
+            mnemonicFlag = `-s "${mnemonic}"`
+        }
+        exec(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`, (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            event.returnValue = handleAccountCreation(args[1]);
+        });
+    }
+});
+
+ipcMain.on("notify", (event, ...args) => {
+    notifier.notify({
+        title: "Swapperd",
+        message: args[0],
+        icon: __dirname + "/Icon.icns",
+        wait: true,
+    });
+    event.returnValue = "";
+})
+
+ipcMain.on("verify-password", async (event, ...args) => {
+    const { passwordHash, nonce } = await getPasswordHash("master");
+    bcrypt.compare(args[0], passwordHash, (err, resp) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        event.returnValue = resp;
+    })
+})
+
+function uninstall() {
     if (process.platform === "win32") {
         let mnemonicFlag = "";
         if (mnemonic !== "") {
@@ -194,18 +255,12 @@ ipcMain.on("create-account", (event, ...args) => {
                         console.error(err);
                         return;
                     }
-                    const data = fs.readFileSync(process.env["programfiles(x86)"] + "\\Swapperd\\testnet.json", {
-                        encoding: "utf-8"
-                    });
-                    if (data) {
-                        mnemonic = JSON.parse(data).config.mnemonic;
-                    }
-                    event.returnValue = mnemonic;
+
                 });
             })
         })
     } else {
-        exec(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh -s ${args[0]} ${args[1]} "${mnemonic}"`, (err, stdout, stderr) => {
+        exec(`curl https://releases.republicprotocol.com/swapperd/remove.sh -sSf | sh -s`, (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
@@ -219,14 +274,75 @@ ipcMain.on("create-account", (event, ...args) => {
             event.returnValue = mnemonic;
         });
     }
-});
+}
 
-ipcMain.on("notify", (event, ...args) => {
-    notifier.notify({
-        title: "Swapperd",
-        message: args[0],
-        icon: __dirname + "/Icon.icns",
-        wait: true,
+function storePasswordHash(account, password, nonce) {
+    bcrypt.hash(password, 10, function(err, hash) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        db.run(`INSERT INTO accounts VALUES ("${account}", "${hash}", "${nonce}")`, (result, err) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(result);
+        })
     });
-    event.returnValue = "";
-})
+}
+
+function swapperdHome() {
+    return process.platform === "win32" ? path.join(process.env["programfiles(x86)"], "Swapperd"): path.join(os.homedir(), ".swapperd");
+}
+
+async function getPasswordHash(account) {
+    let nonce, passwordHash = "";
+    db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
+        if (err) {
+        console.error(`Failed to connect to the SQLite database: ${err.message}`);
+        return;
+        }
+        console.log('Connected to the SQLite database.');
+    });
+
+
+
+    try {
+        const row = await new Promise((resolve, reject) => {
+            db.get(`SELECT * FROM accounts WHERE account="${account}"`, (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row);
+                }
+            })
+        })
+        nonce = row.nonce;
+        passwordHash = row.passwordHash;
+    } catch (err) {
+        console.error(err);
+    }
+    
+    return { nonce, passwordHash };
+}
+
+function handleAccountCreation(password) {
+    fs.writeFileSync(path.join(swapperdHome(), "sqlite.db"), "");
+
+    db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
+        if (err) {
+        console.error(`Failed to connect to the SQLite database: ${err.message}`);
+        return;
+        }
+        console.log('Connected to the SQLite database.');
+    });
+    db.run('CREATE TABLE IF NOT EXISTS accounts(account TEXT, passwordHash TEXT, nonce TEXT)');
+
+    const data = fs.readFileSync(path.join(swapperdHome(), "testnet.json"), {
+        encoding: "utf-8"
+    });
+
+    storePasswordHash("master", password, "")
+    return JSON.parse(data).mnemonic
+}
