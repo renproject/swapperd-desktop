@@ -7,6 +7,9 @@ import swap from "../styles/images/swap.svg";
 import tusd from "../styles/images/tusd.svg";
 import wbtc from "../styles/images/wbtc.png";
 import zrx from "../styles/images/zrx.svg";
+import gusd from "../styles/images/gusd.svg";
+import dai from "../styles/images/dai.svg";
+import usdc from "../styles/images/usdc.svg";
 
 export function getLogo(symbol: string) {
     switch (symbol) {
@@ -26,6 +29,12 @@ export function getLogo(symbol: string) {
             return zrx;
         case "OMG":
             return omg;
+        case "GUSD":
+            return gusd;
+        case "USDC":
+            return usdc;
+        case "DAI":
+            return dai;
         default:
             return swap;
     }
