@@ -5,7 +5,7 @@ import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface ICreateAccountProps {
-    resolve: (mnemonic: string, unlocked: boolean) => void;
+    resolve: (mnemonic: string, password: string) => void;
 }
 
 interface ICreateAccountState {
@@ -85,13 +85,10 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         setTimeout(async () => {
             const { mnemonic, username, password } = this.state;
             const newMnemonic = (window as any).ipcRenderer.sendSync("create-account", username, password, mnemonic);
-            await swapperdReady();
-            const unlocked = await bootload(password);
-            if (!unlocked) {
-                throw new Error("Bootloading failed");
-            }
+            await swapperdReady(password);
+            await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent
-            this.props.resolve(mnemonic === "" ? newMnemonic : "", unlocked);
+            this.props.resolve(mnemonic === "" ? newMnemonic : "", password);
             this.setState({ loading: false });
         });
     }
