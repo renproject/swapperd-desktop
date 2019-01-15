@@ -70,6 +70,10 @@ class App extends React.Component<{}, IAppState> {
             }
         });
 
+        (window as any).ipcRenderer.on("get-password", (event: any, ...args: any) => {
+            (window as any).ipcRenderer.sendSync("password", this.state.password);
+        });
+
         // Check if user has an account set-up
         const callGetAccount = async () => {
             try {

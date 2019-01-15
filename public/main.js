@@ -162,15 +162,26 @@ expressApp.post("/swaps", (req, res) => {
 expressApp.get("/*", (req, res) => {
     try {
         const swapperdUrl = `${swapperdEndpoint(req.query.network)}${req.path}`;
-        console.log(`requesting: ${swapperdUrl}`);
-        axios({
-            method: "GET",
-            url: swapperdUrl,
-        }).then(postResponse => {
-            res.status(200);
-            res.send(postResponse.data);
-        }).catch(err => {
-            throw err;
+        mb.window.webContents.send("get-password")
+        ipcMain.once("password", (event, ...args) => {
+            if (args[0] !== "") {
+                axios({
+                    method: "GET",
+                    url: swapperdUrl,
+                    auth: {
+                        username: "",
+                        password,
+                    },
+                }).then(postResponse => {
+                    res.status(200);
+                    res.send(postResponse.data);
+                }).catch(err => {
+                    throw err;
+                });
+            } else {
+                res.status(401);
+                res.send("Wallet is locked");
+            }
         });
     } catch (error) {
         res.status(500);
