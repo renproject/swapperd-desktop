@@ -3,7 +3,7 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { getLogo } from "../lib/logos";
-import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap } from "../lib/swapperd";
+import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap, decimals } from "../lib/swapperd";
 import { Banner } from "./Banner";
 
 interface IApproveSwapProps {
@@ -20,21 +20,7 @@ interface IApproveSwapState {
 }
 
 function digits(token: string): BigNumber {
-    switch (token) {
-        case "BTC":
-        case "WBTC":
-            return new BigNumber(10).pow(8);
-        case "REN":
-        case "TUSD":
-        case "OMG":
-        case "ZRX":
-        case "ETH":
-            return new BigNumber(10).pow(18)
-        case "DGX":
-            return new BigNumber(10).pow(9)
-        default:
-            return new BigNumber(10).pow(18);
-    }
+    return new BigNumber(10).pow(decimals[token]);
 }
 
 export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
@@ -100,10 +86,10 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState({ error: null, loading: true });
 
         try {
-            const mainResponse = await submitSwap(swapDetails, password, { network });
-            const response = mainResponse.data;
+            const mainResponse = await submitSwap(swapDetails, { password, network });
+            const response = mainResponse.data.swap;
             if (swapDetails.shouldInitiateFirst) {
-                const balances = (await getBalances({ network }));
+                const balances = (await getBalances({ password, network }));
 
                 // Swap details
                 [response.receiveToken, response.sendToken] = [response.sendToken, response.receiveToken];

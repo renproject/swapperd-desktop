@@ -18,6 +18,7 @@ export const NETWORKS = {
 
 export interface IOptions {
     network: string;
+    password: string;
 }
 
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
@@ -97,7 +98,7 @@ export interface IInfoResponse {
     supportedTokens: Array<{ name: string, blockchain: string }>;
 }
 
-const decimals = new Map<string, number>()
+export const decimals = new Map<string, number>()
     .set("WBTC", 8)
     .set("BTC", 8)
     .set("REN", 18)
@@ -105,7 +106,10 @@ const decimals = new Map<string, number>()
     .set("OMG", 18)
     .set("ZRX", 18)
     .set("DGX", 9)
-    .set("ETH", 18);
+    .set("ETH", 18)
+    .set("DAI", 18)
+    .set("USDC", 6)
+    .set("GUSD", 2);
 
 function swapperEndpoint(network: string) {
     switch (network) {
@@ -122,6 +126,10 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/balances`,
+        auth: {
+            username: "",
+            password: options.password,
+        },
     });
 
     const response: IBalances = postResponse.data;
@@ -155,6 +163,10 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
         const response = await axios({
             method: "GET",
             url: `${swapperEndpoint(options.network)}/info`,
+            auth: {
+                username: "",
+                password: options.password,
+            },
         });
         const info: IInfoResponse = response.data;
         if (info.bootloaded) {
@@ -168,10 +180,10 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
     }
 }
 
-export async function swapperdReady(): Promise<boolean> {
+export async function swapperdReady(password: string): Promise<boolean> {
     let status;
     do {
-        status = await fetchAccountStatus({ network: MAINNET_REF });
+        status = await fetchAccountStatus({ network: MAINNET_REF, password });
         if (status !== "none") {
             return true;
         }
@@ -184,6 +196,10 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/swaps`,
+        auth: {
+            username: "",
+            password: options.password,
+        },
     });
 
     const swaps: ISwapsResponse = postResponse.data;
@@ -224,6 +240,10 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/transfers`,
+        auth: {
+            username: "",
+            password: options.password,
+        },
     });
 
     const transfers: ITransfersResponse = postResponse.data;
@@ -253,7 +273,7 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
     return transfers;
 }
 
-export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password: string, options: IOptions) {
+export async function submitWithdraw(withdrawRequest: IWithdrawRequest, options: IOptions) {
     const decimal = decimals.get(withdrawRequest.token);
     if (decimal !== undefined) {
         withdrawRequest.amount = new BigNumber(withdrawRequest.amount).times(new BigNumber(10).pow(decimal)).toFixed();
@@ -264,7 +284,7 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
         url: `${swapperEndpoint(options.network)}/transfers`,
         auth: {
             username: "",
-            password,
+            password: options.password,
         },
         data: withdrawRequest,
     });
@@ -272,13 +292,13 @@ export async function submitWithdraw(withdrawRequest: IWithdrawRequest, password
     return postResponse.data;
 }
 
-export async function submitSwap(swapRequest: IPartialSwapRequest, password: string, options: IOptions) {
+export async function submitSwap(swapRequest: IPartialSwapRequest, options: IOptions) {
     return axios({
         method: "POST",
         url: `${swapperEndpoint(options.network)}/swaps`,
         auth: {
             username: "",
-            password,
+            password: options.password,
         },
         data: swapRequest,
     });
@@ -296,6 +316,30 @@ export async function bootload(password: string): Promise<boolean> {
         }).then(resp => {
             console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
             return resp.status === 200;
+        });
+    })).then((results) => results.every(status => status)).catch(err => {
+        console.error(err);
+        return false;
+    });
+}
+
+export async function getInfo(password: string): Promise<boolean> {
+    return Promise.all(Object.keys(NETWORKS).map((network) => {
+        return axios({
+            method: "GET",
+            url: `${swapperEndpoint(network)}/info`,
+            auth: {
+                username: "",
+                password,
+            },
+        }).then(resp => {
+            console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
+            if (resp.status === 200) {
+                const info: IInfoResponse = resp.data;
+                return info.bootloaded;
+            } else {
+                return false;
+            }
         });
     })).then((results) => results.every(status => status)).catch(err => {
         console.error(err);

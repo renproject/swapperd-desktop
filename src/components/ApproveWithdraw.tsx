@@ -123,7 +123,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         };
 
         try {
-            await submitWithdraw(request, password, { network });
+            await submitWithdraw(request, { password, network });
             this.props.setWithdrawRequest(null);
         } catch (e) {
             console.error(e);
