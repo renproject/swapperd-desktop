@@ -3,6 +3,7 @@ import * as React from "react";
 import { bootload, swapperdReady } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
+import { sendSyncWithTimeout } from '../ipc';
 
 interface ICreateAccountProps {
     resolve: (mnemonic: string, password: string) => void;
@@ -84,7 +85,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     private createAccount = async (): Promise<void> => {
         setTimeout(async () => {
             const { mnemonic, username, password } = this.state;
-            const newMnemonic = (window as any).ipcRenderer.sendSync("create-account", username, password, mnemonic);
+            const newMnemonic: string = await sendSyncWithTimeout("create-account", 10, { username, password, mnemonic });
             await swapperdReady(password);
             await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent

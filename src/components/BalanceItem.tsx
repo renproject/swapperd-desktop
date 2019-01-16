@@ -41,9 +41,11 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
                 </div>
                 <div className="balances--address" onClick={this.consumeClick}>
                     <CopyToClipboard text={address} onCopy={this.handleCopy.bind(this, address)}>
-                        {copied === address ?
-                            <p>Copied!</p> :
-                            <p className="address">{`${address.substring(0, 8)}...${address.slice(-8)}`}</p>
+                        {address === "" ?
+                            <p className="address" />
+                            : copied === address ?
+                                <p>Copied!</p> :
+                                <p className="address">{`${address.substring(0, 8)}...${address.slice(-8)}`}</p>
                         }
                     </CopyToClipboard>
                 </div>

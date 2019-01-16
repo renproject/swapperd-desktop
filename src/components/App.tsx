@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { fetchAccountStatus, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, MAINNET_REF } from "../lib/swapperd";
+import { getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, MAINNET_REF, fetchInfo } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -9,6 +9,9 @@ import { CreateAccount } from "./CreateAccount";
 import { Header } from "./Header";
 import { Swaps } from "./Swaps";
 import { UnlockScreen } from "./UnlockScreen";
+import { SwapResponseValue, on, sendToMain } from '../ipc';
+import { OrderedMap } from 'immutable';
+import BigNumber from 'bignumber.js';
 
 interface IAppState {
     password: string;
@@ -60,25 +63,48 @@ class App extends React.Component<{}, IAppState> {
 
     public async componentDidMount() {
         // Attach event to swap
-        (window as any).ipcRenderer.on("swap", (event: any, ...args: any) => {
-            try {
-                const network = args[1] ? args[1] : this.state.network;
-                const origin = args[2] ? args[2] : this.state.origin;
-                this.setState({ swapDetails: args[0], network, origin });
-            } catch (e) {
-                console.log(e);
-            }
-        });
 
-        (window as any).ipcRenderer.on("get-password", (event: any, ...args: any) => {
-            (window as any).ipcRenderer.sendSync("password", this.state.password);
+
+        on("swap", (swap: SwapResponseValue) => {
+            try {
+                const network = swap.network ? swap.network : this.state.network;
+                const origin = swap.origin ? swap.origin : this.state.origin;
+                this.setState({ swapDetails: swap.body, network, origin });
+            } catch (error) {
+                console.error(error);
+            }
+        }, false);
+
+        on("get-password", () => {
+            return this.state.password;
         });
 
         // Check if user has an account set-up
         const callGetAccount = async () => {
             try {
-                const status = await fetchAccountStatus({ network: this.state.network, password: this.state.password });
-                const accountExists = status !== "none";                
+                let accountExists: boolean;
+                try {
+                    const response = await fetchInfo({ network: this.state.network, password: this.state.password });
+                    accountExists = true;
+
+                    if (this.state.balances === null || this.state.balances.size === 0) {
+
+                        let balances: IBalances = OrderedMap();
+
+                        const supportedTokens = response.supportedTokens;
+                        for (const token of supportedTokens) {
+                            balances = balances.set(token.name, {
+                                address: "",
+                                balance: new BigNumber(0),
+                            });
+                        }
+
+                        this.setState({ balances });
+                    }
+
+                } catch (error) {
+                    accountExists = false;
+                }
                 if (accountExists !== this.state.accountExists) {
                     this.setState({ accountExists, });
                 }
@@ -199,7 +225,12 @@ class App extends React.Component<{}, IAppState> {
 
     private accountCreated(mnemonic: string, password: string): void {
         this.setState({ accountExists: true, mnemonic, password });
-        (window as any).ipcRenderer.sendSync("notify", `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`);
+        sendToMain(
+            "notify",
+            {
+                notification: `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`
+            },
+        );
     }
 
     private resetSwapDetails(): void {

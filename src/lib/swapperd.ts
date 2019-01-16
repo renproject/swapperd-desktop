@@ -94,7 +94,6 @@ export interface ITransfersResponse {
 export interface IInfoResponse {
     version: string;
     bootloaded: boolean;
-    supportedBlockchains: Array<{ name: string, address: string }>;
     supportedTokens: Array<{ name: string, blockchain: string }>;
 }
 
@@ -157,18 +156,24 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     return balances;
 }
 
+export async function fetchInfo(options: IOptions): Promise<IInfoResponse> {
+    // Check if user has an account set-up
+    const response = await axios({
+        method: "GET",
+        url: `${swapperEndpoint(options.network)}/info`,
+        auth: {
+            username: "",
+            password: options.password,
+        },
+    });
+    const info: IInfoResponse = response.data;
+    return info;
+}
+
 export async function fetchAccountStatus(options: IOptions): Promise<string> {
     // Check if user has an account set-up
     try {
-        const response = await axios({
-            method: "GET",
-            url: `${swapperEndpoint(options.network)}/info`,
-            auth: {
-                username: "",
-                password: options.password,
-            },
-        });
-        const info: IInfoResponse = response.data;
+        const info = await fetchInfo(options);
         if (info.bootloaded) {
             return "unlocked";
         } else {
@@ -336,6 +341,7 @@ export async function getInfo(password: string): Promise<boolean> {
             console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
             if (resp.status === 200) {
                 const info: IInfoResponse = resp.data;
+                console.log(resp.data);
                 return info.bootloaded;
             } else {
                 return false;

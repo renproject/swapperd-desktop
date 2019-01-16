@@ -3,6 +3,7 @@ import * as React from "react";
 import { bootload, getInfo } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
+import { sendSyncWithTimeout } from '../ipc';
 
 interface IUnlockScreenProps {
     resolve: (password: string) => void;
@@ -57,13 +58,21 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
     private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
         const { password } = this.state;
-        const success = (window as any).ipcRenderer.sendSync("verify-password", password);
+
+        let success: boolean;
+        try {
+            success = await sendSyncWithTimeout("verify-password", 10, { password });
+        } catch (err) {
+            this.props.resolve("");
+            this.setState({ error: err.message });
+            return;
+        }
+
         let error = "";
-        console.log(success)
         if (!success) {
             error = "Incorrect password";
             this.props.resolve("");
-            this.setState({error});
+            this.setState({ error });
             return;
         }
         this.setState({ submitting: true });
@@ -71,17 +80,17 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
         try {
             const bootloaded = await getInfo(password);
             if (!bootloaded) {
-                
-                    const bootloadSuccessful = await bootload(password);
+
+                const bootloadSuccessful = await bootload(password);
                 if (!bootloadSuccessful) {
                     error = "Bootload failed";
                 }
-            
+
             }
         } catch (err) {
             console.error(err);
         }
-        
+
         this.setState({
             submitting: false,
             error,

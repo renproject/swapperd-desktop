@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js";
 import { getLogo } from "../lib/logos";
 import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap, decimals } from "../lib/swapperd";
 import { Banner } from "./Banner";
+import { sendToMain } from '../ipc';
 
 interface IApproveSwapProps {
     network: string;
@@ -100,7 +101,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                 response.sendTo = balances[response.sendToken];
                 response.shouldInitiateFirst = false;
             }
-            (window as any).ipcRenderer.send("swap-response", mainResponse.status, response);
+            sendToMain("swap-response", { status: mainResponse.status, response });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
@@ -111,7 +112,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject(): void {
-        (window as any).ipcRenderer.send("swap-response", 403);
+        sendToMain("swap-response", { status: 403 });
         this.props.resetSwapDetails();
     }
 }
