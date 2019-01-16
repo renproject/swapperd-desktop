@@ -19,6 +19,8 @@ export const sendSyncWithTimeout = async <Input, Output>(route: string, seconds:
     console.log(`sendSyncWithTimeout ${route}`);
 
     once(`${route}-response`, (response: Output, error: Error) => {
+        console.log(`sendSyncWithTimeout ${route} returned ${value} ${error}`);
+
         if (error) {
             reject(error);
         }
@@ -35,7 +37,7 @@ export const sendSyncWithTimeout = async <Input, Output>(route: string, seconds:
 
 export const on = <Input, Output>(route: string, callback: (params: Input, error: Error) => Output | Promise<Output>, dontReply?: boolean) => {
     (window as any).ipcRenderer.on(route, async (event: any, ...args: IPCResponse<Input>) => {
-        console.log(`handling on ${route}`);
+        console.log(`handling on(${route}) with args: ${args}`);
         let response: Output | null = null;
         try {
             const [params, error] = args;
@@ -53,7 +55,7 @@ export const on = <Input, Output>(route: string, callback: (params: Input, error
 
 export const once = <Input>(route: string, callback: (params: Input | null, error?: Error) => void | Promise<void>) => {
     (window as any).ipcRenderer.once(route, async (event: any, ...args: IPCResponse<Input>) => {
-        console.log(`handling once ${route}`);
+        console.log(`handling once(${route}) with args: ${args}`);
         try {
             const [params, error] = args;
             callback(params, error);

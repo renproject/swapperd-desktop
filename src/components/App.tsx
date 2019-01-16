@@ -76,6 +76,7 @@ class App extends React.Component<{}, IAppState> {
         }, false);
 
         on("get-password", () => {
+            console.log(`Sending password (${this.state.password})`);
             return this.state.password;
         });
 

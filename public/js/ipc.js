@@ -27,7 +27,7 @@ const mb = menubar({
  * @param {Error} error
  */
 const sendToRenderer = (path, value, error) => {
-    console.log(`sendToMain ${path} ${JSON.stringify(value)} ${error}`);
+    console.log(`sendToRenderer ${path} ${JSON.stringify(value)} ${error}`);
     mb.window.webContents.send(path, value, error);
 }
 
@@ -48,6 +48,8 @@ const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve, rej
          * @param {Error} error
          */
         (value, error) => {
+            console.log(`sendSyncWithTimeout ${route} returned ${value} ${error}`);
+
             if (error) {
                 reject(error);
             }
@@ -107,9 +109,14 @@ const once =
             /**
              * @param {any} _event
              */
-            async (_event, [value, error]) => {
-                console.log(`handling once ${route}`)
-                callback(value, error);
+            async (_event, ...args) => {
+                console.log(`handling once(${route}) with args: ${args}`);
+                try {
+                    const [params, error] = args;
+                    callback(params, error);
+                } catch (error) {
+                    callback(null, error);
+                }
             });
     }
 
