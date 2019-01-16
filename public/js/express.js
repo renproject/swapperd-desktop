@@ -36,6 +36,13 @@ expressApp.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+expressApp.post("/network", async (req, res) => {
+    const network = await sendSyncWithTimeout("get-network", 10, null);
+    res.status(200);
+    res.send(network);
+});
+
 expressApp.post("/swaps", async (req, res) => {
     console.log(`expressApp: ${req.url}`);
 
@@ -73,6 +80,7 @@ expressApp.get("/*", async (req, res) => {
             password,
         },
     })
+
     res.status(200);
     res.send(postResponse.data);
 });

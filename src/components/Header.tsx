@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { NETWORKS } from "../lib/swapperd";
+import { NETWORKS, Network } from "../lib/swapperd";
 
 import logo from "../styles/images/logo.png";
 
 interface IHeaderProps {
-    network: string;
+    network: Network;
     hideNetwork?: boolean;
     setNetwork: (network: string) => void;
 }

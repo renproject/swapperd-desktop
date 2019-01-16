@@ -8,6 +8,8 @@ const {
 
 const devMode = process.env.NODE_ENV == "development";
 
+const log = devMode ? console.log : () => null;
+
 
 const mb = menubar({
     tooltip: "Swapperd",
@@ -27,7 +29,7 @@ const mb = menubar({
  * @param {Error} error
  */
 const sendToRenderer = (path, value, error) => {
-    console.log(`sendToRenderer ${path} ${JSON.stringify(value)} ${error}`);
+    log(`sendToRenderer ${path} ${JSON.stringify(value)} ${error}`);
     mb.window.webContents.send(path, value, error);
 }
 
@@ -40,7 +42,7 @@ const sendToRenderer = (path, value, error) => {
  * @param {any} value
  */
 const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve, reject) => {
-    console.log(`sendSyncWithTimeout ${route}`)
+    log(`sendSyncWithTimeout ${route}`)
 
     once(`${route}-response`,
         /**
@@ -48,7 +50,7 @@ const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve, rej
          * @param {Error} error
          */
         (value, error) => {
-            console.log(`sendSyncWithTimeout ${route} returned ${value} ${error}`);
+            log(`got back sendSyncWithTimeout ${route} returned ${value} ${error}`);
 
             if (error) {
                 reject(error);
@@ -78,7 +80,7 @@ const on =
              * @param {[any, Error]} args
              */
             async (_event, ...args) => {
-                console.log(`handling on ${route}`)
+                log(`handling on ${route}`)
                 try {
                     const [value, _error] = args;
                     let response;
@@ -110,7 +112,7 @@ const once =
              * @param {any} _event
              */
             async (_event, ...args) => {
-                console.log(`handling once(${route}) with args: ${args}`);
+                log(`handling once(${route}) with args: ${args}`);
                 try {
                     const [params, error] = args;
                     callback(params, error);

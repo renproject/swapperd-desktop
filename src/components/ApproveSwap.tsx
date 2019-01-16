@@ -21,7 +21,7 @@ interface IApproveSwapState {
 }
 
 function digits(token: string): BigNumber {
-    return new BigNumber(10).pow(decimals[token]);
+    return new BigNumber(10).pow(decimals.get(token) || 0);
 }
 
 export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
@@ -40,6 +40,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     public render(): JSX.Element {
         const { swapDetails, origin, network } = this.props;
         const { password, loading, error } = this.state;
+
         const readableSendAmount = new BigNumber(swapDetails.sendAmount).dividedBy(digits(swapDetails.sendToken));
         const readableReceiveAmount = new BigNumber(swapDetails.receiveAmount).dividedBy(digits(swapDetails.receiveToken));
         const feeBips = new BigNumber(swapDetails.brokerFee ? swapDetails.brokerFee : 0);

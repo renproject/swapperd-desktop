@@ -8,12 +8,14 @@ import { sleep } from "./sleep";
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
 
-export const MAINNET_REF = "mainnet";
-export const TESTNET_REF = "testnet";
+export enum Network {
+    Mainnet = "mainnet",
+    Testnet = "testnet",
+}
 
 export const NETWORKS = {
-    [MAINNET_REF]: "Main Network",
-    [TESTNET_REF]: "Test Network",
+    [Network.Mainnet]: "Main Network",
+    [Network.Testnet]: "Test Network",
 };
 
 export interface IOptions {
@@ -112,9 +114,9 @@ export const decimals = new Map<string, number>()
 
 function swapperEndpoint(network: string) {
     switch (network) {
-        case MAINNET_REF:
+        case Network.Mainnet:
             return MAINNET_ENDPOINT;
-        case TESTNET_REF:
+        case Network.Testnet:
             return TESTNET_ENDPOINT;
         default:
             throw new Error(`Invalid network: ${network}`);
@@ -188,7 +190,7 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
 export async function swapperdReady(password: string): Promise<boolean> {
     let status;
     do {
-        status = await fetchAccountStatus({ network: MAINNET_REF, password });
+        status = await fetchAccountStatus({ network: Network.Mainnet, password });
         if (status !== "none") {
             return true;
         }
@@ -319,7 +321,6 @@ export async function bootload(password: string): Promise<boolean> {
                 password,
             },
         }).then(resp => {
-            console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
             return resp.status === 200;
         });
     })).then((results) => results.every(status => status)).catch(err => {
@@ -338,10 +339,8 @@ export async function getInfo(password: string): Promise<boolean> {
                 password,
             },
         }).then(resp => {
-            console.log(`Response when bootloading ${NETWORKS[network]}: ${resp.status}`);
             if (resp.status === 200) {
                 const info: IInfoResponse = resp.data;
-                console.log(resp.data);
                 return info.bootloaded;
             } else {
                 return false;

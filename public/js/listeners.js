@@ -100,7 +100,6 @@ async function storePasswordHash(db, account, password, nonce) {
             console.error(err);
             return;
         }
-        console.log(result);
     });
 }
 

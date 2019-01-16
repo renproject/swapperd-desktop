@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, MAINNET_REF, fetchInfo } from "../lib/swapperd";
+import { getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network, fetchInfo } from "../lib/swapperd";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -12,19 +12,31 @@ import { UnlockScreen } from "./UnlockScreen";
 import { SwapResponseValue, on, sendToMain } from '../ipc';
 import { OrderedMap } from 'immutable';
 import BigNumber from 'bignumber.js';
+import { Record } from '../lib/record';
+
+export class NetworkDetails extends Record({
+    balances: null as IBalances | null,
+    balancesError: null as string | null,
+    swaps: null as ISwapsResponse | null,
+    transfers: null as ITransfersResponse | null,
+}) { }
+
+export class NetworkState extends Record({
+    [Network.Mainnet]: new NetworkDetails(),
+    [Network.Testnet]: new NetworkDetails(),
+}) { }
 
 interface IAppState {
     password: string;
-    network: string;
+    network: Network;
+
+    networkDetails: NetworkState;
+
     origin: string;
     mnemonic: string;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
-    withdrawRequest: IPartialWithdrawRequest | null;
-    balances: IBalances | null;
-    balancesError: string | null;
-    swaps: ISwapsResponse | null;
-    transfers: ITransfersResponse | null;
+    withdrawRequest: IPartialWithdrawRequest | null,
 }
 
 class App extends React.Component<{}, IAppState> {
@@ -35,17 +47,14 @@ class App extends React.Component<{}, IAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            network: MAINNET_REF,
+            network: Network.Mainnet,
+            networkDetails: new NetworkState(),
             origin: "",
             mnemonic: "",
             password: "",
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
-            balances: null,
-            balancesError: null,
-            swaps: null,
-            transfers: null,
         };
         this.setNetwork = this.setNetwork.bind(this);
         this.mnemonicSaved = this.mnemonicSaved.bind(this);
@@ -73,22 +82,33 @@ class App extends React.Component<{}, IAppState> {
             } catch (error) {
                 console.error(error);
             }
-        }, false);
+        }, true);
 
         on("get-password", () => {
-            console.log(`Sending password (${this.state.password})`);
             return this.state.password;
+        });
+
+        // on("get-balances", () => {
+        //     const { networkDetails, network } = this.state;
+        //     return networkDetails.get(network).balances || {};
+        // });
+
+
+        on("get-network", () => {
+            return this.state.network;
         });
 
         // Check if user has an account set-up
         const callGetAccount = async () => {
+            const { network, networkDetails } = this.state;
+            const balances = networkDetails.get(network).balances;
             try {
                 let accountExists: boolean;
                 try {
                     const response = await fetchInfo({ network: this.state.network, password: this.state.password });
                     accountExists = true;
 
-                    if (this.state.balances === null || this.state.balances.size === 0) {
+                    if (!balances || balances.size === 0) {
 
                         let balances: IBalances = OrderedMap();
 
@@ -100,7 +120,7 @@ class App extends React.Component<{}, IAppState> {
                             });
                         }
 
-                        this.setState({ balances });
+                        this.setState({});
                     }
 
                 } catch (error) {
@@ -118,18 +138,24 @@ class App extends React.Component<{}, IAppState> {
 
         // Check balances and swaps on an interval
         const callGetBalances = async () => {
-            if (this.state.accountExists && this.state.password !== "") {
+            const { accountExists, network, networkDetails, password } = this.state;
+
+            if (accountExists && this.state.password !== "") {
                 try {
-                    const balances = await getBalances({ network: this.state.network, password: this.state.password });
-                    if (!balances.equals(this.state.balances)) {
-                        this.setState({ balances });
+                    const balances = await getBalances({ network: network, password: password });
+
+                    const currentBalances = networkDetails.get(network).balances;
+                    if (!balances.equals(currentBalances)) {
+                        this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
                     }
+
                 } catch (e) {
                     console.error(e);
-                    this.setState({ balancesError: `Unable to retrieve balances. ${e}` });
+                    const { network, networkDetails } = this.state;
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
                 }
             }
-            this.callGetBalancesTimeout = setTimeout(callGetBalances, 2 * 1000);
+            this.callGetBalancesTimeout = setTimeout(callGetBalances, 10 * 1000);
         };
         callGetBalances().catch(console.error);
 
@@ -137,13 +163,16 @@ class App extends React.Component<{}, IAppState> {
             if (this.state.accountExists && this.state.password !== "") {
                 try {
                     const swaps = await getSwaps({ network: this.state.network, password: this.state.password });
-                    this.setState({ swaps });
+
+                    const { network, networkDetails } = this.state;
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("swaps", swaps)) });
                 } catch (e) {
                     console.error(e.response && e.response.data.error || e);
                 }
                 try {
                     const transfers = await getTransfers({ network: this.state.network, password: this.state.password });
-                    this.setState({ transfers });
+                    const { network, networkDetails } = this.state;
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("transfers", transfers)) });
                 } catch (e) {
                     console.error(e.response && e.response.data.error || e);
                 }
@@ -154,7 +183,8 @@ class App extends React.Component<{}, IAppState> {
     }
 
     public render(): JSX.Element {
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, balances, balancesError, swaps, transfers, password } = this.state;
+        const { mnemonic, accountExists, swapDetails, password, withdrawRequest, networkDetails, network } = this.state;
+        const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -216,8 +246,8 @@ class App extends React.Component<{}, IAppState> {
         this.setState({ password });
     }
 
-    private setNetwork(network: string): void {
-        this.setState({ network, balances: null, balancesError: "", swaps: null, transfers: null });
+    private setNetwork(network: Network): void {
+        this.setState({ network });
     }
 
     private mnemonicSaved(): void {
