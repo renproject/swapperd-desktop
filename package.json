@@ -20,11 +20,12 @@
     "eject": "react-scripts eject",
     "watch": "react-scripts start",
     "clean": "rm -rf release-builds build",
-    "start": "npm run clean; npm run build; cd ./build; npm install; NODE_ENV=development npm run start",
-    "build-mac": "npm run clean; npm run build; cd ./build; npm install; npm run build-mac",
-    "build-win": "npm run clean; npm run build; cd ./build; npm install; npm run build-win",
-    "build-linux": "npm run clean; npm run build; cd ./build; npm install; npm run build-linux",
-    "build-debian": "npm run clean; npm run build; cd ./build; npm install; npm run build-debian"
+    "start": "npm run pre-build; cd ./build; NODE_ENV=development npm run start",
+    "build-mac": "npm run pre-build; cd ./build; npm run build-mac",
+    "build-win": "npm run pre-build; cd ./build; npm run build-win",
+    "build-linux": "npm run pre-build; cd ./build; npm run build-linux",
+    "build-debian": "npm run pre-build; cd ./build; npm run build-debian",
+    "pre-build": "npm run clean; npm run build; cd ./build; npm install; npx electron-rebuild -w sqlite3 -p; cd ../"
   },
   "devDependencies": {
     "@types/jest": "^23.3.11",
