@@ -59,10 +59,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }
                     let status;
                     switch (newSwap.status) {
-                        case 4:
+                        case 5:
                             status = "confirmed";
                             break;
-                        case 6:
+                        case 9:
                             status = "canceled";
                             break;
                         default:
@@ -165,7 +165,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
     private pendingSwaps(swaps: ISwapItem[]): ISwapItem[] {
         const pending = [];
         for (const swap of swaps) {
-            if (swap.status === 0 || swap.status === 1 || swap.status === 2) {
+            if (swap.status === 0 || swap.status === 1 || swap.status === 2 || swap.status === 3 || swap.status === 6 || swap.status === 8) {
                 pending.push(swap);
             }
         }
