@@ -3,7 +3,7 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { getLogo } from "../lib/logos";
-import { getBalances, IPartialSwapRequest, NETWORKS, submitSwap, decimals } from "../lib/swapperd";
+import { IPartialSwapRequest, NETWORKS, submitSwap, decimals } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { sendToMain } from '../ipc';
 
