@@ -55,7 +55,7 @@ expressApp.post("/swaps", async (req, res) => {
     });
 
     res.status(response.status);
-    res.send(response.body === undefined ? "" : response.body);
+    res.send(response.response === undefined ? "" : response.response);
 });
 
 expressApp.get("/*", async (req, res) => {

@@ -89,20 +89,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
         try {
             const mainResponse = await submitSwap(swapDetails, { password, network });
-            const response = mainResponse.data.swap;
-            if (swapDetails.shouldInitiateFirst) {
-                const balances = (await getBalances({ password, network }));
-
-                // Swap details
-                [response.receiveToken, response.sendToken] = [response.sendToken, response.receiveToken];
-                [response.receiveAmount, response.sendAmount] = [response.sendAmount, response.receiveAmount];
-                delete response.id;
-
-                response.receiveFrom = balances[response.receiveToken];
-                response.sendTo = balances[response.sendToken];
-                response.shouldInitiateFirst = false;
-            }
-            sendToMain("swap-response", { status: mainResponse.status, response });
+            sendToMain("swap-response", { status: mainResponse.status, response: mainResponse.data });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
