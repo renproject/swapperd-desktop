@@ -231,7 +231,7 @@ class AppClass extends React.Component<Props, IAppState> {
             </div>;
         }
 
-        if (accountExists && password !== "") {
+        if (accountExists && password !== null) {
             return <div className="app">
                 <Header network={this.state.network} setNetwork={this.setNetwork} />
                 <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
