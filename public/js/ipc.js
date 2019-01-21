@@ -22,6 +22,7 @@ const mb = menubar({
     tooltip: "Swapperd",
     preloadWindow: true,
     resizable: devMode,
+    dir: process.env.WATCHING === "true" ? "../build/" : undefined,
     webPreferences: {
         nodeIntegration: false,
         preload: __dirname + "/preload.js",

@@ -23,17 +23,19 @@
     },
     "devDependencies": {
         "electron": "^3.0.11",
-        "electron-rebuild": "^1.8.2",
         "electron-installer-debian": "^1.0.1",
         "electron-installer-dmg": "^2.0.0",
         "electron-packager": "^12.2.0",
+        "electron-rebuild": "^1.8.2",
         "innosetup-compiler": "^5.5.9",
         "minimalist": "^1.0.0",
         "mustache": "^3.0.1",
+        "nodemon": "^1.18.9",
         "rimraf": "^2.6.2"
     },
     "main": "main.js",
     "scripts": {
+        "watch": "WATCHING=true nodemon --exec 'npm run start' --watch ../build",
         "start": "npx ./node_modules/electron/cli.js .",
         "build": "npm run build-mac; npm run build-win; npm run build-debian",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
