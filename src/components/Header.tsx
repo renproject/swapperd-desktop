@@ -27,7 +27,7 @@ class HeaderClass extends React.Component<Props, State> {
                         }
                     </select>
                 }
-                {password ? <div className="header--lock" onClick={this.props.actions.clearPassword} /> : <></>}
+                {password && !hideNetwork ? <div className="header--lock" onClick={this.props.actions.clearPassword} /> : <></>}
             </div>
         );
     }
