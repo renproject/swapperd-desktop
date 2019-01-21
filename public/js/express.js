@@ -10,6 +10,10 @@ const axios = require("axios");
 const {
     mb,
     sendSyncWithTimeout,
+    log,
+    highlight,
+    reset,
+    dim,
 } = require("./ipc");
 
 
@@ -44,7 +48,7 @@ expressApp.post("/network", async (req, res) => {
 });
 
 expressApp.post("/swaps", async (req, res) => {
-    console.log(`expressApp: ${req.url}`);
+    log(`${highlight}expressApp${reset}${dim}: ${req.url}`);
 
     mb.showWindow();
 
@@ -59,7 +63,7 @@ expressApp.post("/swaps", async (req, res) => {
 });
 
 expressApp.get("/*", async (req, res) => {
-    console.log(`expressApp: ${req.url}`);
+    log(`${highlight}expressApp${reset}${dim}: ${req.url}`);
 
     const swapperdUrl = `${swapperdEndpoint(req.query.network)}${req.path}`;
 

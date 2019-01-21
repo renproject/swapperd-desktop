@@ -3,7 +3,7 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { getLogo } from "../lib/logos";
-import { IPartialSwapRequest, NETWORKS, submitSwap, decimals } from "../lib/swapperd";
+import { IPartialSwapRequest, NETWORKS, submitSwap, decimals, Token } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { sendToMain } from '../ipc';
 
@@ -20,7 +20,7 @@ interface IApproveSwapState {
     error: null | string;
 }
 
-function digits(token: string): BigNumber {
+function digits(token: Token): BigNumber {
     return new BigNumber(10).pow(decimals.get(token) || 0);
 }
 

@@ -23,7 +23,19 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
         const { transferItem } = this.props;
         const timestamp = moment.unix(transferItem.timestamp).format("MMM DD, YYYY [at] HH:mm");
         const status = transferItem.confirmations < 1 ? "Pending" : "Confirmed";
-        const feeToken = transferItem.token.blockchain === "bitcoin" ? "BTC" : "ETH";
+
+        const costs = [];
+
+        for (const costToken in transferItem.txCost) {
+            if (transferItem.txCost.hasOwnProperty(costToken)) {
+                if (transferItem.token.name === costToken) {
+                    costs.unshift(<p className={`large`}>-{transferItem.txCost[costToken]} {costToken}</p>)
+                } else {
+                    costs.push(<p>-{transferItem.txCost[costToken]} {costToken}</p>)
+                }
+            }
+        }
+
         return (
             <div className="swaps--item">
                 <div className="swaps--details" onClick={this.handleClick}>
@@ -32,8 +44,8 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
                         <span className={`swaps--status ${status ? status.toLowerCase() : ""}`}>{status}</span>
                     </div>
                     <div>
-                        <p className="large">+{transferItem.value} {transferItem.token.name}</p>
-                        <p>-{transferItem.fee} {feeToken}</p>
+                        {/* <p className="large">+{transferItem.value} {transferItem.token.name}</p> */}
+                        {costs}
                     </div>
                 </div>
                 {this.state.expanded &&

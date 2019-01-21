@@ -8,7 +8,14 @@ const {
 
 const devMode = process.env.NODE_ENV == "development";
 
-const log = devMode ? console.log : () => null;
+const reset = "\x1b[0m";
+const dim = "\x1b[2m";
+const highlight = "\x1b[36m";
+const log = devMode ? x => {
+    process.stdout.write(`[debug] ${dim}`);
+    process.stdout.write(x);
+    process.stdout.write(`${reset}\n`);
+} : () => null;
 
 
 const mb = menubar({
@@ -29,7 +36,7 @@ const mb = menubar({
  * @param {Error} error
  */
 const sendToRenderer = (path, value, error) => {
-    log(`sendToRenderer ${path} ${JSON.stringify(value)} ${error}`);
+    // log(`sendToRenderer: ${path} ${JSON.stringify(value)} ${error}`);
     mb.window.webContents.send(path, value, error);
 }
 
@@ -42,15 +49,13 @@ const sendToRenderer = (path, value, error) => {
  * @param {any} value
  */
 const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve, reject) => {
-    log(`sendSyncWithTimeout ${route}`)
-
     once(`${route}-response`,
         /**
          * @param {any} value
          * @param {Error} error
          */
         (value, error) => {
-            log(`got back sendSyncWithTimeout ${route} returned ${value} ${error}`);
+            log(`${highlight}sendSync${reset}${dim}: ${route} => (${error ? `err: ${error}` : value})`);
 
             if (error) {
                 reject(error);
@@ -80,7 +85,7 @@ const on =
              * @param {[any, Error]} args
              */
             async (_event, ...args) => {
-                log(`handling on ${route}`)
+                log(`${highlight}on(${route})${reset}${dim} with args: (${JSON.stringify(args)})`);
                 try {
                     const [value, _error] = args;
                     let response;
@@ -112,7 +117,6 @@ const once =
              * @param {any} _event
              */
             async (_event, ...args) => {
-                log(`handling once(${route}) with args: ${args}`);
                 try {
                     const [params, error] = args;
                     callback(params, error);
@@ -127,4 +131,8 @@ module.exports = {
     mb,
     sendSyncWithTimeout,
     sendToRenderer,
+    log,
+    dim,
+    highlight,
+    reset,
 }

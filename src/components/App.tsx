@@ -3,6 +3,7 @@ import * as React from "react";
 import BigNumber from 'bignumber.js';
 
 import { connect, ConnectedReturnType } from "react-redux"; // Custom typings
+import { Dispatch, bindActionCreators } from 'redux';
 import { OrderedMap } from 'immutable';
 
 import { getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network, fetchInfo } from "../lib/swapperd";
@@ -17,7 +18,6 @@ import { UnlockScreen } from "./UnlockScreen";
 import { SwapResponseValue, on, sendToMain } from '../ipc';
 import { Record } from '../lib/record';
 import { ApplicationData } from '../store/storeTypes';
-import { Dispatch, bindActionCreators } from 'redux';
 import { setPassword } from '../store/actions/login/loginActions';
 
 export class NetworkDetails extends Record({

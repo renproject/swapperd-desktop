@@ -11,7 +11,7 @@ interface ICreateAccountProps {
 
 interface ICreateAccountState {
     mnemonic: string;
-    username: string;
+    // username: string;
     password: string;
     useMnemonic: boolean;
     loading: boolean;
@@ -23,7 +23,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         super(props);
         this.state = {
             mnemonic: "",
-            username: "",
+            // username: "",
             password: "",
             useMnemonic: false,
             loading: false,
@@ -75,17 +75,18 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
 
     private async handleSubmit(): Promise<void> {
         // Ensure username does not contain any whitespace
-        if (/\s/.test(this.state.username)) {
-            this.setState({ error: "Please enter a valid username." });
-        }
+        // if (/\s/.test(this.state.username)) {
+        //     this.setState({ error: "Please enter a valid username." });
+        // }
         this.setState({ loading: true });
         this.createAccount();
     }
 
     private createAccount = async (): Promise<void> => {
         setTimeout(async () => {
-            const { mnemonic, username, password } = this.state;
-            const newMnemonic: string = await sendSyncWithTimeout("create-account", 10, { username, password, mnemonic });
+            const { mnemonic, password } = this.state;
+            // const { username } = this.state;
+            const newMnemonic: string = await sendSyncWithTimeout("create-account", 10, { /* username, */ password, mnemonic });
             await swapperdReady(password);
             await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent

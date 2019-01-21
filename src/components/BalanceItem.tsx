@@ -4,10 +4,10 @@ import BigNumber from "bignumber.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import { getLogo } from "../lib/logos";
-import { IPartialWithdrawRequest } from "../lib/swapperd";
+import { IPartialWithdrawRequest, Token } from "../lib/swapperd";
 
 interface IBalanceItemProps {
-    token: string;
+    token: Token;
     amount: BigNumber;
     address: string;
     setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;

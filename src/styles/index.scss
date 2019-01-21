@@ -35,7 +35,8 @@ button {
     border-radius: 2px;
 }
 
-input, textarea {
+input,
+textarea {
     border: 1px solid #ccc;
 }
 
@@ -93,6 +94,7 @@ button:hover {
     font-weight: 400;
     font-style: normal;
 }
+
 @font-face {
     font-family: "PingFangSC";
     src: url("fonts/PingFangSC-Medium.woff") format("woff");
@@ -206,6 +208,19 @@ button:hover {
     text-decoration: underline;
 }
 
+.header--lock {
+    background-image: url(images/lock.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 20px;
+    width: 15px;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
 .balances--transfer {
     background-image: url(images/arrow.svg);
     background-size: contain;
@@ -258,7 +273,7 @@ button:hover {
     position: relative;
 }
 
-.swaps > p {
+.swaps>p {
     margin-top: 10px;
     padding: 0 10px;
 }
@@ -278,21 +293,21 @@ button:hover {
     background-color: #fafafa;
 }
 
-.swaps--details > div {
+.swaps--details>div {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.swaps--details > div:last-child {
+.swaps--details>div:last-child {
     align-items: flex-end;
 }
 
-.swaps--details > div:last-child > p.large {
+.swaps--details>div:last-child>p.large {
     font-size: 16px;
 }
 
-.swaps--details > div > * + * {
+.swaps--details>div>*+* {
     margin-top: 5px;
 }
 
@@ -361,7 +376,7 @@ button:hover {
     margin: 10px 0;
 }
 
-.account input + input {
+.account input+input {
     margin-top: -1px;
 }
 
@@ -405,7 +420,7 @@ button:hover {
     margin-right: 10px;
 }
 
-.withdraw--balance p + p {
+.withdraw--balance p+p {
     margin-top: 5px;
 }
 
@@ -413,7 +428,7 @@ button:hover {
     margin-top: 10px;
 }
 
-.withdraw--inputs input + input {
+.withdraw--inputs input+input {
     margin-top: -1px;
 }
 
@@ -447,7 +462,7 @@ button:hover {
     transform: translate(-50%, -50%);
 }
 
-.swap--details > div {
+.swap--details>div {
     display: flex;
     flex-direction: column;
     align-items: center;

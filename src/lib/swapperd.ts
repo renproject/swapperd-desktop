@@ -29,7 +29,7 @@ export interface IWithdrawRequest extends IPartialWithdrawRequest {
 }
 
 export interface IPartialWithdrawRequest {
-    token: string;
+    token: Token;
 }
 
 export interface ISwapRequest extends IPartialSwapRequest {
@@ -39,8 +39,8 @@ export interface ISwapRequest extends IPartialSwapRequest {
 }
 
 export interface IPartialSwapRequest {
-    sendToken: string;
-    receiveToken: string;
+    sendToken: Token;
+    receiveToken: Token;
 
     // SendAmount and ReceiveAmount are hex encoded.
     sendAmount: string;
@@ -52,7 +52,7 @@ export interface IPartialSwapRequest {
     brokerFee?: number;
 }
 
-export type IBalances = OrderedMap<string, { address: string, balance: BigNumber }>;
+export type IBalances = OrderedMap<Token, { address: string, balance: BigNumber }>;
 
 export interface IBalancesResponseRaw {
     [symbol: string]: { address: string, balance: string };
@@ -60,12 +60,16 @@ export interface IBalancesResponseRaw {
 
 export interface ISwapItem {
     id: string;
-    sendToken: string;
-    receiveToken: string;
+    sendToken: Token;
+    receiveToken: Token;
     sendAmount: string;
     receiveAmount: string;
-    sendCost: Map<string, string>;
-    receiveCost: Map<string, string>;
+    sendCost: {
+        [token: string]: string;
+    }
+    receiveCost: {
+        [token: string]: string;
+    }
     timestamp: number;
     status: number;
     timeLock?: number;
@@ -75,15 +79,31 @@ export interface ISwapsResponse {
     swaps: ISwapItem[];
 }
 
+export enum Token {
+    WBTC = "WBTC",
+    BTC = "BTC",
+    REN = "REN",
+    TUSD = "TUSD",
+    OMG = "OMG",
+    ZRX = "ZRX",
+    DGX = "DGX",
+    ETH = "ETH",
+    DAI = "DAI",
+    USDC = "USDC",
+    GUSD = "GUSD",
+}
+
 export interface ITransferItem {
     to: string;
     from: string;
     token: {
-        name: string;
+        name: Token;
         blockchain: string;
     };
     value: string;
-    fee: string;
+    txCost: {
+        [token: string]: string;
+    }
     txHash: string;
     confirmations: number;
     timestamp: number;
@@ -96,21 +116,21 @@ export interface ITransfersResponse {
 export interface IInfoResponse {
     version: string;
     bootloaded: boolean;
-    supportedTokens: Array<{ name: string, blockchain: string }>;
+    supportedTokens: Array<{ name: Token, blockchain: string }>;
 }
 
-export const decimals = new Map<string, number>()
-    .set("WBTC", 8)
-    .set("BTC", 8)
-    .set("REN", 18)
-    .set("TUSD", 18)
-    .set("OMG", 18)
-    .set("ZRX", 18)
-    .set("DGX", 9)
-    .set("ETH", 18)
-    .set("DAI", 18)
-    .set("USDC", 6)
-    .set("GUSD", 2);
+export const decimals = new Map<Token, number>()
+    .set(Token.WBTC, 8)
+    .set(Token.BTC, 8)
+    .set(Token.REN, 18)
+    .set(Token.TUSD, 18)
+    .set(Token.OMG, 18)
+    .set(Token.ZRX, 18)
+    .set(Token.DGX, 9)
+    .set(Token.ETH, 18)
+    .set(Token.DAI, 18)
+    .set(Token.USDC, 6)
+    .set(Token.GUSD, 2);
 
 function swapperEndpoint(network: string) {
     switch (network) {
@@ -133,13 +153,13 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
         },
     });
 
-    const response: IBalances = postResponse.data;
+    const response: IBalancesResponseRaw = postResponse.data;
 
     const keys = [];
 
     for (const token in response) {
         if (response.hasOwnProperty(token)) {
-            keys.push(token);
+            keys.push(token as Token);
         }
     }
 
@@ -223,7 +243,7 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
             }
             for (const sendToken in swap.sendCost) {
                 if (swap.sendCost.hasOwnProperty(sendToken)) {
-                    sendDecimal = decimals.get(sendToken);
+                    sendDecimal = decimals.get(sendToken as Token);
                     if (sendDecimal) {
                         swap.sendCost[sendToken] = new BigNumber(swap.sendCost[sendToken]).div(new BigNumber(10).pow(sendDecimal)).toFixed();
                     }
@@ -231,7 +251,7 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
             }
             for (const receiveToken in swap.receiveCost) {
                 if (swap.receiveCost.hasOwnProperty(receiveToken)) {
-                    receiveDecimal = decimals.get(receiveToken);
+                    receiveDecimal = decimals.get(receiveToken as Token);
                     if (receiveDecimal) {
                         swap.receiveCost[receiveToken] = new BigNumber(swap.receiveCost[receiveToken]).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
                     }
@@ -265,14 +285,30 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
             }
             switch (transfer.token.blockchain) {
                 case "bitcoin":
-                    decimal = decimals.get("BTC");
+                    decimal = decimals.get(Token.BTC);
                     break;
                 case "ethereum":
-                    decimal = decimals.get("ETH");
+                    decimal = decimals.get(Token.ETH);
                     break;
             }
+
+            for (const costToken in transfer.txCost) {
+                if (transfer.txCost.hasOwnProperty(costToken)) {
+                    const costDecimal = decimals.get(costToken as Token);
+                    if (costDecimal !== undefined) {
+                        transfer.txCost[costToken] = new BigNumber(transfer.txCost[costToken])
+                            .div(new BigNumber(10).pow(costDecimal))
+                            .toFixed();
+                    }
+                }
+            }
+
             if (decimal !== undefined) {
-                transfer.fee = new BigNumber(transfer.fee).div(new BigNumber(10).pow(decimal)).toFixed();
+                // FIXME
+
+                // transfer.txCost = transfer.txCost.forEach()
+
+                // transfer.fee = new BigNumber(transfer.fee).div(new BigNumber(10).pow(decimal)).toFixed();
             }
         }
     }
