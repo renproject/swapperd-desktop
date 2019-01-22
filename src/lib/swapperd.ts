@@ -91,6 +91,7 @@ export enum Token {
     DAI = "DAI",
     USDC = "USDC",
     GUSD = "GUSD",
+    PAX = "PAX",
 }
 
 export interface ITransferItem {
@@ -129,6 +130,7 @@ export const decimals = new Map<Token, number>()
     .set(Token.DGX, 9)
     .set(Token.ETH, 18)
     .set(Token.DAI, 18)
+    .set(Token.PAX, 18)
     .set(Token.USDC, 6)
     .set(Token.GUSD, 2);
 

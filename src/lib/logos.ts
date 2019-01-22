@@ -10,6 +10,7 @@ import zrx from "../styles/images/zrx.svg";
 import gusd from "../styles/images/gusd.svg";
 import dai from "../styles/images/dai.svg";
 import usdc from "../styles/images/usdc.svg";
+import pax from "../styles/images/pax.svg";
 
 export function getLogo(symbol: string) {
     switch (symbol) {
@@ -35,6 +36,8 @@ export function getLogo(symbol: string) {
             return usdc;
         case "DAI":
             return dai;
+        case "PAX":
+            return pax;
         default:
             return swap;
     }
