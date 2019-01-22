@@ -10,7 +10,7 @@ import zrx from "../styles/images/zrx.svg";
 import gusd from "../styles/images/gusd.svg";
 import dai from "../styles/images/dai.svg";
 import usdc from "../styles/images/usdc.svg";
-import pax from "../styles/images/pax.svg";
+import pax from "../styles/images/pax.png";
 
 export function getLogo(symbol: string) {
     switch (symbol) {
