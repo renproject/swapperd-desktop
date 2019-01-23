@@ -78,6 +78,9 @@ class AppClass extends React.Component<Props, IAppState> {
 
         on("get-password", () => {
             const { store: { password } } = this.props;
+            if (password === null) {
+                throw new Error("Swapperd locked");
+            }
             return password;
         });
 
