@@ -20,6 +20,8 @@ import { Record } from '../lib/record';
 import { ApplicationData } from '../store/storeTypes';
 import { setPassword } from '../store/actions/login/loginActions';
 
+import { version } from "../../package.json";
+
 export class NetworkDetails extends Record({
     balances: null as IBalances | null,
     balancesError: null as string | null,
@@ -92,6 +94,10 @@ class AppClass extends React.Component<Props, IAppState> {
 
         on("get-network", () => {
             return this.state.network;
+        });
+
+        on("get-version", () => {
+            return version;
         });
 
         // Check if user has an account set-up

@@ -8,6 +8,9 @@ import { sleep } from "./sleep";
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
 
+const DEFAULT_TIMEOUT = 60 * 1000; // 1 minute
+const BALANCE_TIMEOUT = 5 * 60 * 1000; // 5 minute
+
 export enum Network {
     Mainnet = "mainnet",
     Testnet = "testnet",
@@ -149,6 +152,7 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/balances`,
+        timeout: BALANCE_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -185,6 +189,7 @@ export async function fetchInfo(options: IOptions): Promise<IInfoResponse> {
     const response = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/info`,
+        timeout: DEFAULT_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -225,6 +230,7 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/swaps`,
+        timeout: DEFAULT_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -269,6 +275,7 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/transfers`,
+        timeout: DEFAULT_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -372,6 +379,7 @@ export async function getInfo(password: string): Promise<boolean> {
         return axios({
             method: "GET",
             url: `${swapperEndpoint(network)}/info`,
+            timeout: DEFAULT_TIMEOUT,
             auth: {
                 username: "",
                 password,

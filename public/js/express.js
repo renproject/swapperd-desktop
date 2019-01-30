@@ -41,10 +41,16 @@ expressApp.use(function (req, res, next) {
     next();
 });
 
-expressApp.post("/network", async (req, res) => {
+expressApp.get("/network", async (req, res) => {
     const network = await sendSyncWithTimeout("get-network", 10, null);
     res.status(200);
     res.send(network);
+});
+
+expressApp.get("/version", async (req, res) => {
+    const version = await sendSyncWithTimeout("get-version", 10, null);
+    res.status(200);
+    res.send(version);
 });
 
 expressApp.post("/swaps", async (req, res) => {
@@ -76,14 +82,26 @@ expressApp.get("/*", async (req, res) => {
         return;
     }
 
-    const postResponse = await axios({
-        method: "GET",
-        url: swapperdUrl,
-        auth: {
-            username: "",
-            password,
-        },
-    })
+    let postResponse;
+    try {
+        postResponse = await axios({
+            method: "GET",
+            url: swapperdUrl,
+            auth: {
+                username: "",
+                password,
+            },
+        })
+    } catch (error) {
+        if (error.response) {
+            res.status(error.response.status);
+            res.send(error.response.data);
+        } else {
+            res.status(502);
+            res.send(error.toString());
+        }
+        return;
+    }
 
     res.status(200);
     res.send(postResponse.data);

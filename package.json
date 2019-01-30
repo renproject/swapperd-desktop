@@ -23,14 +23,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "watch": "concurrently --kill-others \"cra-build-watch\" \"cd ./public; npm run watch\"",
+    "watch": "concurrently --kill-others \"cra-build-watch --verbose\" \"cd ./public; npm run watch\"",
     "clean": "rm -rf release-builds build",
     "start": "npm run pre-build && cd ./build && NODE_ENV=development npm run start",
     "build-mac": "npm run pre-build && cd ./build && npm run build-mac",
     "build-win": "npm run pre-build && cd ./build && npm run build-win",
     "build-linux": "npm run pre-build && cd ./build && npm run build-linux",
     "build-debian": "npm run pre-build && cd ./build && npm run build-debian",
-    "pre-build": "npm run clean && npm run build && cd ./build && npm install && npx electron-rebuild -w sqlite3 -p && cd ../"
+    "pre-build": "cd ./public && npx electron-rebuild -w sqlite3 -p && cd ../ && npm run clean && npm run build && cd ./build && npm install && cd ../"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",

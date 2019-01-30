@@ -35,7 +35,7 @@
     },
     "main": "main.js",
     "scripts": {
-        "watch": "WATCHING=true nodemon --exec 'npm run start' --watch ../build",
+        "watch": "WATCHING=true nodemon --exec 'npm run start' --watch ../build --watch ../public",
         "start": "npx ./node_modules/electron/cli.js .",
         "build": "npm run build-mac; npm run build-win; npm run build-debian",
         "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --out=${npm_package_config_outputDir}",
