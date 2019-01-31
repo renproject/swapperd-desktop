@@ -1,63 +1,165 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable global-require, function-paren-newline, no-console */
+// @ts-check
 
-const path = require('path');
-const {
-  app,
-  ipcMain,
-} = require('electron');
-const menubar = require('menubar');
-
-require('fix-path')(); // resolve user $PATH env variable
-
-if (process.env.NODE_ENV === 'development') {
-  require('electron-debug')({
-    showDevTools: true
-  });
+// Fix Electron menubar icons not working in Gnome
+// https://github.com/electron/electron/issues/9046#issuecomment-296169661
+if (
+  process.platform === "linux" &&
+  process.env.XDG_CURRENT_DESKTOP &&
+  process.env.XDG_CURRENT_DESKTOP.match(/gnome|unity|pantheon/i)
+) {
+  process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
-const installExtensions = async () => {
-  if (process.env.NODE_ENV === 'development') {
-    const installer = require('electron-devtools-installer');
+const {
+  Menu,
+  app
+} = require("electron");
 
-    const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+const {
+  mb,
+} = require("./js/ipc");
 
-    return Promise.all(
-      extensions.map(name => installer.default(installer[name],
-        forceDownload)),
-    ).catch(console.log);
+require("./js/express");
+require("./js/listeners");
+
+
+// Set app to auto-launch
+app.setLoginItemSettings({
+  openAtLogin: true,
+  path: app.getPath("exe")
+});
+
+const devMode = process.env.NODE_ENV == "development";
+
+mb.on("ready", function ready() {
+  const application = {
+    label: "Application",
+    submenu: [{
+      label: "About",
+      selector: "orderFrontStandardAboutPanel:"
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Quit",
+      accelerator: "Command+Q",
+      click: () => {
+        mb.app.quit();
+      }
+    }
+    ]
+  };
+
+  const edit = {
+    label: "Edit",
+    submenu: [{
+      label: "Undo",
+      accelerator: "CmdOrCtrl+Z",
+      selector: "undo:"
+    },
+    {
+      label: "Redo",
+      accelerator: "Shift+CmdOrCtrl+Z",
+      selector: "redo:"
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Cut",
+      accelerator: "CmdOrCtrl+X",
+      selector: "cut:"
+    },
+    {
+      label: "Copy",
+      accelerator: "CmdOrCtrl+C",
+      selector: "copy:"
+    },
+    {
+      label: "Paste",
+      accelerator: "CmdOrCtrl+V",
+      selector: "paste:"
+    },
+    {
+      label: "Select All",
+      accelerator: "CmdOrCtrl+A",
+      selector: "selectAll:"
+    }
+    ]
+  };
+
+  const template = [
+    application,
+    edit
+  ];
+
+  // @ts-ignore
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  // Set any anchor links to open in default web browser
+  mb.window.webContents.on("new-window", (event, url) => {
+    event.preventDefault();
+    require("electron").shell.openExternal(url);
+  });
+});
+
+mb.on("after-create-window", function () {
+  if (devMode) {
+    // @ts-ignore
+    mb.window.openDevTools();
+    // @ts-ignore
+    mb.window.openDevTools();
   }
-};
-
-// menubar
-const mb = menubar({
-  alwaysOnTop: process.env.NODE_ENV === 'development',
-  icon: path.join(app.getAppPath(), 'resources/IconTemplate.png'),
-  minWidth: 500,
-  maxWidth: 500,
-  minHeight: 500,
-  preloadWindow: true,
-  resizable: true,
-  transparent: true,
-});
-
-mb.on('ready', async () => {
-  await installExtensions();
-
-  console.log('app is ready');
-});
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
+  const contextMenu = Menu.buildFromTemplate([{
+    type: "separator"
+  },
+  {
+    label: "Quit Swapperd",
+    click: () => {
+      mb.app.quit();
+    }
   }
+  ])
+  mb.tray.on("right-click", () => {
+    mb.tray.popUpContextMenu(contextMenu);
+  })
 });
 
-// ipc communication
-ipcMain.on('quit', () => {
-  app.quit();
-});
+// function uninstall() {
+//     if (process.platform === "win32") {
+//         let mnemonicFlag = "";
+//         if (mnemonic !== "") {
+//             mnemonicFlag = ` --mnemonic ${mnemonic}`
+//         }
+//         exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe" --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
+//             if (err) {
+//                 console.error(err);
+//                 return;
+//             }
+//             exec('sc create swapperd binpath= "%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe"', () => {
+//                 exec('sc start swapperd', (err, stdout, stderr) => {
+//                     if (err) {
+//                         console.error(err);
+//                         return;
+//                     }
+
+//                 });
+//             })
+//         })
+//     } else {
+//         exec(`curl https://releases.republicprotocol.com/swapperd/remove.sh -sSf | sh -s`, (err, stdout, stderr) => {
+//             if (err) {
+//                 console.error(err);
+//                 return;
+//             }
+//             const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {
+//                 encoding: "utf-8"
+//             });
+//             if (data) {
+//                 mnemonic = JSON.parse(data).config.mnemonic;
+//             }
+//             event.returnValue = mnemonic;
+//         });
+//     }
+// }

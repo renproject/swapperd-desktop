@@ -1,26 +1,23 @@
-import React from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
-import theme from './styles/theme';
-import './styles/global';
-import configureStore from './store';
-import App from './containers/App';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import './styles/main.scss';
+import { Provider } from "react-redux";
 
-const store = configureStore();
+import { App } from "./components/App";
+import { _catch_ } from './components/ErrorBoundary';
+import { configureStore } from "./store/configureStore";
 
-console.log('2!!!');
+import '@babel/polyfill';
 
-render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ThemeProvider>
-  </Provider>,
-  document.getElementById('root'),
+import "./styles/index.scss";
+
+export const { store } = configureStore();
+
+ReactDOM.render(
+    _catch_(
+        <Provider store={store}>
+            <App />
+        </Provider>
+    ),
+    document.getElementById("root") as HTMLElement
 );
