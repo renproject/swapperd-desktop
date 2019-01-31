@@ -20,7 +20,7 @@ import { Record } from '../lib/record';
 import { ApplicationData } from '../store/storeTypes';
 import { setPassword } from '../store/actions/login/loginActions';
 
-import { version } from "../../package.json";
+import { version } from "../../../package.json";
 
 export class NetworkDetails extends Record({
     balances: null as IBalances | null,

@@ -4,7 +4,9 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const baseConfig = require('./webpack.config.base');
 
 const config = merge(baseConfig, {
-  entry: './src/index',
+  entry: {
+    'renderer': './src/renderer/index',
+  },
   mode: 'production',
 
   output: {

@@ -8,10 +8,12 @@ const config = merge(baseConfig, {
   devtool: 'eval',
   mode: 'development',
 
-  entry: [
-    `webpack-hot-middleware/client?reload=true&path=http://localhost:${port}/__webpack_hmr`,
-    './src/index',
-  ],
+  entry: {
+    'renderer': [
+      `webpack-hot-middleware/client?reload=true&path=http://localhost:${port}/__webpack_hmr`,
+      './src/renderer/index',
+    ],
+  },
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
