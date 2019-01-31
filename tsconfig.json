@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "module": "commonjs",
+        "target": "es5",
+        "noEmitOnError": false,
+        "lib": [
+            "es2015",
+            "es2017",
+            "dom",
+            "esnext"
+        ],
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "src/main"
+    ]
+}

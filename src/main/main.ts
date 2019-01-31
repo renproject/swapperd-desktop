@@ -10,17 +10,17 @@ if (
   process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
-const {
+import {
   Menu,
   app
-} = require("electron");
+} from "electron";
 
-const {
+import {
   mb,
-} = require("./ipc");
+} from "./ipc";
 
-require("./express");
-require("./listeners");
+import "./express";
+import "./listeners";
 
 
 // Set app to auto-launch
@@ -35,57 +35,57 @@ mb.on("ready", function ready() {
   const application = {
     label: "Application",
     submenu: [{
-        label: "About",
-        selector: "orderFrontStandardAboutPanel:"
-      },
-      {
-        type: "separator"
-      },
-      {
-        label: "Quit",
-        accelerator: "Command+Q",
-        click: () => {
-          mb.app.quit();
-        }
+      label: "About",
+      selector: "orderFrontStandardAboutPanel:"
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Quit",
+      accelerator: "Command+Q",
+      click: () => {
+        mb.app.quit();
       }
+    }
     ]
   };
 
   const edit = {
     label: "Edit",
     submenu: [{
-        label: "Undo",
-        accelerator: "CmdOrCtrl+Z",
-        selector: "undo:"
-      },
-      {
-        label: "Redo",
-        accelerator: "Shift+CmdOrCtrl+Z",
-        selector: "redo:"
-      },
-      {
-        type: "separator"
-      },
-      {
-        label: "Cut",
-        accelerator: "CmdOrCtrl+X",
-        selector: "cut:"
-      },
-      {
-        label: "Copy",
-        accelerator: "CmdOrCtrl+C",
-        selector: "copy:"
-      },
-      {
-        label: "Paste",
-        accelerator: "CmdOrCtrl+V",
-        selector: "paste:"
-      },
-      {
-        label: "Select All",
-        accelerator: "CmdOrCtrl+A",
-        selector: "selectAll:"
-      }
+      label: "Undo",
+      accelerator: "CmdOrCtrl+Z",
+      selector: "undo:"
+    },
+    {
+      label: "Redo",
+      accelerator: "Shift+CmdOrCtrl+Z",
+      selector: "redo:"
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Cut",
+      accelerator: "CmdOrCtrl+X",
+      selector: "cut:"
+    },
+    {
+      label: "Copy",
+      accelerator: "CmdOrCtrl+C",
+      selector: "copy:"
+    },
+    {
+      label: "Paste",
+      accelerator: "CmdOrCtrl+V",
+      selector: "paste:"
+    },
+    {
+      label: "Select All",
+      accelerator: "CmdOrCtrl+A",
+      selector: "selectAll:"
+    }
     ]
   };
 
@@ -110,14 +110,14 @@ mb.on("after-create-window", function () {
     mb.window.openDevTools();
   }
   const contextMenu = Menu.buildFromTemplate([{
-      type: "separator"
-    },
-    {
-      label: "Quit Swapperd",
-      click: () => {
-        mb.app.quit();
-      }
+    type: "separator"
+  },
+  {
+    label: "Quit Swapperd",
+    click: () => {
+      mb.app.quit();
     }
+  }
   ])
   mb.tray.on("right-click", () => {
     mb.tray.popUpContextMenu(contextMenu);

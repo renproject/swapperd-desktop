@@ -52,7 +52,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
     private handleInput(event: React.FormEvent<HTMLInputElement>): void {
         const element = (event.target as HTMLInputElement);
-        this.setState((state) => ({ ...state, [element.name]: element.value }));
+        this.setState((state) => ({ ...state, error: null, [element.name]: element.value }));
     }
 
     private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
@@ -70,11 +70,12 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
         let error = "";
         if (!success) {
+            console.log("!!!2", success);
             error = "Incorrect password";
-            this.props.resolve("");
             this.setState({ error });
             return;
         }
+        console.log("!!!", success);
         this.setState({ submitting: true });
 
         try {

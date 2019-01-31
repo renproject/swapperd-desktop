@@ -1,20 +1,20 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+import * as express from "express";
+import * as bodyParser from "body-parser";
 
 /**
  * @type {import("axios").default}
  */
 // @ts-ignore
-const axios = require("axios");
+import axios from "axios";
 
-const {
+import {
     mb,
     sendSyncWithTimeout,
     log,
     highlight,
     reset,
     dim,
-} = require("./ipc");
+} from "./ipc";
 
 
 const swapperdEndpoint = (network) => {

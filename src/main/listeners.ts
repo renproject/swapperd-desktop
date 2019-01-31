@@ -1,21 +1,14 @@
-const {
-    exec
-} = require('child_process');
+import { exec } from 'child_process';
 const notifier = require("node-notifier");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 const sqlite3 = require('sqlite3').verbose();
-
 const bcrypt = require('bcrypt');
 
-const {
-    on,
-} = require("./ipc");
+import { on, } from "./ipc";
 
-const {
-    updateSwapperd,
-} = require("./update");
+// import { updateSwapperd, } from "./update";
 
 
 on("create-account",

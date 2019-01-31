@@ -1,11 +1,12 @@
-const path = require('path');
+import * as path from 'path';
 
-const {
+import {
   app,
   ipcMain,
-} = require('electron');
+} from 'electron';
 
-const menubar = require('menubar');
+import * as menubar from "menubar";
+// const menubar = require('menubar');
 
 // require('fix-path')(); // resolve user $PATH env variable
 
@@ -32,17 +33,17 @@ const installExtensions = async () => {
 };
 
 
-const reset = "\x1b[0m";
-const dim = "\x1b[2m";
-const highlight = "\x1b[36m";
-const log = devMode ? x => {
+export const reset = "\x1b[0m";
+export const dim = "\x1b[2m";
+export const highlight = "\x1b[36m";
+export const log = devMode ? x => {
   process.stdout.write(`[debug] ${dim}`);
   process.stdout.write(x);
   process.stdout.write(`${reset}\n`);
 } : () => null;
 
 
-const mb = menubar({
+export const mb = menubar({
   tooltip: "Swapperd",
   preloadWindow: true,
   resizable: devMode,
@@ -87,7 +88,7 @@ ipcMain.on('quit', () => {
  * @param {any} value
  * @param {Error} error
  */
-const sendToRenderer = (path, value, error) => {
+export const sendToRenderer = (path, value, error) => {
   // log(`sendToRenderer: ${path} ${JSON.stringify(value)} ${error}`);
   mb.window.webContents.send(path, value, error);
 }
@@ -100,7 +101,7 @@ const sendToRenderer = (path, value, error) => {
  * @param {number} seconds
  * @param {any} value
  */
-const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve,
+export const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve,
   reject) => {
   once(`${route}-response`,
     /**
@@ -127,7 +128,7 @@ const sendSyncWithTimeout = (route, seconds, value) => new Promise((resolve,
   }
 });
 
-const on =
+export const on =
   /**
    * @param {string} route
    * @param {(value: any, error: Error) => any | Promise<any>} callback
@@ -183,13 +184,13 @@ const once =
       });
   }
 
-module.exports = {
-  on,
-  mb,
-  sendSyncWithTimeout,
-  sendToRenderer,
-  log,
-  dim,
-  highlight,
-  reset,
-}
+// module.exports = {
+//   on,
+//   mb,
+//   sendSyncWithTimeout,
+//   sendToRenderer,
+//   log,
+//   dim,
+//   highlight,
+//   reset,
+// }
