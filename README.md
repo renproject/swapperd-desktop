@@ -1,18 +1,16 @@
-# YAREMS
+# SwapperdD Native
 
-**Yet Another React Electron Menubar Starter** 
+## Installation
 
-[![Build Status](https://travis-ci.org/epilande/yarems.svg?branch=master)](https://travis-ci.org/epilande/yarems)
+(TODO)
 
-![yarems](http://i.giphy.com/ckI6lN0ti8I6s.gif)
-
-## Quick Start
+## Development
 
 #### Clone this repo
 
 ```bash
-$ git clone https://github.com/epilande/yarems.git
-$ cd yarems
+$ git clone https://github.com/republicprotocol/swapperd-native
+$ cd swapperd-native
 ```
 
 #### Install dependencies

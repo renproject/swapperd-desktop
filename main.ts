@@ -108,8 +108,6 @@ mb.on("after-create-window", function () {
   if (devMode) {
     // @ts-ignore
     mb.window.openDevTools();
-    // @ts-ignore
-    mb.window.openDevTools();
   }
   const contextMenu = Menu.buildFromTemplate([{
     type: "separator"

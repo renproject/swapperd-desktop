@@ -55,7 +55,7 @@ const mb = menubar({
   maxWidth: 500,
   minHeight: 500,
   //   resizable: true,
-  transparent: true,
+  // transparent: true,
 });
 
 mb.on('ready', async () => {

@@ -4,7 +4,6 @@
   ],
   "plugins": [
     "@babel/plugin-transform-runtime",
-    "babel-plugin-styled-components",
     "react-hot-loader/babel",
     ["transform-class-properties", {
       "loose": true
