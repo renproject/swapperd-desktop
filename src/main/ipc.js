@@ -1,19 +1,21 @@
 const path = require('path');
+
 const {
   app,
   ipcMain,
 } = require('electron');
+
 const menubar = require('menubar');
 
-require('fix-path')(); // resolve user $PATH env variable
+// require('fix-path')(); // resolve user $PATH env variable
 
 const devMode = process.env.NODE_ENV === "development";
 
-if (devMode) {
-  require('electron-debug')({
-    showDevTools: true
-  });
-}
+// if (devMode) {
+//   require('electron-debug')({
+//     showDevTools: true
+//   });
+// }
 
 const installExtensions = async () => {
   if (process.env.NODE_ENV === 'development') {
@@ -44,11 +46,10 @@ const mb = menubar({
   tooltip: "Swapperd",
   preloadWindow: true,
   resizable: devMode,
-  // dir: process.env.WATCHING === "true" ? "../build/" : undefined,
-  // webPreferences: {
-  //   nodeIntegration: false,
-  //   preload: __dirname + "/preload.js",
-  // },
+  webPreferences: {
+    // nodeIntegration: false,
+    preload: __dirname + "/preload.js",
+  },
   alwaysOnTop: process.env.NODE_ENV === 'development',
   icon: path.join(app.getAppPath(), 'resources/IconTemplate.png'),
   minWidth: 500,

@@ -13,6 +13,9 @@ const config = merge(baseConfig, {
       `webpack-hot-middleware/client?reload=true&path=http://localhost:${port}/__webpack_hmr`,
       './src/renderer/index',
     ],
+    // 'main': [
+    //   './main',
+    // ],
   },
 
   output: {

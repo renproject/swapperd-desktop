@@ -16,17 +16,19 @@ $ cd swapperd-native
 #### Install dependencies
 
 ```bash
-$ npm install
+$ yarn
 ```
 
 #### Launch dev environment
 
 ```bash
-$ npm run dev
+$ yarn run dev
 ```
 
 #### Package application
 
+This will package it for the same OS it's being run on.
+
 ```bash
-$ npm run package
+$ yarn run package
 ```
