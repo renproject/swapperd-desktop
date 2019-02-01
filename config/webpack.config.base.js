@@ -12,7 +12,7 @@ module.exports = {
 
       {
         test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$/i,
-        loader: 'url-loader?limit=10000',
+        loader: 'url-loader',
       },
 
       {
@@ -24,7 +24,7 @@ module.exports = {
   },
 
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '/../dist'),
     filename: '[name].js',
   },
 

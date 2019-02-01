@@ -11,7 +11,7 @@ const config = merge(baseConfig, {
   mode: 'production',
 
   output: {
-    publicPath: './dist/',
+    publicPath: '../dist/',
   },
 
   optimization: {
