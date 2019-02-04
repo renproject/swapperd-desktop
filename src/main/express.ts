@@ -3,15 +3,16 @@ import express from "express";
 
 import axios from "axios";
 
-import { mb } from "./mb";
+import { MenubarApp } from "./mb";
 
 import {
     dim,
     highlight,
-    ipc,
     log,
     reset,
 } from "./ipc";
+
+import { IPC } from "../common/ipc";
 
 const swapperdEndpoint = (networkIn: string) => {
     const network = networkIn || "mainnet";
@@ -25,7 +26,7 @@ const swapperdEndpoint = (networkIn: string) => {
     }
 };
 
-export const setupExpress = () => {
+export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     const expressApp = express();
 
     expressApp.use(bodyParser.json());

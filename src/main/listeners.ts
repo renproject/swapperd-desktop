@@ -8,13 +8,13 @@ import sqlite3All, { Database } from "sqlite3";
 
 import { exec } from "child_process";
 
-import { ipc } from "./ipc";
+import { IPC } from "../common/ipc";
 
 const sqlite3 = sqlite3All.verbose();
 
 // import { updateSwapperd, } from "./update";
 
-export const setupListeners = () => {
+export const setupListeners = (ipc: IPC) => {
     ipc.on("create-account",
         async (value: { mnemonic: string; password: string }, _error?: Error) => new Promise(async (resolve, reject) => {
             if (_error) {
@@ -60,34 +60,35 @@ export const setupListeners = () => {
             }
         })
     );
-};
 
-ipc.on("notify", (value: { notification: string }, _error?: Error) => {
-    if (_error) {
-        throw new Error("Should not have received error");
-    }
+    ipc.on("notify", (value: { notification: string }, _error?: Error) => {
+        if (_error) {
+            throw new Error("Should not have received error");
+        }
 
-    notifier.notify({
-        title: "Swapperd",
-        message: value.notification,
-        icon: `${__dirname}/Icon.icns`,
-        wait: true,
+        notifier.notify({
+            title: "Swapperd",
+            message: value.notification,
+            icon: `${__dirname}/Icon.icns`,
+            wait: true,
+        });
+        return;
     });
-    return;
-});
 
-ipc.on("verify-password", async (value: { password: string }, _error?: Error): Promise<boolean> => {
-    if (_error) {
-        throw new Error("Should not have received error");
-    }
+    ipc.on("verify-password", async (value: { password: string }, _error?: Error): Promise<boolean> => {
+        if (_error) {
+            throw new Error("Should not have received error");
+        }
 
-    const {
-        passwordHash,
-        // nonce
-    } = await getPasswordHash("master");
+        const {
+            passwordHash,
+            // nonce
+        } = await getPasswordHash("master");
 
-    return bcrypt.compare(value.password, passwordHash);
-});
+        return bcrypt.compare(value.password, passwordHash);
+    });
+
+};
 
 async function storePasswordHash(db: Database, account: string, password: string, nonce: string) {
     const hash = await bcrypt.hash(password, 10);

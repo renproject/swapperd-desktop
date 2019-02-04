@@ -33,7 +33,7 @@ export class IPC {
         this.other().send(path, value, error);
     }
 
-    // In order to use this, two routes must be defined in main.js, `${route}` and
+    // In order to use this, two routes must be defined in index.js, `${route}` and
     // `${route}-response`.
     public sendSyncWithTimeout = async <Input, Output>(route: string, seconds: number, value: Input): Promise<Output> => new Promise<Output>((resolve, reject) => {
         // log(`sendSyncWithTimeout ${route}`);
