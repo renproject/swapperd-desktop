@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import { connect, ConnectedReturnType } from "react-redux"; // Custom typings
-import { Dispatch, bindActionCreators } from 'redux';
-
-import { NETWORKS, Network } from "../lib/swapperd";
+import { bindActionCreators, Dispatch } from "redux";
 
 import logo from "../styles/images/logo.png";
-import { ApplicationData } from '../store/storeTypes';
-import { clearPassword } from '../store/actions/login/loginActions';
+
+import { Network, NETWORKS } from "../lib/swapperd";
+import { clearPassword } from "../store/actions/login/loginActions";
+import { ApplicationData } from "../store/storeTypes";
 
 class HeaderClass extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -22,22 +22,19 @@ class HeaderClass extends React.Component<Props, State> {
                 <img src={logo} alt="Swapperd" />
                 {!hideNetwork &&
                     <select value={this.props.network} onChange={this.handleChange}>
-                        {
-                            Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)
-                        }
+                        {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
-                {password && !hideNetwork ? <div className="header--lock" onClick={this.props.actions.clearPassword} /> : <></>}
+                {password && !hideNetwork ? <div role="button" className="header--lock" onClick={this.props.actions.clearPassword} /> : <></>}
             </div>
         );
     }
 
     private handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const network = event.target.value;
-        this.props.setNetwork(network);
+        this.props.setNetwork(network as Network);
     }
 }
-
 
 const mapStateToProps = (state: ApplicationData) => ({
     store: {
@@ -54,7 +51,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 interface Props extends ReturnType<typeof mapStateToProps>, ConnectedReturnType<typeof mapDispatchToProps> {
     network: Network;
     hideNetwork?: boolean;
-    setNetwork: (network: string) => void;
+    setNetwork(network: Network): void;
 }
 
 interface State {

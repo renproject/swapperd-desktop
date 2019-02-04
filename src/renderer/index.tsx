@@ -4,10 +4,10 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import { App } from "./components/App";
-import { _catch_ } from './components/ErrorBoundary';
+import { _catch_ } from "./components/ErrorBoundary";
 import { configureStore } from "./store/configureStore";
 
-import '@babel/polyfill';
+import "@babel/polyfill";
 
 import "./styles/index.scss";
 

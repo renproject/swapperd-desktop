@@ -50,7 +50,6 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
                 break;
             default:
                 status = "Unknown";
-                break;
         }
         return (
             <div className="swaps--item">
@@ -127,7 +126,7 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
         );
     }
 
-    private handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    private readonly handleClick = (_event: React.MouseEvent<HTMLDivElement>) => {
         this.setState({ expanded: !this.state.expanded });
     }
 

@@ -37,5 +37,6 @@ module.exports = {
 
   externals: {},
 
+  /** @type any */
   target: 'electron-renderer',
 };

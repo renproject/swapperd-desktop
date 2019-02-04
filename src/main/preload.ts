@@ -1,2 +1,4 @@
+import { ipcRenderer } from "electron";
+
 // @ts-ignore
-window.ipcRenderer = require('electron').ipcRenderer;
+window.ipcRenderer = ipcRenderer;

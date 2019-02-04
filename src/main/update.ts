@@ -2,12 +2,7 @@
 //     exec
 // } = require('child_process');
 
-
-/**
- * 
- * @param {string | "" | null} mnemonic 
- */
-const updateSwapperd = async (mnemonic) => {
+export const updateSwapperd = async (_mnemonic: string) => {
 
   // let mnemonicFlag = "";
 
@@ -49,8 +44,4 @@ const updateSwapperd = async (mnemonic) => {
   // } = exec(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`);
 
   return;
-}
-
-module.exports = {
-  updateSwapperd,
 };

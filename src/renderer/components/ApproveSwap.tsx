@@ -2,16 +2,16 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
+import { ipc } from "../ipc";
 import { getLogo } from "../lib/logos";
-import { IPartialSwapRequest, NETWORKS, submitSwap, decimals, Token } from "../lib/swapperd";
+import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "../lib/swapperd";
 import { Banner } from "./Banner";
-import { sendToMain } from '../ipc';
 
 interface IApproveSwapProps {
     network: string;
     origin: string;
     swapDetails: IPartialSwapRequest;
-    resetSwapDetails: () => void;
+    resetSwapDetails(): void;
 }
 
 interface IApproveSwapState {
@@ -53,11 +53,11 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                     <p>{origin} is proposing the following swap on {NETWORKS[network]}:</p>
                     <div className="swap--details">
                         <div>
-                            <img src={getLogo(swapDetails.sendToken)} />
+                            <img role="presentation" alt="" src={getLogo(swapDetails.sendToken)} />
                             <p>{readableSendAmount.toFixed()} {swapDetails.sendToken}</p>
                         </div>
                         <div>
-                            <img src={getLogo(swapDetails.receiveToken)} />
+                            <img role="presentation" alt="" src={getLogo(swapDetails.receiveToken)} />
                             <p>{readableReceiveAmount.toFixed()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
@@ -89,7 +89,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
         try {
             const mainResponse = await submitSwap(swapDetails, { password, network });
-            sendToMain("swap-response", { status: mainResponse.status, response: mainResponse.data });
+            ipc.sendToMain("swap-response", { status: mainResponse.status, response: mainResponse.data });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
@@ -100,7 +100,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject(): void {
-        sendToMain("swap-response", { status: 403 });
+        ipc.sendToMain("swap-response", { status: 403 });
         this.props.resetSwapDetails();
     }
 }

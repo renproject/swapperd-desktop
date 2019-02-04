@@ -1,12 +1,17 @@
 import * as React from "react";
 
-import BigNumber from 'bignumber.js';
+import BigNumber from "bignumber.js";
 
+import { OrderedMap } from "immutable";
 import { connect, ConnectedReturnType } from "react-redux"; // Custom typings
-import { Dispatch, bindActionCreators } from 'redux';
-import { OrderedMap } from 'immutable';
+import { bindActionCreators, Dispatch } from "redux";
 
-import { getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network, fetchInfo } from "../lib/swapperd";
+import { SwapResponseValue } from "../../common/ipc";
+import { ipc } from "../ipc";
+import { Record } from "../lib/record";
+import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "../lib/swapperd";
+import { setPassword } from "../store/actions/login/loginActions";
+import { ApplicationData } from "../store/storeTypes";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -15,12 +20,9 @@ import { CreateAccount } from "./CreateAccount";
 import { Header } from "./Header";
 import { Swaps } from "./Swaps";
 import { UnlockScreen } from "./UnlockScreen";
-import { SwapResponseValue, on, sendToMain } from '../ipc';
-import { Record } from '../lib/record';
-import { ApplicationData } from '../store/storeTypes';
-import { setPassword } from '../store/actions/login/loginActions';
 
-import { version } from "../../../package.json";
+// import { version } from "../../../package.json";
+const version = "";
 
 export class NetworkDetails extends Record({
     balances: null as IBalances | null,
@@ -67,8 +69,7 @@ class AppClass extends React.Component<Props, IAppState> {
     public async componentDidMount() {
         // Attach event to swap
 
-
-        on("swap", (swap: SwapResponseValue) => {
+        ipc.on("swap", (swap: SwapResponseValue) => {
             try {
                 const network = swap.network ? swap.network : this.state.network;
                 const origin = swap.origin ? swap.origin : this.state.origin;
@@ -78,7 +79,7 @@ class AppClass extends React.Component<Props, IAppState> {
             }
         }, true);
 
-        on("get-password", () => {
+        ipc.on("get-password", () => {
             const { store: { password } } = this.props;
             if (password === null) {
                 throw new Error("Swapperd locked");
@@ -91,12 +92,11 @@ class AppClass extends React.Component<Props, IAppState> {
         //     return networkDetails.get(network).balances || {};
         // });
 
-
-        on("get-network", () => {
+        ipc.on("get-network", () => {
             return this.state.network;
         });
 
-        on("get-version", () => {
+        ipc.on("get-version", () => {
             return version;
         });
 
@@ -104,7 +104,7 @@ class AppClass extends React.Component<Props, IAppState> {
         const callGetAccount = async () => {
             const { store: { password } } = this.props;
             const { network, networkDetails } = this.state;
-            const balances = networkDetails.get(network).balances;
+            let balances: IBalances | null = networkDetails.get(network).balances;
             try {
                 let accountExists: boolean;
                 try {
@@ -113,7 +113,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
                     if (!balances || balances.size === 0) {
 
-                        let balances: IBalances = OrderedMap();
+                        balances = OrderedMap();
 
                         const supportedTokens = response.supportedTokens;
                         for (const token of supportedTokens) {
@@ -156,7 +156,6 @@ class AppClass extends React.Component<Props, IAppState> {
 
                 } catch (e) {
                     console.error(e);
-                    const { network, networkDetails } = this.state;
                     this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
                 }
             }
@@ -251,7 +250,7 @@ class AppClass extends React.Component<Props, IAppState> {
         return <div className="app">An error occurred.</div>;
     }
 
-    private setUnlocked = (password: string): void => {
+    private readonly setUnlocked = (password: string): void => {
         this.props.actions.setPassword(password);
     }
 
@@ -266,7 +265,7 @@ class AppClass extends React.Component<Props, IAppState> {
     private accountCreated(mnemonic: string, password: string): void {
         this.setState({ accountExists: true, mnemonic });
         this.props.actions.setPassword(password);
-        sendToMain(
+        ipc.sendToMain(
             "notify",
             {
                 notification: `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`
@@ -310,7 +309,7 @@ interface IAppState {
     mnemonic: string;
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
-    withdrawRequest: IPartialWithdrawRequest | null,
+    withdrawRequest: IPartialWithdrawRequest | null;
 }
 
 export const App = connect(mapStateToProps, mapDispatchToProps)(AppClass);

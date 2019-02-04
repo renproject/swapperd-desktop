@@ -1,127 +1,59 @@
-// @ts-check
 
 // Fix Electron menubar icons not working in Gnome
 // https://github.com/electron/electron/issues/9046#issuecomment-296169661
 if (
-  process.platform === "linux" &&
-  process.env.XDG_CURRENT_DESKTOP &&
-  process.env.XDG_CURRENT_DESKTOP.match(/gnome|unity|pantheon/i)
+    process.platform === "linux" &&
+    process.env.XDG_CURRENT_DESKTOP &&
+    process.env.XDG_CURRENT_DESKTOP.match(/gnome|unity|pantheon/i)
 ) {
-  process.env.XDG_CURRENT_DESKTOP = "Unity";
+    process.env.XDG_CURRENT_DESKTOP = "Unity";
 }
 
 import {
-  Menu,
-  app
+    app,
+    Menu,
+    shell,
 } from "electron";
 
-import {
-  mb,
-} from "./ipc";
+import { mb } from "./mb";
 
-import "./express";
-import "./listeners";
+import { contextTemplate, template } from "./appMenu";
 
+import { setupExpress } from "./express";
+import { setupListeners } from "./listeners";
+
+setupExpress();
+setupListeners();
 
 // Set app to auto-launch
 app.setLoginItemSettings({
-  openAtLogin: true,
-  path: app.getPath("exe")
+    openAtLogin: true,
+    path: app.getPath("exe")
 });
 
-const devMode = process.env.NODE_ENV == "development";
+const devMode = process.env.NODE_ENV === "development";
 
-mb.on("ready", function ready() {
-  const application = {
-    label: "Application",
-    submenu: [{
-      label: "About",
-      selector: "orderFrontStandardAboutPanel:"
-    },
-    {
-      type: "separator"
-    },
-    {
-      label: "Quit",
-      accelerator: "Command+Q",
-      click: () => {
-        mb.app.quit();
-      }
-    }
-    ]
-  };
-
-  const edit = {
-    label: "Edit",
-    submenu: [{
-      label: "Undo",
-      accelerator: "CmdOrCtrl+Z",
-      selector: "undo:"
-    },
-    {
-      label: "Redo",
-      accelerator: "Shift+CmdOrCtrl+Z",
-      selector: "redo:"
-    },
-    {
-      type: "separator"
-    },
-    {
-      label: "Cut",
-      accelerator: "CmdOrCtrl+X",
-      selector: "cut:"
-    },
-    {
-      label: "Copy",
-      accelerator: "CmdOrCtrl+C",
-      selector: "copy:"
-    },
-    {
-      label: "Paste",
-      accelerator: "CmdOrCtrl+V",
-      selector: "paste:"
-    },
-    {
-      label: "Select All",
-      accelerator: "CmdOrCtrl+A",
-      selector: "selectAll:"
-    }
-    ]
-  };
-
-  const template = [
-    application,
-    edit
-  ];
-
-  // @ts-ignore
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-
-  // Set any anchor links to open in default web browser
-  mb.window.webContents.on("new-window", (event, url) => {
-    event.preventDefault();
-    require("electron").shell.openExternal(url);
-  });
-});
-
-mb.on("after-create-window", function () {
-  if (devMode) {
+mb.on("ready", () => {
     // @ts-ignore
-    mb.window.openDevTools();
-  }
-  const contextMenu = Menu.buildFromTemplate([{
-    type: "separator"
-  },
-  {
-    label: "Quit Swapperd",
-    click: () => {
-      mb.app.quit();
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+    // Set any anchor links to open in default web browser
+    // tslint:disable-next-line: no-any
+    mb.window.webContents.on("new-window", (event: any, url: string) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    });
+});
+
+mb.on("after-create-window", () => {
+    if (devMode) {
+        // @ts-ignore
+        mb.window.openDevTools();
     }
-  }
-  ])
-  mb.tray.on("right-click", () => {
-    mb.tray.popUpContextMenu(contextMenu);
-  })
+    const contextMenu = Menu.buildFromTemplate(contextTemplate);
+    mb.tray.on("right-click", () => {
+        mb.tray.popUpContextMenu(contextMenu);
+    });
 });
 
 // function uninstall() {

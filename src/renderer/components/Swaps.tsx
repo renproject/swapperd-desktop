@@ -1,20 +1,26 @@
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
+
+import { ipc } from "../ipc";
 import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 import { SwapItem } from "./SwapItem";
 import { TransferItem } from "./TransferItem";
-import { sendToMain } from '../ipc';
 
 interface ISwapsProps {
     swaps: ISwapsResponse | null;
     transfers: ITransfersResponse | null;
 }
 
+enum Tab {
+    Swaps,
+    Transfers,
+}
+
 interface ISwapsState {
-    selected: string;
+    selected: Tab;
     pendingSwaps: ISwapItem[];
     pendingTransfers: ITransferItem[];
 }
@@ -23,7 +29,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
     constructor(props: ISwapsProps) {
         super(props);
         this.state = {
-            selected: "swaps",
+            selected: Tab.Swaps,
             pendingSwaps: [],
             pendingTransfers: [],
         };
@@ -67,14 +73,13 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                             break;
                         default:
                             status = "failed";
-                            break;
                     }
                     const sendCost = newSwap.sendCost[newSwap.sendToken] ? newSwap.sendCost[newSwap.sendToken] : 0;
                     const receiveCost = newSwap.receiveCost[newSwap.receiveToken] ? newSwap.receiveCost[newSwap.receiveToken] : 0;
                     const sendAmount = new BigNumber(newSwap.sendAmount).plus(new BigNumber(sendCost)).toFixed();
                     const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(receiveCost)).toFixed();
                     const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}.`;
-                    sendToMain("notify", { notification: notificationMessage });
+                    ipc.sendToMain("notify", { notification: notificationMessage });
                 }
             }
             if (pendingSwaps !== this.state.pendingSwaps) {
@@ -90,7 +95,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }).length === 0;
                 });
                 for (const transfer of notPending) {
-                    sendToMain("notify", { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` });
+                    ipc.sendToMain("notify", { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` });
                 }
             }
             if (pendingTransfers !== this.state.pendingTransfers) {
@@ -106,10 +111,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
             <>
                 <Banner title="History" />
                 <ul className="tabs">
-                    <li className={selected === "swaps" ? "active" : ""} onClick={this.toggleSelected.bind(this, "swaps")}>Swaps</li>
-                    <li className={selected === "transfers" ? "active" : ""} onClick={this.toggleSelected.bind(this, "transfers")}>Transfers</li>
+                    <li role="tab" className={selected === Tab.Swaps ? "active" : ""} onClick={this.showSwaps}>Swaps</li>
+                    <li role="tab" className={selected === Tab.Transfers ? "active" : ""} onClick={this.showTransfers}>Transfers</li>
                 </ul>
-                {selected === "swaps" ?
+                {selected === Tab.Swaps ?
                     <div className="swaps">
                         {swaps !== null ?
                             swaps.swaps !== null ?
@@ -158,8 +163,12 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
         );
     }
 
-    private toggleSelected(selected: string) {
-        this.setState({ selected });
+    private readonly showSwaps = () => {
+        this.setState({ selected: Tab.Swaps });
+    }
+
+    private readonly showTransfers = () => {
+        this.setState({ selected: Tab.Transfers });
     }
 
     private pendingSwaps(swaps: ISwapItem[]): ISwapItem[] {

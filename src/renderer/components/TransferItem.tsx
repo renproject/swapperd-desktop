@@ -24,17 +24,15 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
         const timestamp = moment.unix(transferItem.timestamp).format("MMM DD, YYYY [at] HH:mm");
         const status = transferItem.confirmations < 1 ? "Pending" : "Confirmed";
 
-        const costs = [];
+        const costs: JSX.Element[] = [];
 
-        for (const costToken in transferItem.txCost) {
-            if (transferItem.txCost.hasOwnProperty(costToken)) {
-                if (transferItem.token.name === costToken) {
-                    costs.unshift(<p className={`large`}>-{transferItem.txCost[costToken]} {costToken}</p>)
-                } else {
-                    costs.push(<p>-{transferItem.txCost[costToken]} {costToken}</p>)
-                }
+        Object.keys(transferItem.txCost).map((costToken) => {
+            if (transferItem.token.name === costToken) {
+                costs.unshift(<p className={`large`}>-{transferItem.txCost[costToken]} {costToken}</p>);
+            } else {
+                costs.push(<p>-{transferItem.txCost[costToken]} {costToken}</p>);
             }
-        }
+        });
 
         return (
             <div className="swaps--item">
@@ -60,7 +58,7 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
         );
     }
 
-    private handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    private readonly handleClick = (_event: React.MouseEvent<HTMLDivElement>) => {
         this.setState({ expanded: !this.state.expanded });
     }
 }

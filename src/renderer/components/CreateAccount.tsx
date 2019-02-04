@@ -1,12 +1,12 @@
 import * as React from "react";
 
+import { ipc } from "../ipc";
 import { bootload, swapperdReady } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
-import { sendSyncWithTimeout } from '../ipc';
 
 interface ICreateAccountProps {
-    resolve: (mnemonic: string, password: string) => void;
+    resolve(mnemonic: string, password: string): void;
 }
 
 interface ICreateAccountState {
@@ -49,9 +49,9 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
                             <button onClick={this.handleSubmit}>{useMnemonic ? "Import" : "Create"} account</button>
                             {!useMnemonic ?
-                                <a onClick={this.restoreUsingMnemonic.bind(this, true)}>Import using a mnemonic instead</a>
+                                <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
                                 :
-                                <a onClick={this.restoreUsingMnemonic.bind(this, false)}>Create new account instead</a>
+                                <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
                             }
                             {error ? <p className="error">{error}</p> : null}
                         </>
@@ -79,14 +79,14 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         //     this.setState({ error: "Please enter a valid username." });
         // }
         this.setState({ loading: true });
-        this.createAccount();
+        await this.createAccount();
     }
 
-    private createAccount = async (): Promise<void> => {
+    private readonly createAccount = async (): Promise<void> => {
         setTimeout(async () => {
             const { mnemonic, password } = this.state;
             // const { username } = this.state;
-            const newMnemonic: string = await sendSyncWithTimeout("create-account", 10, { /* username, */ password, mnemonic });
+            const newMnemonic: string = await ipc.sendSyncWithTimeout("create-account", 10, { /* username, */ password, mnemonic });
             await swapperdReady(password);
             await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent
@@ -95,7 +95,11 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         });
     }
 
-    private restoreUsingMnemonic(value: boolean): void {
-        this.setState({ useMnemonic: value });
+    private restoreWithMnemonic(): void {
+        this.setState({ useMnemonic: true });
+    }
+
+    private restoreWithoutMnemonic(): void {
+        this.setState({ useMnemonic: false });
     }
 }

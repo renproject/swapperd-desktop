@@ -1,12 +1,12 @@
 import * as React from "react";
 
+import { ipc } from "../ipc";
 import { bootload, getInfo } from "../lib/swapperd";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
-import { sendSyncWithTimeout } from '../ipc';
 
 interface IUnlockScreenProps {
-    resolve: (password: string) => void;
+    resolve(password: string): void;
 }
 
 interface IUnlockScreenState {
@@ -61,7 +61,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
         let success: boolean;
         try {
-            success = await sendSyncWithTimeout("verify-password", 10, { password });
+            success = await ipc.sendSyncWithTimeout("verify-password", 10, { password });
         } catch (err) {
             this.props.resolve("");
             this.setState({ error: err.message });
@@ -70,12 +70,10 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
         let error = "";
         if (!success) {
-            console.log("!!!2", success);
             error = "Incorrect password";
             this.setState({ error });
             return;
         }
-        console.log("!!!", success);
         this.setState({ submitting: true });
 
         try {
