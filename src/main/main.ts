@@ -10,7 +10,6 @@ if (
 }
 
 import {
-    app,
     Menu,
     shell,
 } from "electron";
@@ -19,17 +18,13 @@ import { mb } from "./mb";
 
 import { contextTemplate, template } from "./appMenu";
 
+import { setupAutoLaunch } from "./autoLaunch";
 import { setupExpress } from "./express";
 import { setupListeners } from "./listeners";
 
+setupAutoLaunch();
 setupExpress();
 setupListeners();
-
-// Set app to auto-launch
-app.setLoginItemSettings({
-    openAtLogin: true,
-    path: app.getPath("exe")
-});
 
 const devMode = process.env.NODE_ENV === "development";
 
