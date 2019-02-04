@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="11px" height="18px" viewBox="0 0 11 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(-2423.000000, -1169.000000)" stroke="#000000" stroke-width="1.51999998">
+            <g transform="translate(2022.000000, 958.000000)">
+                <g>
+                    <g transform="translate(0.000000, 195.000000)">
+                        <polyline transform="translate(406.500000, 25.000000) rotate(-90.000000) translate(-406.500000, -25.000000) " points="414 21 406.5 29 399 21"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
