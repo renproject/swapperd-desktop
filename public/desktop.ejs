@@ -1,0 +1,13 @@
+[Desktop Entry]
+<% if (productName) { %>Name=<%= productName %>
+<% } %><% if (description) { %>Comment=<%= description %>
+<% } %><% if (version) { %>Version=<%= version %>
+<% } %><% if (genericName) { %>GenericName=<%= genericName %>
+<% } %><% if (name) { %>Exec=<%= productName %> %U
+<% } %><% if (name) { %>Icon=/usr/lib/<%= name %>/resources/app/resources/icons/png/1024x1024.png
+<% } %><% if (name) { %>Path=/usr/lib/<%= name%>
+<% } %>Type=Application
+StartupNotify=true
+<% if (categories && categories.length) { %>Categories=<%= categories.join(';') %>;
+<% } %><% if (mimeType && mimeType.length) { %>MimeType=<%= mimeType.join(';') %>;
+<% } %>
