@@ -22,3 +22,21 @@ export const mb = menubar({
     //   resizable: true,
     // transparent: true,
 });
+
+// Restrict to a single instance
+const gotTheLock = mb.app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+    mb.app.quit();
+} else {
+    // tslint:disable-next-line: no-any
+    mb.app.on("second-instance", (_event: any, _commandLine: any, _workingDirectory: any) => {
+        // Someone tried to run a second instance, we should focus our window.
+        mb.showWindow();
+    });
+
+    // Create myWindow, load the rest of the app, etc...
+    mb.app.on("ready", () => {
+        //
+    });
+}
