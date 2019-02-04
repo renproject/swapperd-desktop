@@ -70,17 +70,14 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
         let error = "";
         if (!success) {
-            console.log("!!!2", success);
             error = "Incorrect password";
             this.setState({ error });
             return;
         }
-        console.log("!!!", success);
         this.setState({ submitting: true });
 
         try {
             const bootloaded = await getInfo(password);
-            console.log(bootloaded);
             if (!bootloaded) {
 
                 const bootloadSuccessful = await bootload(password);
@@ -97,7 +94,6 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
             submitting: false,
             error,
         });
-        console.log("Resolving!!!");
         this.props.resolve(password);
     }
 }

@@ -9,8 +9,7 @@ type AlertAction = ActionType<typeof loginActions>;
 export const loginReducer = (state: LoginData = new LoginData(), action: AlertAction) => {
     switch (action.type) {
         case getType(loginActions.setPassword):
-            console.log("Updating password in store to ", action.payload);
-            return new LoginData({ password: "password2" });
+            return new LoginData({ password: action.payload });
         case getType(loginActions.clearPassword):
             return state.set("password", null);
 

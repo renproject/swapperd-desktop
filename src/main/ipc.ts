@@ -6,6 +6,9 @@ import {
 } from 'electron';
 
 import * as menubar from "menubar";
+
+import "../../resources/IconTemplate.png";
+
 // const menubar = require('menubar');
 
 import { format as formatUrl } from 'url';
@@ -44,6 +47,7 @@ export const log = devMode ? x => {
   process.stdout.write(`${reset}\n`);
 } : () => null;
 
+const icon = "resources/IconTemplate.png";
 
 export const mb = menubar({
   tooltip: "Swapperd",
@@ -65,7 +69,7 @@ export const mb = menubar({
     protocol: 'file',
     slashes: true
   }),
-  icon: "./IconTemplate.png",
+  icon: devMode ? icon : path.join(app.getAppPath(), icon),
   //   resizable: true,
   // transparent: true,
 });

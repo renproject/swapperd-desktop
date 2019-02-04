@@ -104,8 +104,9 @@ class AppClass extends React.Component<Props, IAppState> {
         // Check if user has an account set-up
         const callGetAccount = async () => {
             const { store: { password } } = this.props;
+
             const { network, networkDetails } = this.state;
-            const balances = networkDetails.get(network).balances;
+            let balances = networkDetails.get(network).balances;
             try {
                 let accountExists: boolean;
                 try {
@@ -114,7 +115,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
                     if (!balances || balances.size === 0) {
 
-                        let balances: IBalances = OrderedMap();
+                        balances = OrderedMap();
 
                         const supportedTokens = response.supportedTokens;
                         for (const token of supportedTokens) {
@@ -124,7 +125,7 @@ class AppClass extends React.Component<Props, IAppState> {
                             });
                         }
 
-                        this.setState({});
+                        // this.setState({ balances });
                     }
 
                 } catch (error) {
@@ -193,8 +194,6 @@ class AppClass extends React.Component<Props, IAppState> {
     public render(): JSX.Element {
         const { store: { password } } = this.props;
 
-        console.log("!In render with: ", password);
-
         const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails, network } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
@@ -255,7 +254,6 @@ class AppClass extends React.Component<Props, IAppState> {
     }
 
     private setUnlocked = (password: string): void => {
-        console.log("Inside setUnlocked");
         this.props.actions.setPassword(password);
     }
 
@@ -291,8 +289,6 @@ class AppClass extends React.Component<Props, IAppState> {
 }
 
 const mapStateToProps = (state: ApplicationData) => {
-    console.log("State is:");
-    console.log(state);
     return {
         store: {
             password: state.login.password,
