@@ -34,10 +34,6 @@ const installExtensions = async () => {
 
 const icon = "resources/IconTemplate.png";
 
-console.log(path.join(app.getAppPath(), icon));
-console.log(path.join(__dirname, icon))
-console.log(devMode);
-
 export const setupMenubar = () => {
 
     const mb = menubar({

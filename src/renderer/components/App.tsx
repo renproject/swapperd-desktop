@@ -52,21 +52,16 @@ class AppClass extends React.Component<Props, IAppState> {
             swapDetails: null,
             withdrawRequest: null,
         };
-        this.setNetwork = this.setNetwork.bind(this);
-        this.mnemonicSaved = this.mnemonicSaved.bind(this);
-        this.accountCreated = this.accountCreated.bind(this);
-        this.resetSwapDetails = this.resetSwapDetails.bind(this);
-        this.setWithdrawRequest = this.setWithdrawRequest.bind(this);
     }
 
-    public componentWillUnmount() {
+    public readonly componentWillUnmount = () => {
         // Clear timeouts
         if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
         if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
         if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
     }
 
-    public async componentDidMount() {
+    public readonly componentDidMount = async () => {
         // Attach event to swap
 
         ipc.on("swap", (swap: SwapResponseValue) => {
@@ -100,44 +95,7 @@ class AppClass extends React.Component<Props, IAppState> {
             return version;
         });
 
-        // Check if user has an account set-up
-        const callGetAccount = async () => {
-            const { store: { password } } = this.props;
-            const { network, networkDetails } = this.state;
-            let balances: IBalances | null = networkDetails.get(network).balances;
-            try {
-                let accountExists: boolean;
-                try {
-                    const response = await fetchInfo({ network: network, password: password || "" });
-                    accountExists = true;
-
-                    if (!balances || balances.size === 0) {
-
-                        balances = OrderedMap();
-
-                        const supportedTokens = response.supportedTokens;
-                        for (const token of supportedTokens) {
-                            balances = balances.set(token.name, {
-                                address: "",
-                                balance: new BigNumber(0),
-                            });
-                        }
-
-                        this.setState({});
-                    }
-
-                } catch (error) {
-                    accountExists = false;
-                }
-                if (accountExists !== this.state.accountExists) {
-                    this.setState({ accountExists, });
-                }
-            } catch (e) {
-                console.error(e.response && e.response.data.error || e);
-            }
-            this.callGetAccountTimeout = setTimeout(callGetAccount, 3 * 1000);
-        };
-        callGetAccount().catch(console.error);
+        this.callGetAccount().catch(console.error);
 
         // Check balances and swaps on an interval
         const callGetBalances = async () => {
@@ -162,6 +120,8 @@ class AppClass extends React.Component<Props, IAppState> {
                     this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
                 }
             }
+
+            if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
             this.callGetBalancesTimeout = setTimeout(callGetBalances, 10 * 1000);
         };
         callGetBalances().catch(console.error);
@@ -190,12 +150,14 @@ class AppClass extends React.Component<Props, IAppState> {
                     console.error(e.response && e.response.data.error || e);
                 }
             }
+
+            if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
             this.callGetTransactionsTimeout = setTimeout(callGetTransactions, 5 * 1000);
         };
         callGetTransactions().catch(console.error);
     }
 
-    public render(): JSX.Element {
+    public readonly render = (): JSX.Element => {
         const { store: { password } } = this.props;
 
         const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails, network } = this.state;
@@ -261,15 +223,15 @@ class AppClass extends React.Component<Props, IAppState> {
         this.props.actions.setPassword(password);
     }
 
-    private setNetwork(network: Network): void {
-        this.setState({ network });
+    private readonly setNetwork = (network: Network): void => {
+        this.setState({ network }, async () => this.callGetAccount().catch(console.error));
     }
 
-    private mnemonicSaved(): void {
+    private readonly mnemonicSaved = (): void => {
         this.setState({ mnemonic: "" });
     }
 
-    private accountCreated(mnemonic: string, password: string): void {
+    private readonly accountCreated = (mnemonic: string, password: string): void => {
         this.setState({ accountExists: true, mnemonic });
         this.props.actions.setPassword(password);
         ipc.sendToMain(
@@ -280,15 +242,49 @@ class AppClass extends React.Component<Props, IAppState> {
         );
     }
 
-    private resetSwapDetails(): void {
+    private readonly resetSwapDetails = (): void => {
         this.setState({
             swapDetails: null,
             origin: "",
         });
     }
 
-    private setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void {
+    private readonly setWithdrawRequest = (withdrawRequest: IPartialWithdrawRequest | null): void => {
         this.setState({ withdrawRequest });
+    }
+
+    // Check if user has an account set-up
+    private readonly callGetAccount = async () => {
+        const { store: { password } } = this.props;
+        const { network } = this.state;
+        try {
+            const response = await fetchInfo({ network: network, password: password || "" });
+
+            const { networkDetails } = this.state;
+            let balances: IBalances | null = networkDetails.get(network).balances;
+
+            if (!balances || balances.size === 0) {
+
+                balances = OrderedMap();
+
+                const supportedTokens = response.supportedTokens;
+                for (const token of supportedTokens) {
+                    balances = balances.set(token.name, {
+                        address: "",
+                        balance: new BigNumber(0),
+                    });
+                }
+
+                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
+            }
+
+            if (!this.state.accountExists) { this.setState({ accountExists: true }); }
+        } catch (e) {
+            console.error(e.response && e.response.data.error || e);
+        }
+
+        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
+        this.callGetAccountTimeout = setTimeout(this.callGetAccount, 10 * 1000);
     }
 }
 
