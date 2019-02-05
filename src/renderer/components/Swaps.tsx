@@ -2,6 +2,7 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
+import { NotifyRequest } from "../../common/ipc";
 import { ipc } from "../ipc";
 import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "../lib/swapperd";
 import { Banner } from "./Banner";
@@ -79,7 +80,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     const sendAmount = new BigNumber(newSwap.sendAmount).plus(new BigNumber(sendCost)).toFixed();
                     const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(receiveCost)).toFixed();
                     const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}.`;
-                    ipc.sendToMain("notify", { notification: notificationMessage });
+                    ipc.sendToMain<NotifyRequest>(
+                        "notify",
+                        { notification: notificationMessage },
+                    );
                 }
             }
             if (pendingSwaps !== this.state.pendingSwaps) {
@@ -95,7 +99,10 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     }).length === 0;
                 });
                 for (const transfer of notPending) {
-                    ipc.sendToMain("notify", { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` });
+                    ipc.sendToMain<NotifyRequest>(
+                        "notify",
+                        { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` },
+                    );
                 }
             }
             if (pendingTransfers !== this.state.pendingTransfers) {

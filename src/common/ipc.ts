@@ -18,6 +18,15 @@ declare global {
     }
 }
 
+export type CreateAccountRequest = { mnemonic: string; password: string };
+export type CreateAccountResponse = string;
+
+export type NotifyRequest = { notification: string };
+export type NotifyResponse = void;
+
+export type VerifyPasswordRequest = { password: string };
+export type VerifyPasswordResponse = boolean;
+
 export class IPC {
 
     private readonly self: IpcRenderer | IpcMain;
@@ -52,10 +61,12 @@ export class IPC {
         this.sendToMain(route, value);
 
         // Reject after 1 minute
-        setTimeout(() => { reject(new Error("timeout")); }, seconds * 1000);
+        if (seconds) {
+            setTimeout(() => { reject(new Error("timeout")); }, seconds * 1000);
+        }
     })
 
-    public on = <Input, Output>(route: string, callback: (params: Input, error: Error) => Output | Promise<Output>, dontReply?: boolean) => {
+    public on = <Input, Output>(route: string, callback: (params: Input, error: Error) => Output | Promise<Output>, options?: { dontReply?: boolean }) => {
         this.self.on(route, async (_event: any, ...args: IPCResponse<Input>) => {
             // log(`handling on(${route}) with args: (${JSON.stringify(args)})`);
             let response: Output | null = null;
@@ -68,7 +79,7 @@ export class IPC {
                 return;
             }
 
-            if (!dontReply) {
+            if (!options || !options.dontReply) {
                 this.sendToMain(`${route}-response`, response);
             }
         });

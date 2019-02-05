@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { VerifyPasswordRequest, VerifyPasswordResponse } from "../../common/ipc";
 import { ipc } from "../ipc";
 import { bootload, getInfo } from "../lib/swapperd";
 import { Banner } from "./Banner";
@@ -61,7 +62,11 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
         let success: boolean;
         try {
-            success = await ipc.sendSyncWithTimeout("verify-password", 10, { password });
+            success = await ipc.sendSyncWithTimeout<VerifyPasswordRequest, VerifyPasswordResponse>(
+                "verify-password",
+                10, // timeout
+                { password },
+            );
         } catch (err) {
             this.props.resolve("");
             this.setState({ error: err.message });

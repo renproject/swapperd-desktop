@@ -6,62 +6,30 @@ import bcrypt from "bcrypt";
 import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
-import { exec } from "child_process";
-
-import { IPC } from "../common/ipc";
+import { CreateAccountRequest, CreateAccountResponse, IPC, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "../common/ipc";
 
 const sqlite3 = sqlite3All.verbose();
 
-// import { updateSwapperd, } from "./update";
+import { updateSwapperd } from "./update";
 
 export const setupListeners = (ipc: IPC) => {
-    ipc.on("create-account",
-        async (value: { mnemonic: string; password: string }, _error?: Error) => new Promise(async (resolve, reject) => {
-            if (_error) {
-                reject("Should not have received error");
-            }
+    ipc.on<CreateAccountRequest, CreateAccountResponse>("create-account", async (value, _error?: Error) => {
+        if (_error) {
+            throw new Error("Should not have received error");
+        }
 
-            const {
-                mnemonic,
-                password,
-                // username
-            } = value;
+        const {
+            mnemonic,
+            password,
+            // username
+        } = value;
 
-            let mnemonicFlag = "";
-            if (process.platform === "win32") {
-                if (mnemonic !== "") {
-                    mnemonicFlag = ` --mnemonic ${mnemonic}`;
-                }
-                exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe"${mnemonicFlag}`, (err, _stdout, _stderr) => {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-                    exec("sc create swapperd binpath= \"%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe\"", () => {
-                        exec("sc start swapperd", async (error, _stdout2, _stderr2) => {
-                            if (error) {
-                                console.error(error);
-                                reject(error);
-                                return;
-                            }
-                            resolve(await handleAccountCreation(password));
-                            return;
-                        });
-                    });
-                });
-            } else {
-                try {
-                    // await updateSwapperd(mnemonic);
-                    resolve(await handleAccountCreation(password));
-                    return;
-                } catch (error) {
-                    reject(error);
-                }
-            }
-        })
-    );
+        await updateSwapperd(mnemonic);
+        const newMnemonic = await handleAccountCreation(password);
+        return newMnemonic;
+    });
 
-    ipc.on("notify", (value: { notification: string }, _error?: Error) => {
+    ipc.on<NotifyRequest, NotifyResponse>("notify", (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
         }
@@ -75,7 +43,7 @@ export const setupListeners = (ipc: IPC) => {
         return;
     });
 
-    ipc.on("verify-password", async (value: { password: string }, _error?: Error): Promise<boolean> => {
+    ipc.on<VerifyPasswordRequest, VerifyPasswordResponse>("verify-password", async (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
         }
@@ -147,7 +115,7 @@ async function getPasswordHash(account: string) {
     };
 }
 
-async function handleAccountCreation(password: string) {
+async function handleAccountCreation(password: string): Promise<string> {
     // tslint:disable-next-line: non-literal-fs-path
     fs.writeFileSync(path.join(swapperdHome(), "sqlite.db"), "");
 

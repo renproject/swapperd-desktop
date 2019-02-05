@@ -5,7 +5,7 @@ import { autoUpdater, UpdateCheckResult } from "electron-updater";
 export const startAutoUpdater = async (mb: any): Promise<UpdateCheckResult | null> => {
 
     autoUpdater.on("checking-for-update", () => {
-        console.log("Checking for update...");
+        console.log("Checking for updates...");
     });
 
     autoUpdater.on("update-available", (_info) => {

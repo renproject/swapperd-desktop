@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { CreateAccountRequest, CreateAccountResponse } from "../../common/ipc";
 import { ipc } from "../ipc";
 import { bootload, swapperdReady } from "../lib/swapperd";
 import { Banner } from "./Banner";
@@ -56,7 +57,12 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             {error ? <p className="error">{error}</p> : null}
                         </>
                         :
-                        <Loading />
+                        <>
+                            <Loading />
+                            <span>
+                                Setting up account...
+                            </span>
+                        </>
                     }
                 </div>
             </>
@@ -86,7 +92,17 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         setTimeout(async () => {
             const { mnemonic, password } = this.state;
             // const { username } = this.state;
-            const newMnemonic: string = await ipc.sendSyncWithTimeout("create-account", 10, { /* username, */ password, mnemonic });
+            let newMnemonic: string;
+            try {
+                newMnemonic = await ipc.sendSyncWithTimeout<CreateAccountRequest, CreateAccountResponse>(
+                    "create-account",
+                    0, // timeout
+                    { password, mnemonic }
+                );
+            } catch (error) {
+                console.error(`Got error instead!!!: ${error}`);
+                return;
+            }
             await swapperdReady(password);
             await bootload(password);
             // If the user provided a mnemonic, there is no point passing the new one to the parent

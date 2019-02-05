@@ -1,47 +1,43 @@
-// const {
-//     exec
-// } = require('child_process');
+import { exec } from "child_process";
 
-export const updateSwapperd = async (_mnemonic: string) => {
+const run = async (command: string) => new Promise((resolve, reject) => {
+    const cmd = exec(command, (error) => {
+        if (error) {
+            reject(error);
+        }
+        resolve();
+    });
 
-  // let mnemonicFlag = "";
+    // cmd.stdout.pipe(process.stdout);
+    // cmd.stderr.pipe(process.stderr);
 
-  // if (process.platform === "win32") {
-  //     if (mnemonic !== "") {
-  //         mnemonicFlag = ` --mnemonic ${mnemonic}`
-  //     }
-  //     exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe"${mnemonicFlag}`, (err, stdout, stderr) => {
-  //         if (err) {
-  //             console.error(err);
-  //             return;
-  //         }
-  //         exec('sc create swapperd binpath= "%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe"', () => {
-  //             exec('sc start swapperd', async (err, stdout, stderr) => {
-  //                 if (err) {
-  //                     console.error(err);
-  //                     return reject(err);
-  //                 }
-  //                 return resolve(await handleAccountCreation(password));
-  //             });
-  //         })
-  //     })
-  // } else {
-  //     if (mnemonic) {
-  //         mnemonicFlag = `-s "${mnemonic}"`
-  //     }
+    cmd.stdout.on("data", (data) => {
+        console.log(data);
+    });
 
-  //     try {
-  //         await updateSwapperd(mnemonic);
-  //         return resolve(await handleAccountCreation(password));
-  //     } catch (error) {
-  //         reject(error);
-  //     }
-  // }
+    cmd.stderr.on("data", (data) => {
+        console.error(data);
+    });
+});
 
-  // const {
-  //     stdout: _stdout,
-  //     stderr: _stderr,
-  // } = exec(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`);
+export const updateSwapperd = async (mnemonic: string) => {
 
-  return;
+    let mnemonicFlag = "";
+
+    if (process.platform === "win32") {
+        if (mnemonic) {
+            mnemonicFlag = ` --mnemonic ${mnemonic}`;
+        }
+
+        await run(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe"${mnemonicFlag}`);
+        await run("sc create swapperd binpath= \"%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe\"");
+        await run("sc start swapperd");
+        return;
+    } else {
+        if (mnemonic) {
+            mnemonicFlag = `-s "${mnemonic}"`;
+        }
+        await run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`);
+        return;
+    }
 };

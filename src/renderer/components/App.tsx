@@ -72,7 +72,7 @@ class AppClass extends React.Component<Props, IAppState> {
             } catch (error) {
                 console.error(error);
             }
-        }, true);
+        }, { dontReply: true });
 
         ipc.on("get-password", () => {
             const { store: { password } } = this.props;
