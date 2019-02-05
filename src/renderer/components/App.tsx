@@ -108,7 +108,7 @@ class AppClass extends React.Component<Props, IAppState> {
             try {
                 let accountExists: boolean;
                 try {
-                    const response = await fetchInfo({ network: this.state.network, password: password || "" });
+                    const response = await fetchInfo({ network: network, password: password || "" });
                     accountExists = true;
 
                     if (!balances || balances.size === 0) {
@@ -143,11 +143,13 @@ class AppClass extends React.Component<Props, IAppState> {
         const callGetBalances = async () => {
             const { store: { password } } = this.props;
 
-            const { accountExists, network, networkDetails } = this.state;
+            const { accountExists, network } = this.state;
 
             if (accountExists && password !== null) {
                 try {
                     const balances = await getBalances({ network: network, password });
+
+                    const { networkDetails } = this.state;
 
                     const currentBalances = networkDetails.get(network).balances;
                     if (!balances.equals(currentBalances)) {
@@ -156,6 +158,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
                 } catch (e) {
                     console.error(e);
+                    const { networkDetails } = this.state;
                     this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
                 }
             }
@@ -165,19 +168,23 @@ class AppClass extends React.Component<Props, IAppState> {
 
         const callGetTransactions = async () => {
             const { store: { password } } = this.props;
+            const { accountExists } = this.state;
 
-            if (this.state.accountExists && password !== null) {
+            if (accountExists && password !== null) {
                 try {
-                    const swaps = await getSwaps({ network: this.state.network, password: password });
+                    const { network } = this.state;
+                    const swaps = await getSwaps({ network, password: password });
 
-                    const { network, networkDetails } = this.state;
+                    const { networkDetails } = this.state;
                     this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("swaps", swaps)) });
                 } catch (e) {
                     console.error(e.response && e.response.data.error || e);
                 }
                 try {
-                    const transfers = await getTransfers({ network: this.state.network, password: password });
-                    const { network, networkDetails } = this.state;
+                    const { network } = this.state;
+                    const transfers = await getTransfers({ network: network, password: password });
+
+                    const { networkDetails } = this.state;
                     this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("transfers", transfers)) });
                 } catch (e) {
                     console.error(e.response && e.response.data.error || e);
@@ -196,31 +203,31 @@ class AppClass extends React.Component<Props, IAppState> {
 
         if (mnemonic !== "") {
             return <div className="app">
-                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (accountExists && password === null) {
             return <div className="app">
-                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <UnlockScreen resolve={this.setUnlocked} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <ApproveSwap
-                    origin={this.state.origin}
-                    network={this.state.network}
+                    origin={origin}
+                    network={network}
                     swapDetails={swapDetails}
                     resetSwapDetails={this.resetSwapDetails}
                 />
@@ -229,9 +236,9 @@ class AppClass extends React.Component<Props, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header network={this.state.network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <ApproveWithdraw
-                    network={this.state.network}
+                    network={network}
                     balances={balances}
                     withdrawRequest={withdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
@@ -241,7 +248,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
         if (accountExists && password !== null) {
             return <div className="app">
-                <Header network={this.state.network} setNetwork={this.setNetwork} />
+                <Header network={network} setNetwork={this.setNetwork} />
                 <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
                 <Swaps swaps={swaps} transfers={transfers} />
             </div>;

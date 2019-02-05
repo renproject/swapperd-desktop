@@ -95,11 +95,11 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         });
     }
 
-    private restoreWithMnemonic(): void {
+    private readonly restoreWithMnemonic = (): void => {
         this.setState({ useMnemonic: true });
     }
 
-    private restoreWithoutMnemonic(): void {
+    private readonly restoreWithoutMnemonic = (): void => {
         this.setState({ useMnemonic: false });
     }
 }

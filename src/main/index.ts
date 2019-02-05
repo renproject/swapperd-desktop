@@ -21,5 +21,3 @@ const ipc = setupIPC(mb);
 setupAutoLaunch();
 setupExpress(mb, ipc);
 setupListeners(ipc);
-
-console.log("testing");

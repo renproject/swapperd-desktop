@@ -14,6 +14,7 @@ import "./styles/index.scss";
 export const { store } = configureStore();
 
 if (process.env.NODE_ENV === "development") {
+    // tslint:disable-next-line: no-require-imports
     require("devtron").install();
 }
 

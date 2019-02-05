@@ -21,12 +21,10 @@ export const startAutoUpdater = async (mb: any): Promise<UpdateCheckResult | nul
     });
 
     autoUpdater.on("download-progress", (progressObj) => {
-        const logMessage = `\
+        console.log(`\
 Download speed: ${progressObj.bytesPerSecond} \
 - Downloaded ${progressObj.percent}% \
-(${progressObj.transferred}/${progressObj.total})`;
-
-        console.log(logMessage);
+(${progressObj.transferred}/${progressObj.total})`);
     });
 
     autoUpdater.on("update-downloaded", (_info) => {

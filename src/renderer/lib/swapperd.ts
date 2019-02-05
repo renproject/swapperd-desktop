@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
@@ -9,7 +9,7 @@ const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
 
 const DEFAULT_TIMEOUT = 60 * 1000; // 1 minute
-const BALANCE_TIMEOUT = 5 * 60 * 1000; // 5 minute
+const LONGER_TIMEOUT = 5 * 60 * 1000; // 5 minute
 
 export enum Network {
     Mainnet = "mainnet",
@@ -26,19 +26,13 @@ export interface IOptions {
     password: string;
 }
 
-export interface IWithdrawRequest extends IPartialWithdrawRequest {
-    to: string;
-    amount: string;
-}
-
 export interface IPartialWithdrawRequest {
     token: Token;
 }
 
-export interface ISwapRequest extends IPartialSwapRequest {
-    id: string;
-    timeLock: number;
-    secretHash: string;
+export interface IWithdrawRequest extends IPartialWithdrawRequest {
+    to: string;
+    amount: string;
 }
 
 export interface IPartialSwapRequest {
@@ -55,10 +49,16 @@ export interface IPartialSwapRequest {
     brokerFee?: number;
 }
 
-export type IBalances = OrderedMap<Token, { address: string, balance: BigNumber }>;
+export interface ISwapRequest extends IPartialSwapRequest {
+    id: string;
+    timeLock: number;
+    secretHash: string;
+}
+
+export type IBalances = OrderedMap<Token, { address: string; balance: BigNumber }>;
 
 export interface IBalancesResponseRaw {
-    [symbol: string]: { address: string, balance: string };
+    [key: string]: { address: string; balance: string };
 }
 
 export interface ISwapItem {
@@ -69,10 +69,10 @@ export interface ISwapItem {
     receiveAmount: string;
     sendCost: {
         [token: string]: string;
-    }
+    };
     receiveCost: {
         [token: string]: string;
-    }
+    };
     timestamp: number;
     status: number;
     timeLock?: number;
@@ -99,6 +99,7 @@ export enum Token {
 
 export interface ITransferItem {
     to: string;
+    // tslint:disable-next-line: no-reserved-keywords
     from: string;
     token: {
         name: Token;
@@ -107,7 +108,7 @@ export interface ITransferItem {
     value: string;
     txCost: {
         [token: string]: string;
-    }
+    };
     txHash: string;
     confirmations: number;
     timestamp: number;
@@ -120,7 +121,7 @@ export interface ITransfersResponse {
 export interface IInfoResponse {
     version: string;
     bootloaded: boolean;
-    supportedTokens: Array<{ name: Token, blockchain: string }>;
+    supportedTokens: Array<{ name: Token; blockchain: string }>;
 }
 
 export const decimals = new Map<Token, number>()
@@ -152,7 +153,7 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/balances`,
-        timeout: BALANCE_TIMEOUT,
+        timeout: LONGER_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -186,7 +187,7 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
 
 export async function fetchInfo(options: IOptions): Promise<IInfoResponse> {
     // Check if user has an account set-up
-    const response = await axios({
+    const response: AxiosResponse<IInfoResponse> = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/info`,
         timeout: DEFAULT_TIMEOUT,
@@ -195,8 +196,7 @@ export async function fetchInfo(options: IOptions): Promise<IInfoResponse> {
             password: options.password,
         },
     });
-    const info: IInfoResponse = response.data;
-    return info;
+    return response.data;
 }
 
 export async function fetchAccountStatus(options: IOptions): Promise<string> {
@@ -221,7 +221,8 @@ export async function swapperdReady(password: string): Promise<boolean> {
         if (status !== "none") {
             return true;
         }
-        sleep(1000);
+        // Sleep for 1 second before retrying
+        await sleep(1000);
     } while (status === "none");
     return false;
 }
@@ -230,7 +231,7 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/swaps`,
-        timeout: DEFAULT_TIMEOUT,
+        timeout: LONGER_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -275,7 +276,7 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
     const postResponse = await axios({
         method: "GET",
         url: `${swapperEndpoint(options.network)}/transfers`,
-        timeout: DEFAULT_TIMEOUT,
+        timeout: LONGER_TIMEOUT,
         auth: {
             username: "",
             password: options.password,
@@ -299,6 +300,8 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
                 case "ethereum":
                     decimal = decimals.get(Token.ETH);
                     break;
+                default:
+                // don't do anything
             }
 
             for (const costToken in transfer.txCost) {
@@ -357,7 +360,7 @@ export async function submitSwap(swapRequest: IPartialSwapRequest, options: IOpt
 }
 
 export async function bootload(password: string): Promise<boolean> {
-    return Promise.all(Object.keys(NETWORKS).map((network) => {
+    return Promise.all(Object.keys(NETWORKS).map(async (network) => {
         return axios({
             method: "POST",
             url: `${swapperEndpoint(network)}/bootload`,
@@ -375,7 +378,7 @@ export async function bootload(password: string): Promise<boolean> {
 }
 
 export async function getInfo(password: string): Promise<boolean> {
-    return Promise.all(Object.keys(NETWORKS).map((network) => {
+    return Promise.all(Object.keys(NETWORKS).map(async (network) => {
         return axios({
             method: "GET",
             url: `${swapperEndpoint(network)}/info`,
