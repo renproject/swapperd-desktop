@@ -3,15 +3,13 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
-import { connect, ConnectedReturnType } from "react-redux"; // Custom typings
-import { bindActionCreators, Dispatch } from "redux";
+import { Subscribe } from "unstated";
 
 import { SwapResponseValue } from "../../common/ipc";
 import { ipc } from "../ipc";
 import { Record } from "../lib/record";
 import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "../lib/swapperd";
-import { setPassword } from "../store/actions/login/loginActions";
-import { ApplicationData } from "../store/storeTypes";
+import { AppContainer } from "../store/containers/appContainer";
 import { AcceptMnemonic } from "./AcceptMnemonic";
 import { ApproveSwap } from "./ApproveSwap";
 import { ApproveWithdraw } from "./ApproveWithdraw";
@@ -36,12 +34,12 @@ export class NetworkState extends Record({
     [Network.Testnet]: new NetworkDetails(),
 }) { }
 
-class AppClass extends React.Component<Props, IAppState> {
+class AppClass extends React.Component<IAppProps, IAppState> {
     private callGetBalancesTimeout: NodeJS.Timer | undefined;
     private callGetAccountTimeout: NodeJS.Timer | undefined;
     private callGetTransactionsTimeout: NodeJS.Timer | undefined;
 
-    constructor(props: Props) {
+    constructor(props: IAppProps) {
         super(props);
         this.state = {
             network: Network.Mainnet,
@@ -75,7 +73,7 @@ class AppClass extends React.Component<Props, IAppState> {
         }, { dontReply: true });
 
         ipc.on("get-password", () => {
-            const { store: { password } } = this.props;
+            const { password } = this.props.container.state.login;
             if (password === null) {
                 throw new Error("Swapperd locked");
             }
@@ -99,7 +97,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
         // Check balances and swaps on an interval
         const callGetBalances = async () => {
-            const { store: { password } } = this.props;
+            const { password } = this.props.container.state.login;
 
             const { accountExists, network } = this.state;
 
@@ -127,7 +125,7 @@ class AppClass extends React.Component<Props, IAppState> {
         callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
-            const { store: { password } } = this.props;
+            const { password } = this.props.container.state.login;
             const { accountExists } = this.state;
 
             if (accountExists && password !== null) {
@@ -158,7 +156,7 @@ class AppClass extends React.Component<Props, IAppState> {
     }
 
     public readonly render = (): JSX.Element => {
-        const { store: { password } } = this.props;
+        const { password } = this.props.container.state.login;
 
         const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails, network } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
@@ -220,7 +218,7 @@ class AppClass extends React.Component<Props, IAppState> {
     }
 
     private readonly setUnlocked = (password: string): void => {
-        this.props.actions.setPassword(password);
+        this.props.container.setPassword(password);
     }
 
     private readonly setNetwork = (network: Network): void => {
@@ -233,7 +231,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
     private readonly accountCreated = (mnemonic: string, password: string): void => {
         this.setState({ accountExists: true, mnemonic });
-        this.props.actions.setPassword(password);
+        this.props.container.setPassword(password);
         ipc.sendToMain(
             "notify",
             {
@@ -255,7 +253,7 @@ class AppClass extends React.Component<Props, IAppState> {
 
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
-        const { store: { password } } = this.props;
+        const { password } = this.props.container.state.login;
         const { network } = this.state;
         try {
             const response = await fetchInfo({ network: network, password: password || "" });
@@ -288,19 +286,8 @@ class AppClass extends React.Component<Props, IAppState> {
     }
 }
 
-const mapStateToProps = (state: ApplicationData) => ({
-    store: {
-        password: state.login.password,
-    },
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    actions: bindActionCreators({
-        setPassword,
-    }, dispatch)
-});
-
-interface Props extends ReturnType<typeof mapStateToProps>, ConnectedReturnType<typeof mapDispatchToProps> {
+interface IAppProps {
+    container: AppContainer;
 }
 
 interface IAppState {
@@ -315,4 +302,12 @@ interface IAppState {
     withdrawRequest: IPartialWithdrawRequest | null;
 }
 
-export const App = connect(mapStateToProps, mapDispatchToProps)(AppClass);
+export const App = () => {
+    return (
+        <Subscribe to={[AppContainer]}>
+            {(container: AppContainer) => (
+                <AppClass container={container}/>
+            )}
+        </Subscribe>
+    );
+};
