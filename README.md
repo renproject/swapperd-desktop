@@ -1,8 +1,8 @@
-# SwapperdD Native
+# SwapperdD Desktop
 
 ## Installation
 
-(TODO)
+Download the latest release from [SwapperD Desktop Releases](https://github.com/republicprotocol/swapperd-native-releases/releases/).
 
 ## Development
 
@@ -16,7 +16,7 @@ $ cd swapperd-native
 #### Install dependencies
 
 ```bash
-$ yarn
+$ yarn install
 ```
 
 #### Launch dev environment
@@ -30,5 +30,5 @@ $ yarn run dev
 This will package it for the same OS it's being run on.
 
 ```bash
-$ yarn run package
+$ yarn run dist
 ```
