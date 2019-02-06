@@ -16,13 +16,14 @@
       "resources"
     ],
     "productName": "SwapperD Native",
-    "publish": [{
-      "provider": "github",
-      "owner": "republicprotocol",
-      "repo": "swapperd-native-releases"
-    }]
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "republicprotocol",
+        "repo": "swapperd-native-releases"
+      }
+    ]
   },
-
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
