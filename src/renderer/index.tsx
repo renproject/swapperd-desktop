@@ -1,17 +1,14 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Provider } from "react-redux";
+import { Provider } from "unstated";
 
 import { App } from "./components/App";
 import { _catch_ } from "./components/ErrorBoundary";
-import { configureStore } from "./store/configureStore";
 
 // import "@babel/polyfill";
 
 import "./styles/index.scss";
-
-export const { store } = configureStore();
 
 if (process.env.NODE_ENV === "development") {
     // tslint:disable-next-line: no-require-imports
@@ -20,7 +17,7 @@ if (process.env.NODE_ENV === "development") {
 
 ReactDOM.render(
     _catch_(
-        <Provider store={store}>
+        <Provider>
             <App />
         </Provider>
     ),

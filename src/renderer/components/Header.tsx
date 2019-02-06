@@ -1,13 +1,11 @@
 import * as React from "react";
 
-import { connect, ConnectedReturnType } from "react-redux"; // Custom typings
-import { bindActionCreators, Dispatch } from "redux";
+import { Subscribe } from "unstated";
 
 import logo from "../styles/images/logo.png";
 
 import { Network, NETWORKS } from "../lib/swapperd";
-import { clearPassword } from "../store/actions/login/loginActions";
-import { ApplicationData } from "../store/storeTypes";
+import { AppContainer } from "../store/containers/appContainer";
 
 class HeaderClass extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -16,17 +14,20 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { hideNetwork, store: { password } } = this.props;
+        const { hideNetwork } = this.props;
         return (
-            <div className="header">
-                <img src={logo} alt="Swapperd" />
-                {!hideNetwork &&
-                    <select value={this.props.network} onChange={this.handleChange}>
-                        {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
-                    </select>
+            <Subscribe to={[AppContainer]}>
+                {(container: AppContainer) => <div className="header">
+                    <img src={logo} alt="Swapperd" />
+                    {!hideNetwork &&
+                        <select value={this.props.network} onChange={this.handleChange}>
+                            {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
+                        </select>
+                    }
+                    {container.state.login.password && !hideNetwork ? <div role="button" className="header--lock" onClick={container.clearPassword} /> : <></>}
+                </div>
                 }
-                {password && !hideNetwork ? <div role="button" className="header--lock" onClick={this.props.actions.clearPassword} /> : <></>}
-            </div>
+            </Subscribe>
         );
     }
 
@@ -36,19 +37,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state: ApplicationData) => ({
-    store: {
-        password: state.login.password,
-    },
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    actions: bindActionCreators({
-        clearPassword,
-    }, dispatch)
-});
-
-interface Props extends ReturnType<typeof mapStateToProps>, ConnectedReturnType<typeof mapDispatchToProps> {
+interface Props {
     network: Network;
     hideNetwork?: boolean;
     setNetwork(network: Network): void;
@@ -57,4 +46,4 @@ interface Props extends ReturnType<typeof mapStateToProps>, ConnectedReturnType<
 interface State {
 }
 
-export const Header = connect(mapStateToProps, mapDispatchToProps)(HeaderClass);
+export const Header = HeaderClass;
