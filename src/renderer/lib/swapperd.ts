@@ -164,10 +164,8 @@ export async function getBalances(options: IOptions): Promise<IBalances> {
 
     const keys = [];
 
-    for (const token in response) {
-        if (response.hasOwnProperty(token)) {
-            keys.push(token as Token);
-        }
+    for (const token of Object.keys(response)) {
+        keys.push(token as Token);
     }
 
     keys.sort();
@@ -250,20 +248,16 @@ export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {
                 swap.sendAmount = new BigNumber(swap.sendAmount).div(new BigNumber(10).pow(sendDecimal)).toFixed();
                 swap.receiveAmount = new BigNumber(swap.receiveAmount).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
             }
-            for (const sendToken in swap.sendCost) {
-                if (swap.sendCost.hasOwnProperty(sendToken)) {
-                    sendDecimal = decimals.get(sendToken as Token);
-                    if (sendDecimal) {
-                        swap.sendCost[sendToken] = new BigNumber(swap.sendCost[sendToken]).div(new BigNumber(10).pow(sendDecimal)).toFixed();
-                    }
+            for (const sendToken of Object.keys(swap.sendCost)) {
+                sendDecimal = decimals.get(sendToken as Token);
+                if (sendDecimal) {
+                    swap.sendCost[sendToken] = new BigNumber(swap.sendCost[sendToken]).div(new BigNumber(10).pow(sendDecimal)).toFixed();
                 }
             }
-            for (const receiveToken in swap.receiveCost) {
-                if (swap.receiveCost.hasOwnProperty(receiveToken)) {
-                    receiveDecimal = decimals.get(receiveToken as Token);
-                    if (receiveDecimal) {
-                        swap.receiveCost[receiveToken] = new BigNumber(swap.receiveCost[receiveToken]).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
-                    }
+            for (const receiveToken of Object.keys(swap.receiveCost)) {
+                receiveDecimal = decimals.get(receiveToken as Token);
+                if (receiveDecimal) {
+                    swap.receiveCost[receiveToken] = new BigNumber(swap.receiveCost[receiveToken]).div(new BigNumber(10).pow(receiveDecimal)).toFixed();
                 }
             }
         }
@@ -304,14 +298,12 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
                 // don't do anything
             }
 
-            for (const costToken in transfer.txCost) {
-                if (transfer.txCost.hasOwnProperty(costToken)) {
-                    const costDecimal = decimals.get(costToken as Token);
-                    if (costDecimal !== undefined) {
-                        transfer.txCost[costToken] = new BigNumber(transfer.txCost[costToken])
-                            .div(new BigNumber(10).pow(costDecimal))
-                            .toFixed();
-                    }
+            for (const costToken of Object.keys(transfer.txCost)) {
+                const costDecimal = decimals.get(costToken as Token);
+                if (costDecimal !== undefined) {
+                    transfer.txCost[costToken] = new BigNumber(transfer.txCost[costToken])
+                        .div(new BigNumber(10).pow(costDecimal))
+                        .toFixed();
                 }
             }
 

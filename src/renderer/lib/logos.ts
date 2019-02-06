@@ -12,8 +12,8 @@ import usdc from "../styles/images/usdc.svg";
 import wbtc from "../styles/images/wbtc.png";
 import zrx from "../styles/images/zrx.svg";
 
-export function getLogo(symbol: string) {
-    switch (symbol) {
+export function getLogo(symb: string) {
+    switch (symb) {
         case "WBTC":
             return wbtc;
         case "BTC":
