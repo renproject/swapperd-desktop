@@ -1,8 +1,8 @@
 // tslint:disable: no-any
 
-import { IPC } from "../common/ipc";
-
 import { ipcRenderer } from "electron";
+
+import { IPC } from "common/ipc";
 
 // import { ipcRenderer } from "electron";
 

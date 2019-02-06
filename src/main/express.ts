@@ -3,16 +3,16 @@ import express from "express";
 
 import axios from "axios";
 
-import { MenubarApp } from "./mb";
+import { MenubarApp } from "./menubar";
 
 import {
     dim,
     highlight,
     log,
     reset,
-} from "./ipc";
+} from "./mainIpc";
 
-import { IPC } from "../common/ipc";
+import { IPC } from "common/ipc";
 
 const swapperdEndpoint = (networkIn: string) => {
     const network = networkIn || "mainnet";

@@ -2,10 +2,10 @@ import * as React from "react";
 
 import { Subscribe } from "unstated";
 
-import logo from "../styles/images/logo.png";
+import logo from "@/styles/images/logo.png";
 
-import { Network, NETWORKS } from "../lib/swapperd";
-import { AppContainer } from "../store/containers/appContainer";
+import { Network, NETWORKS } from "@/lib/swapperd";
+import { AppContainer } from "@/store/containers/appContainer";
 
 class HeaderClass extends React.Component<Props, State> {
     constructor(props: Props) {

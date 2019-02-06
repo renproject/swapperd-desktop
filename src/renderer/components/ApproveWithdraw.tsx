@@ -1,16 +1,16 @@
 import BigNumber from "bignumber.js";
 import * as React from "react";
 
-import { getLogo } from "../lib/logos";
-import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "../lib/swapperd";
-import { Banner } from "./Banner";
-import { Loading } from "./Loading";
+import { Banner } from "@/components/Banner";
+import { Loading } from "@/components/Loading";
+import { getLogo } from "@/lib/logos";
+import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "@/lib/swapperd";
 
 interface IApproveWithdrawProps {
     network: string;
     balances: null | IBalances;
     withdrawRequest: IPartialWithdrawRequest;
-    setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest | null) => void;
+    setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest | null): void;
 }
 
 interface IApproveWithdrawState {

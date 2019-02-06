@@ -5,19 +5,19 @@ import BigNumber from "bignumber.js";
 import { OrderedMap } from "immutable";
 import { Subscribe } from "unstated";
 
-import { SwapResponseValue } from "../../common/ipc";
-import { ipc } from "../ipc";
-import { Record } from "../lib/record";
-import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "../lib/swapperd";
-import { AppContainer } from "../store/containers/appContainer";
-import { AcceptMnemonic } from "./AcceptMnemonic";
-import { ApproveSwap } from "./ApproveSwap";
-import { ApproveWithdraw } from "./ApproveWithdraw";
-import { Balances } from "./Balances";
-import { CreateAccount } from "./CreateAccount";
-import { Header } from "./Header";
-import { Swaps } from "./Swaps";
-import { UnlockScreen } from "./UnlockScreen";
+import { AcceptMnemonic } from "@/components/AcceptMnemonic";
+import { ApproveSwap } from "@/components/ApproveSwap";
+import { ApproveWithdraw } from "@/components/ApproveWithdraw";
+import { Balances } from "@/components/Balances";
+import { CreateAccount } from "@/components/CreateAccount";
+import { Header } from "@/components/Header";
+import { Swaps } from "@/components/Swaps";
+import { UnlockScreen } from "@/components/UnlockScreen";
+import { ipc } from "@/ipc";
+import { Record } from "@/lib/record";
+import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "@/lib/swapperd";
+import { AppContainer } from "@/store/containers/appContainer";
+import { SwapResponseValue } from "common/ipc";
 
 // import { version } from "../../../package.json";
 const version = "";
@@ -218,7 +218,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     private readonly setUnlocked = (password: string): void => {
-        this.props.container.setPassword(password);
+        this.props.container.setPassword(password)
+            .catch(console.error);
     }
 
     private readonly setNetwork = (network: Network): void => {
@@ -231,7 +232,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly accountCreated = (mnemonic: string, password: string): void => {
         this.setState({ accountExists: true, mnemonic });
-        this.props.container.setPassword(password);
+        this.props.container.setPassword(password)
+            .catch(console.error);
         ipc.sendToMain(
             "notify",
             {
@@ -306,7 +308,7 @@ export const App = () => {
     return (
         <Subscribe to={[AppContainer]}>
             {(container: AppContainer) => (
-                <AppClass container={container}/>
+                <AppClass container={container} />
             )}
         </Subscribe>
     );

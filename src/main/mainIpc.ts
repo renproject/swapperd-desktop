@@ -2,8 +2,8 @@ import {
   ipcMain,
 } from "electron";
 
-import { IPC } from "../common/ipc";
-import { MenubarApp } from "./mb";
+import { IPC } from "common/ipc";
+import { MenubarApp } from "./menubar";
 
 const devMode = process.env.NODE_ENV === "development";
 

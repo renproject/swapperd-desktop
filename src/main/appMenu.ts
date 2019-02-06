@@ -1,4 +1,4 @@
-import { MenubarApp } from "./mb";
+import { MenubarApp } from "./menubar";
 
 export const getMenuTemplate = (mb: MenubarApp) => {
 

@@ -3,8 +3,8 @@ import * as ReactDOM from "react-dom";
 
 import { Provider } from "unstated";
 
-import { App } from "./components/App";
-import { _catch_ } from "./components/ErrorBoundary";
+import { App } from "@/components/App";
+import { _catch_ } from "@/components/ErrorBoundary";
 
 // import "@babel/polyfill";
 

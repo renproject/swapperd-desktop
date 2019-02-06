@@ -3,8 +3,8 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
-import { naturalTime } from "../lib/naturalTime";
-import { ISwapItem } from "../lib/swapperd";
+import { naturalTime } from "@/lib/naturalTime";
+import { ISwapItem } from "@/lib/swapperd";
 
 interface ISwapItemProps {
     swapItem: ISwapItem;

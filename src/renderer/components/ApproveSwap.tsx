@@ -2,10 +2,10 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
-import { ipc } from "../ipc";
-import { getLogo } from "../lib/logos";
-import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "../lib/swapperd";
-import { Banner } from "./Banner";
+import { Banner } from "@/components/Banner";
+import { ipc } from "@/ipc";
+import { getLogo } from "@/lib/logos";
+import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "@/lib/swapperd";
 
 interface IApproveSwapProps {
     network: string;

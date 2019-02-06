@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
-import { CreateAccountRequest, CreateAccountResponse, IPC, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "../common/ipc";
+import { CreateAccountRequest, CreateAccountResponse, IPC, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
 
 const sqlite3 = sqlite3All.verbose();
 
@@ -25,8 +25,7 @@ export const setupListeners = (ipc: IPC) => {
         } = value;
 
         await updateSwapperd(mnemonic);
-        const newMnemonic = await handleAccountCreation(password);
-        return newMnemonic;
+        return handleAccountCreation(password);
     });
 
     ipc.on<NotifyRequest, NotifyResponse>("notify", (value, _error?: Error) => {

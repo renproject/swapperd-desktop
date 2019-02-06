@@ -1,12 +1,12 @@
 import * as React from "react";
 
-import { IBalances, IPartialWithdrawRequest } from "../lib/swapperd";
-import { BalanceItem } from "./BalanceItem";
+import { BalanceItem } from "@/components/BalanceItem";
+import { IBalances, IPartialWithdrawRequest } from "@/lib/swapperd";
 
 interface IBalancesProps {
     balances: null | IBalances;
     balancesError: string | null;
-    setWithdrawRequest: (withdrawRequest: IPartialWithdrawRequest) => void;
+    setWithdrawRequest(withdrawRequest: IPartialWithdrawRequest): void;
 }
 
 export class Balances extends React.Component<IBalancesProps> {

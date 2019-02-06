@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { Banner } from "./Banner";
+import { Banner } from "@/components/Banner";
 
 interface IAcceptMnemonicProps {
     mnemonic: string;
-    resolve: () => void;
+    resolve(): void;
 }
 
-export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, {}> {
+export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps> {
     constructor(props: IAcceptMnemonicProps) {
         super(props);
         this.onAccept = this.onAccept.bind(this);

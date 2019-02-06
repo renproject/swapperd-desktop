@@ -2,13 +2,13 @@ import * as React from "react";
 
 import BigNumber from "bignumber.js";
 
-import { NotifyRequest } from "../../common/ipc";
-import { ipc } from "../ipc";
-import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "../lib/swapperd";
-import { Banner } from "./Banner";
-import { Loading } from "./Loading";
-import { SwapItem } from "./SwapItem";
-import { TransferItem } from "./TransferItem";
+import { Banner } from "@/components/Banner";
+import { Loading } from "@/components/Loading";
+import { SwapItem } from "@/components/SwapItem";
+import { TransferItem } from "@/components/TransferItem";
+import { ipc } from "@/ipc";
+import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "@/lib/swapperd";
+import { NotifyRequest } from "common/ipc";
 
 interface ISwapsProps {
     swaps: ISwapsResponse | null;

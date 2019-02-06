@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { VerifyPasswordRequest, VerifyPasswordResponse } from "../../common/ipc";
-import { ipc } from "../ipc";
-import { bootload, getInfo } from "../lib/swapperd";
-import { Banner } from "./Banner";
-import { Loading } from "./Loading";
+import { Banner } from "@/components/Banner";
+import { Loading } from "@/components/Loading";
+import { ipc } from "@/ipc";
+import { bootload, getInfo } from "@/lib/swapperd";
+import { VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
 
 interface IUnlockScreenProps {
     resolve(password: string): void;
