@@ -1,5 +1,3 @@
-// require('fix-path')(); // resolve user $PATH env variable
-
 // Fix Electron menubar icons not working in Gnome
 // https://github.com/electron/electron/issues/9046#issuecomment-296169661
 if (

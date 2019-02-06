@@ -22,7 +22,7 @@ $ yarn install
 #### Launch dev environment
 
 ```bash
-$ yarn run dev
+$ yarn run start
 ```
 
 #### Package application
@@ -30,5 +30,5 @@ $ yarn run dev
 This will package it for the same OS it's being run on.
 
 ```bash
-$ yarn run dist
+$ yarn run build
 ```
