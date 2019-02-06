@@ -8,7 +8,7 @@ import { SwapItem } from "@/components/SwapItem";
 import { TransferItem } from "@/components/TransferItem";
 import { ipc } from "@/ipc";
 import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "@/lib/swapperd";
-import { NotifyRequest } from "common/ipc";
+import { Message, NotifyRequest } from "common/ipc";
 
 interface ISwapsProps {
     swaps: ISwapsResponse | null;
@@ -81,7 +81,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     const receiveAmount = new BigNumber(newSwap.receiveAmount).minus(new BigNumber(receiveCost)).toFixed();
                     const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}.`;
                     ipc.sendToMain<NotifyRequest>(
-                        "notify",
+                        Message.Notify,
                         { notification: notificationMessage },
                     );
                 }
@@ -100,7 +100,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                 });
                 for (const transfer of notPending) {
                     ipc.sendToMain<NotifyRequest>(
-                        "notify",
+                        Message.Notify,
                         { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` },
                     );
                 }

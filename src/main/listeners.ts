@@ -6,14 +6,14 @@ import bcrypt from "bcrypt";
 import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
-import { CreateAccountRequest, CreateAccountResponse, IPC, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
+import { CreateAccountRequest, CreateAccountResponse, IPC, Message, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
 
 const sqlite3 = sqlite3All.verbose();
 
-import { updateSwapperd } from "./update";
+import { installOrUpdateSwapperd } from "./autoUpdater";
 
 export const setupListeners = (ipc: IPC) => {
-    ipc.on<CreateAccountRequest, CreateAccountResponse>("create-account", async (value, _error?: Error) => {
+    ipc.on<CreateAccountRequest, CreateAccountResponse>(Message.CreateAccount, async (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
         }
@@ -24,11 +24,11 @@ export const setupListeners = (ipc: IPC) => {
             // username
         } = value;
 
-        await updateSwapperd(mnemonic);
+        await installOrUpdateSwapperd(mnemonic);
         return handleAccountCreation(password);
     });
 
-    ipc.on<NotifyRequest, NotifyResponse>("notify", (value, _error?: Error) => {
+    ipc.on<NotifyRequest, NotifyResponse>(Message.Notify, (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
         }
@@ -42,7 +42,7 @@ export const setupListeners = (ipc: IPC) => {
         return;
     });
 
-    ipc.on<VerifyPasswordRequest, VerifyPasswordResponse>("verify-password", async (value, _error?: Error) => {
+    ipc.on<VerifyPasswordRequest, VerifyPasswordResponse>(Message.VerifyPassword, async (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
         }
@@ -78,7 +78,6 @@ const connectToDB = (): Database => {
             console.error(`Failed to connect to the SQLite database: ${err.message}`);
             return;
         }
-        console.log("Connected to the SQLite database.");
     });
 };
 

@@ -4,7 +4,7 @@ import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
 import { bootload, getInfo } from "@/lib/swapperd";
-import { VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
+import { Message, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
 
 interface IUnlockScreenProps {
     resolve(password: string): void;
@@ -63,7 +63,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
         let success: boolean;
         try {
             success = await ipc.sendSyncWithTimeout<VerifyPasswordRequest, VerifyPasswordResponse>(
-                "verify-password",
+                Message.VerifyPassword,
                 10, // timeout
                 { password },
             );

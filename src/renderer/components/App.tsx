@@ -17,7 +17,7 @@ import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
 import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "@/lib/swapperd";
 import { AppContainer } from "@/store/containers/appContainer";
-import { SwapResponseValue } from "common/ipc";
+import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, GetVersionRequest, GetVersionResponse, Message, NotifyRequest, SwapRequest, SwapResponse, SwapResponseValue } from "common/ipc";
 
 // import { version } from "../../../package.json";
 const version = "";
@@ -62,7 +62,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly componentDidMount = async () => {
         // Attach event to swap
 
-        ipc.on("swap", (swap: SwapResponseValue) => {
+        ipc.on<SwapRequest, SwapResponse>(Message.Swap, (swap: SwapResponseValue) => {
             try {
                 const network = swap.network ? swap.network : this.state.network;
                 const origin = swap.origin ? swap.origin : this.state.origin;
@@ -72,7 +72,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             }
         }, { dontReply: true });
 
-        ipc.on("get-password", () => {
+        ipc.on<GetPasswordRequest, GetPasswordResponse>(Message.GetPassword, () => {
             const { password } = this.props.container.state.login;
             if (password === null) {
                 throw new Error("Swapperd locked");
@@ -85,11 +85,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         //     return networkDetails.get(network).balances || {};
         // });
 
-        ipc.on("get-network", () => {
+        ipc.on<GetNetworkRequest, GetNetworkResponse>(Message.GetNetwork, () => {
             return this.state.network;
         });
 
-        ipc.on("get-version", () => {
+        ipc.on<GetVersionRequest, GetVersionResponse>(Message.GetVersion, () => {
             return version;
         });
 
@@ -234,8 +234,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         this.setState({ accountExists: true, mnemonic });
         this.props.container.setPassword(password)
             .catch(console.error);
-        ipc.sendToMain(
-            "notify",
+        ipc.sendToMain<NotifyRequest>(
+            Message.Notify,
             {
                 notification: `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`
             },

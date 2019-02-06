@@ -11,8 +11,6 @@ import { format as formatUrl } from "url";
 
 import { getMenuTemplate } from "./appMenu";
 
-import { startAutoUpdater } from "./autoUpdater";
-
 const devMode = process.env.NODE_ENV === "development";
 
 export type MenubarApp = ReturnType<typeof menubar>;
@@ -89,8 +87,6 @@ export const setupMenubar = () => {
             event.preventDefault();
             shell.openExternal(url);
         });
-
-        await startAutoUpdater(mb);
 
         await installExtensions();
 

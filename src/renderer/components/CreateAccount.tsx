@@ -4,15 +4,15 @@ import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
 import { bootload, swapperdReady } from "@/lib/swapperd";
-import { CreateAccountRequest, CreateAccountResponse } from "common/ipc";
+import { CreateAccountRequest, CreateAccountResponse, Message } from "common/ipc";
 
 interface ICreateAccountProps {
     resolve(mnemonic: string, password: string): void;
 }
 
 interface ICreateAccountState {
-    mnemonic: string;
-    // username: string;
+    mnemonic: string | null;
+    username: string;
     password: string;
     useMnemonic: boolean;
     loading: boolean;
@@ -23,8 +23,8 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     constructor(props: ICreateAccountProps) {
         super(props);
         this.state = {
-            mnemonic: "",
-            // username: "",
+            mnemonic: null,
+            username: "",
             password: "",
             useMnemonic: false,
             loading: false,
@@ -36,7 +36,12 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     }
 
     public render(): JSX.Element {
-        const { useMnemonic, loading, error } = this.state;
+        const { useMnemonic, loading, error, username, password, mnemonic } = this.state;
+
+        const disabled = useMnemonic ?
+            !mnemonic || !password || !username :
+            !password || !username || password.length < 8;
+
         return (
             <>
                 <Banner title={useMnemonic ? "Import account" : "Create account"} />
@@ -48,7 +53,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             }
                             <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                             <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
-                            <button onClick={this.handleSubmit}>{useMnemonic ? "Import" : "Create"} account</button>
+                            <button disabled={disabled} onClick={this.handleSubmit}>{useMnemonic ? "Import" : "Create"} account</button>
                             {!useMnemonic ?
                                 <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
                                 :
@@ -95,7 +100,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             let newMnemonic: string;
             try {
                 newMnemonic = await ipc.sendSyncWithTimeout<CreateAccountRequest, CreateAccountResponse>(
-                    "create-account",
+                    Message.CreateAccount,
                     0, // timeout
                     { password, mnemonic }
                 );

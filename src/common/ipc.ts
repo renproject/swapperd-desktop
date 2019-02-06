@@ -18,7 +18,20 @@ declare global {
     }
 }
 
-export type CreateAccountRequest = { mnemonic: string; password: string };
+export enum Message {
+    // renderer to main
+    CreateAccount = "create-account",
+    Notify = "notify",
+    VerifyPassword = "verify-password",
+
+    // main to renderer
+    GetPassword = "get-password",
+    Swap = "swap",
+    GetNetwork = "get-network",
+    GetVersion = "get-version",
+}
+
+export type CreateAccountRequest = { mnemonic: string | null; password: string };
 export type CreateAccountResponse = string;
 
 export type NotifyRequest = { notification: string };
@@ -26,6 +39,18 @@ export type NotifyResponse = void;
 
 export type VerifyPasswordRequest = { password: string };
 export type VerifyPasswordResponse = boolean;
+
+export type GetPasswordRequest = null;
+export type GetPasswordResponse = string;
+
+export type SwapRequest = any;
+export type SwapResponse = any;
+
+export type GetNetworkRequest = any;
+export type GetNetworkResponse = any;
+
+export type GetVersionRequest = any;
+export type GetVersionResponse = any;
 
 export class IPC {
 

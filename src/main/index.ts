@@ -1,4 +1,5 @@
 import { setupAutoLaunch } from "./autoLaunch";
+import { setupAutoUpdater } from "./autoUpdater";
 import { setupExpress } from "./express";
 import { setupListeners } from "./listeners";
 import { setupIPC } from "./mainIpc";
@@ -19,3 +20,4 @@ const ipc = setupIPC(mb);
 setupAutoLaunch();
 setupExpress(mb, ipc);
 setupListeners(ipc);
+setupAutoUpdater(ipc);
