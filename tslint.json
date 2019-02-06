@@ -119,6 +119,7 @@
         "max-line-length": false,
         "max-func-body-length": false,
         "react-a11y-input-elements": false,
+        "react-a11y-no-onchange": false,
         "react-a11y-role-has-required-aria-props": false,
         "completed-docs": false
     }
