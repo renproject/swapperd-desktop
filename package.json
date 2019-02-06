@@ -16,20 +16,17 @@
       "resources"
     ],
     "productName": "SwapperD Native",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "republicprotocol",
-        "repo": "swapperd-native-releases"
-      }
-    ]
+    "publish": [{
+      "provider": "github",
+      "owner": "republicprotocol",
+      "repo": "swapperd-native-releases"
+    }]
   },
   "scripts": {
-    "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "icon": "(mkdir dist || true) && cp -r resources dist/resources",
-    "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "lint": "tslint --project ./ -t stylish",
+    "start": "electron-webpack dev",
+    "build": "electron-webpack && electron-builder",
+    "build:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
@@ -40,7 +37,6 @@
     "body-parser": "^1.18.3",
     "electron-updater": "^4.0.6",
     "express": "^4.16.4",
-    "fix-path": "^2.1.0",
     "immutable": "^4.0.0-rc.12",
     "menubar": "^5.2.3",
     "moment": "^2.24.0",
@@ -49,7 +45,8 @@
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.7.0",
     "sqlite3": "^4.0.6",
-    "unstated": "^2.1.1"
+    "unstated": "^2.1.1",
+    "source-map-support": "^0.5.10"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
@@ -65,7 +62,6 @@
     "@types/react-dom": "^16.0.11",
     "@types/sqlite3": "^3.1.3",
     "babel-loader": "^8.0.5",
-    "csstype": "^2.6.2",
     "devtron": "^1.4.0",
     "electron": "4.0.2",
     "electron-builder": "20.38.5",
@@ -75,7 +71,6 @@
     "prop-types": "^15.0.0",
     "react-hot-loader": "4.6.5",
     "sass-loader": "^7.1.0",
-    "source-map-support": "^0.5.10",
     "ts-unused-exports": "^2.0.11",
     "tslint": "^5.12.1",
     "tslint-microsoft-contrib": "^6.0.0",
