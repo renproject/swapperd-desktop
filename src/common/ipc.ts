@@ -50,7 +50,7 @@ export type GetNetworkRequest = null;
 export type GetNetworkResponse = string;
 
 export type UpdateReadyRequest = string;
-export type UpdateReadyResponse = null;
+export type UpdateReadyResponse = void;
 
 export class IPC {
 
