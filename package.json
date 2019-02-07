@@ -44,7 +44,7 @@
     "build": "yarn run prebuild; electron-webpack && electron-builder",
     "build:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
-    "prebuild": "tsc src/packaging/afterPackHook.ts --lib ES2015 --outDir packaging"
+    "prebuild": "tsc packaging/*.ts --lib es2015 --skipLibCheck"
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
