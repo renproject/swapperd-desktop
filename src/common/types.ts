@@ -20,10 +20,13 @@ export enum Message {
 }
 
 export type ResponseType<X extends Message> =
+    // renderer to main
     X extends Message.CreateAccount ? string :
     X extends Message.Notify ? void :
     X extends Message.VerifyPassword ? boolean :
     X extends Message.Relaunch ? void :
+
+    // main to renderer
     X extends Message.GetPassword ? string :
     // tslint:disable-next-line: no-any
     X extends Message.Swap ? { status: number; response?: any } :
@@ -32,10 +35,13 @@ export type ResponseType<X extends Message> =
     never;
 
 export type RequestType<X extends Message> =
+    // renderer to main
     X extends Message.CreateAccount ? { mnemonic: string | null; password: string } :
     X extends Message.Notify ? { notification: string } :
     X extends Message.VerifyPassword ? { password: string } :
     X extends Message.Relaunch ? null :
+
+    // main to renderer
     X extends Message.GetPassword ? null :
     // tslint:disable-next-line: no-any
     X extends Message.Swap ? { body: any; network: Network; origin: any } :

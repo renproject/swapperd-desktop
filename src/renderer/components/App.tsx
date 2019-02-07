@@ -230,7 +230,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private readonly accountCreated = async (mnemonic: string, password: string): Promise<void> => {
         this.setState({ accountExists: true, mnemonic });
         await this.props.container.setPassword(password);
-        ipc.sendToMain(
+        ipc.sendMessage(
             Message.Notify,
             {
                 notification: `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`

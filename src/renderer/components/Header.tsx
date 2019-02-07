@@ -38,7 +38,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     private readonly update = () => {
-        ipc.sendToMain(Message.Relaunch, null);
+        ipc.sendMessage(Message.Relaunch, null);
     }
 }
 

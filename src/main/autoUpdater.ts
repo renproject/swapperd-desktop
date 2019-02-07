@@ -103,7 +103,7 @@ Download speed: ${progressObj.bytesPerSecond} \
 
         const newVersion = "";
 
-        ipc.sendToMain(Message.UpdateReady, newVersion);
+        ipc.sendMessage(Message.UpdateReady, newVersion);
     });
 
     const interval = async () => {

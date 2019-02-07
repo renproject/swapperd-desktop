@@ -25,13 +25,13 @@ export class IPC {
         this.other = other;
     }
 
-    public sendToMain = <T extends Message>(route: T, value: RequestType<T>) => {
-        // log(`sendToMain ${route} ${JSON.stringify(value)} ${error}`);
+    public sendMessage = <T extends Message>(route: T, value: RequestType<T>) => {
+        // log(`sendMessage ${route} ${JSON.stringify(value)} ${error}`);
         this.other().send(route, value, null);
     }
 
-    public replyToMain = <T extends Message>(route: string, value: ResponseType<T> | null, error?: Error | null) => {
-        // log(`sendToMain ${route} ${JSON.stringify(value)} ${error}`);
+    public replyToMessage = <T extends Message>(route: string, value: ResponseType<T> | null, error?: Error | null) => {
+        // log(`sendMessage ${route} ${JSON.stringify(value)} ${error}`);
         this.other().send(route, value, error);
     }
 
@@ -51,7 +51,7 @@ export class IPC {
             resolve(response!);
         }));
 
-        this.sendToMain(route, value);
+        this.sendMessage(route, value);
 
         // Reject after 1 minute
         if (seconds) {
@@ -68,12 +68,12 @@ export class IPC {
                 response = await callback(params, error);
             } catch (error) {
                 console.error(error);
-                this.replyToMain<T>(routeResponse(route), response, error);
+                this.replyToMessage<T>(routeResponse(route), response, error);
                 return;
             }
 
             if (!options || !options.dontReply) {
-                this.replyToMain<T>(routeResponse(route), response);
+                this.replyToMessage<T>(routeResponse(route), response);
             }
         });
     }
