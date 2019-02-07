@@ -35,10 +35,8 @@ export interface ConnectedProps {
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export function connect<X extends ConnectedProps>(_container: typeof AppContainer) {
     return (Component: React.ComponentClass<X>) => (props: Omit<X, "container">) => (
-        // tslint:disable: no-any
         <Subscribe to={[_container]}>
-            {(...container) => <Component {...({ ...props, container: container } as any as X)} />}
+            {(...containers) => <Component {...({ ...props, container: containers[0] } as unknown as X)} />}
         </Subscribe>
-        // tslint:enable: no-any
     );
 }

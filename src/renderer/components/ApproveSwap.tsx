@@ -6,7 +6,7 @@ import { Banner } from "@/components/Banner";
 import { ipc } from "@/ipc";
 import { getLogo } from "@/lib/logos";
 import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "@/lib/swapperd";
-import { Message, SwapResponse } from "common/ipc";
+import { Message } from "common/types";
 
 interface IApproveSwapProps {
     network: string;
@@ -90,7 +90,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
 
         try {
             const mainResponse = await submitSwap(swapDetails, { password, network });
-            ipc.sendToMain<SwapResponse>(Message.SwapResponse, { status: mainResponse.status, response: mainResponse.data });
+            ipc.sendMessage(Message._SwapResponse, { status: mainResponse.status, response: mainResponse.data });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
@@ -101,7 +101,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
     }
 
     private onReject(): void {
-        ipc.sendToMain<SwapResponse>(Message.SwapResponse, { status: 403 });
+        ipc.sendMessage(Message._SwapResponse, { status: 403 });
         this.props.resetSwapDetails();
     }
 }

@@ -4,7 +4,7 @@ import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
 import { bootload, swapperdReady } from "@/lib/swapperd";
-import { CreateAccountRequest, CreateAccountResponse, Message } from "common/ipc";
+import { Message } from "common/types";
 
 interface ICreateAccountProps {
     resolve(mnemonic: string, password: string): void;
@@ -99,7 +99,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             // const { username } = this.state;
             let newMnemonic: string;
             try {
-                newMnemonic = await ipc.sendSyncWithTimeout<CreateAccountRequest, CreateAccountResponse>(
+                newMnemonic = await ipc.sendSyncWithTimeout(
                     Message.CreateAccount,
                     0, // timeout
                     { password, mnemonic }

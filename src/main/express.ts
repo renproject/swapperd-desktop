@@ -14,7 +14,8 @@ import {
     reset,
 } from "./mainIpc";
 
-import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, IPC, Message, SwapRequest, SwapResponse } from "common/ipc";
+import { IPC } from "common/ipc";
+import { Message } from "common/types";
 
 const PORT = 7928;
 
@@ -41,7 +42,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     });
 
     expressApp.get("/network", async (_req, res) => {
-        const network = await ipc.sendSyncWithTimeout<GetNetworkRequest, GetNetworkResponse>(Message.GetNetwork, 10, null);
+        const network = await ipc.sendSyncWithTimeout(Message.GetNetwork, 10, null);
         res.status(200);
         res.send(network);
     });
@@ -57,7 +58,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
         mb.showWindow();
 
         // tslint:disable-next-line: no-any
-        const response = await ipc.sendSyncWithTimeout<SwapRequest, SwapResponse>(Message.Swap, 0, {
+        const response = await ipc.sendSyncWithTimeout(Message.Swap, 0, {
             body: req.body,
             network: req.query.network,
             origin: req.get("origin")
@@ -74,7 +75,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
 
         let password: string;
         try {
-            password = await ipc.sendSyncWithTimeout<GetPasswordRequest, GetPasswordResponse>(Message.GetPassword, 10, null);
+            password = await ipc.sendSyncWithTimeout(Message.GetPassword, 10, null);
         } catch (err) {
             res.status(401);
             res.send("Wallet is locked");
