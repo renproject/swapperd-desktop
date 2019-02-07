@@ -1,11 +1,9 @@
 import * as React from "react";
 
-import { Subscribe } from "unstated";
-
 import logo from "@/styles/images/logo.png";
 
 import { NETWORKS } from "@/lib/swapperd";
-import { AppContainer } from "@/store/containers/appContainer";
+import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 import { Network } from "common/types";
 
 class HeaderClass extends React.Component<Props, State> {
@@ -15,20 +13,17 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { hideNetwork } = this.props;
+        const { hideNetwork, container } = this.props;
         return (
-            <Subscribe to={[AppContainer]}>
-                {(container: AppContainer) => <div className="header">
-                    <img src={logo} alt="Swapperd" />
-                    {!hideNetwork &&
-                        <select value={this.props.network} onChange={this.handleChange}>
-                            {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
-                        </select>
-                    }
-                    {container.state.login.password && !hideNetwork ? <div role="button" className="header--lock" onClick={container.clearPassword} /> : <></>}
-                </div>
+            <div className="header">
+                <img src={logo} alt="Swapperd" />
+                {!hideNetwork &&
+                    <select value={this.props.network} onChange={this.handleChange}>
+                        {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
+                    </select>
                 }
-            </Subscribe>
+                {container.state.login.password && !hideNetwork ? <div role="button" className="header--lock" onClick={container.clearPassword} /> : <></>}
+            </div>
         );
     }
 
@@ -38,7 +33,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 }
 
-interface Props {
+interface Props extends ConnectedProps {
     network: Network;
     hideNetwork?: boolean;
     setNetwork(network: Network): void;
@@ -47,4 +42,4 @@ interface Props {
 interface State {
 }
 
-export const Header = HeaderClass;
+export const Header = connect<Props>(AppContainer)(HeaderClass);

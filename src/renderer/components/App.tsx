@@ -285,6 +285,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 }
 
 interface IAppProps extends ConnectedProps {
+    version: string;
 }
 
 interface IAppState {
@@ -297,4 +298,4 @@ interface IAppState {
     withdrawRequest: IPartialWithdrawRequest | null;
 }
 
-export const App = connect(AppContainer)(AppClass);
+export const App = connect<IAppProps>(AppContainer)(AppClass);
