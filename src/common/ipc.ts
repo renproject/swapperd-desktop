@@ -1,6 +1,6 @@
 import { IpcMain, IpcRenderer, WebContents } from "electron";
 
-import { Network } from "common/types";
+import { Message, RequestType, ResponseType } from "common/types";
 
 // tslint:disable: no-any
 
@@ -13,44 +13,7 @@ declare global {
     }
 }
 
-export enum Message {
-    // renderer to main
-    CreateAccount = "create-account",
-    Notify = "notify",
-    VerifyPassword = "verify-password",
-    Relaunch = "relaunch",
-
-    // main to renderer
-    GetPassword = "get-password",
-    Swap = "swap",
-    SwapResponse = "swap-response", // must be `${Message.Swap}-response`
-    GetNetwork = "get-network",
-    UpdateReady = "update-ready",
-}
-
-export type CreateAccountRequest = { mnemonic: string | null; password: string };
-export type CreateAccountResponse = string;
-
-export type NotifyRequest = { notification: string };
-export type NotifyResponse = void;
-
-export type VerifyPasswordRequest = { password: string };
-export type VerifyPasswordResponse = boolean;
-
-export type RelaunchRequest = null;
-export type RelaunchResponse = void;
-
-export type GetPasswordRequest = null;
-export type GetPasswordResponse = string;
-
-export type SwapRequest = { body: any; network: Network; origin: any };
-export type SwapResponse = { status: number; response?: any };
-
-export type GetNetworkRequest = null;
-export type GetNetworkResponse = string;
-
-export type UpdateReadyRequest = string;
-export type UpdateReadyResponse = void;
+export const routeResponse = <X extends Message>(msg: X) => `${msg}-response`;
 
 export class IPC {
 
@@ -62,17 +25,22 @@ export class IPC {
         this.other = other;
     }
 
-    public sendToMain = <T>(path: string, value: T | null, error?: Error | null) => {
-        // log(`sendToMain ${path} ${JSON.stringify(value)} ${error}`);
-        this.other().send(path, value, error);
+    public sendMessage = <T extends Message>(route: T, value: RequestType<T>) => {
+        // log(`sendMessage ${route} ${JSON.stringify(value)} ${error}`);
+        this.other().send(route, value, null);
+    }
+
+    public replyToMessage = <T extends Message>(route: string, value: ResponseType<T> | null, error?: Error | null) => {
+        // log(`sendMessage ${route} ${JSON.stringify(value)} ${error}`);
+        this.other().send(route, value, error);
     }
 
     // In order to use this, two routes must be defined in index.js, `${route}` and
     // `${route}-response`.
-    public sendSyncWithTimeout = async <Input, Output>(route: string, seconds: number, value: Input): Promise<Output> => new Promise<Output>((resolve, reject) => {
+    public sendSyncWithTimeout = async <T extends Message>(route: T, seconds: number, value: RequestType<T>) => new Promise<ResponseType<T>>((resolve, reject) => {
         // log(`sendSyncWithTimeout ${route}`);
 
-        this.once(`${route}-response`, (response: Output | null, error?: Error) => {
+        (this.once as any)(routeResponse(route), ((response: ResponseType<T> | null, error?: Error) => {
             // log(`sendSyncWith ${route} => (${error ? `err: ${error}` : value})`);
 
             if (error) {
@@ -81,9 +49,9 @@ export class IPC {
 
             // tslint:disable-next-line: no-non-null-assertion
             resolve(response!);
-        });
+        }));
 
-        this.sendToMain(route, value);
+        this.sendMessage(route, value);
 
         // Reject after 1 minute
         if (seconds) {
@@ -91,29 +59,29 @@ export class IPC {
         }
     })
 
-    public on = <Input, Output>(route: string, callback: (params: Input, error: Error) => Output | Promise<Output>, options?: { dontReply?: boolean }) => {
-        this.self.on(route, async (_event: any, ...args: IPCResponse<Input>) => {
+    public on = <T extends Message>(route: T, callback: (params: RequestType<T>, error: Error) => ResponseType<T> | Promise<ResponseType<T>>, options?: { dontReply?: boolean }) => {
+        this.self.on(route, async (_event: any, ...args: IPCResponse<RequestType<T>>) => {
             // log(`handling on(${route}) with args: (${JSON.stringify(args)})`);
-            let response: Output | null = null;
+            let response: ResponseType<T> | null = null;
             try {
                 const [params, error] = args;
                 response = await callback(params, error);
             } catch (error) {
                 console.error(error);
-                this.sendToMain<Output>(`${route}-response`, response, error);
+                this.replyToMessage<T>(routeResponse(route), response, error);
                 return;
             }
 
             if (!options || !options.dontReply) {
-                this.sendToMain(`${route}-response`, response);
+                this.replyToMessage<T>(routeResponse(route), response);
             }
         });
     }
 
-    public delayedOn = <Input>(route: string, callback: (params: Input, error: Error) => void | Promise<void>) => { this.on(route, callback, { dontReply: true }); };
+    public delayedOn = <T extends Message>(route: T, callback: (params: RequestType<T>, error: Error) => void | Promise<void>) => { this.on<T>(route, callback as any, { dontReply: true }); };
 
-    public once = <Input>(route: string, callback: (params: Input | null, error?: Error) => void | Promise<void>) => {
-        this.self.once(route, async (_event: any, ...args: IPCResponse<Input>) => {
+    public once = <T extends Message>(route: T, callback: (params: RequestType<T> | null, error?: Error) => void | Promise<void>) => {
+        this.self.once(route, async (_event: any, ...args: IPCResponse<RequestType<T>>) => {
             try {
                 const [params, error] = args;
                 callback(params, error);

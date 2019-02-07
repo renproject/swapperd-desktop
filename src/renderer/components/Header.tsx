@@ -2,14 +2,14 @@ import * as React from "react";
 
 import logo from "@/styles/images/logo.png";
 
+import { ipc } from "@/ipc";
 import { NETWORKS } from "@/lib/swapperd";
 import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
-import { Network } from "common/types";
+import { Message, Network } from "common/types";
 
 class HeaderClass extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
     }
 
     public render(): JSX.Element {
@@ -22,14 +22,23 @@ class HeaderClass extends React.Component<Props, State> {
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
-                {container.state.login.password && !hideNetwork ? <div role="button" className="header--lock" onClick={container.clearPassword} /> : <></>}
+                {container.state.login.password && !hideNetwork ?
+                    container.state.app.updateReady ?
+                        <a onClick={this.update}>Update available</a> :
+                        <div role="button" className="header--lock" onClick={container.clearPassword} /> :
+                    <></>
+                }
             </div>
         );
     }
 
-    private handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    private handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const network = event.target.value;
         this.props.setNetwork(network as Network);
+    }
+
+    private readonly update = () => {
+        ipc.sendMessage(Message.Relaunch, null);
     }
 }
 
