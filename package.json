@@ -41,8 +41,8 @@
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
     "start": "electron-webpack dev",
-    "build": "yarn run prebuild; electron-webpack && electron-builder",
-    "build:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "build": "npm run prebuild && electron-webpack && electron-builder",
+    "build:dir": "npm run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
     "prebuild": "tsc packaging/*.ts --lib es2015 --skipLibCheck"
   },
