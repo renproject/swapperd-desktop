@@ -285,7 +285,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 }
 
 interface IAppProps extends ConnectedProps {
-    version: string;
 }
 
 interface IAppState {
