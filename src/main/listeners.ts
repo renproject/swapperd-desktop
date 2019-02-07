@@ -6,13 +6,14 @@ import bcrypt from "bcrypt";
 import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
-import { CreateAccountRequest, CreateAccountResponse, IPC, Message, NotifyRequest, NotifyResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
+import { CreateAccountRequest, CreateAccountResponse, IPC, Message, NotifyRequest, NotifyResponse, RelaunchRequest, RelaunchResponse, VerifyPasswordRequest, VerifyPasswordResponse } from "common/ipc";
 
 const sqlite3 = sqlite3All.verbose();
 
 import { installOrUpdateSwapperd } from "./autoUpdater";
+import { MenubarApp } from "./menubar";
 
-export const setupListeners = (ipc: IPC) => {
+export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
     ipc.on<CreateAccountRequest, CreateAccountResponse>(Message.CreateAccount, async (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");
@@ -55,6 +56,9 @@ export const setupListeners = (ipc: IPC) => {
         return bcrypt.compare(value.password, passwordHash);
     });
 
+    ipc.on<RelaunchRequest, RelaunchResponse>(Message.CreateAccount, (_value: null, _error?: Error) => {
+        mb.app.relaunch();
+    });
 };
 
 async function storePasswordHash(db: Database, account: string, password: string, nonce: string) {

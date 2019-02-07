@@ -3,18 +3,14 @@ import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
 
-import { sleep } from "./sleep";
+import { sleep } from "@/lib/sleep";
+import { Network } from "common/types";
 
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
 
 const DEFAULT_TIMEOUT = 60 * 1000; // 1 minute
 const LONGER_TIMEOUT = 5 * 60 * 1000; // 5 minute
-
-export enum Network {
-    Mainnet = "mainnet",
-    Testnet = "testnet",
-}
 
 export const NETWORKS = {
     [Network.Mainnet]: "Main Network",

@@ -114,6 +114,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
     public render(): JSX.Element {
         const { swaps, transfers } = this.props;
         const { selected } = this.state;
+
         return (
             <>
                 <Banner title="History" />

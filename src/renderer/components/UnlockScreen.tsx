@@ -58,6 +58,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
 
     private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
+
         const { password } = this.state;
 
         let success: boolean;

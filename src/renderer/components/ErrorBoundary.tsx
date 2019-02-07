@@ -31,18 +31,21 @@ class ErrorBoundary extends React.Component<Props, State> {
             // Error path
             return (
                 <div>
-                    <h2>Something went wrong.</h2>
+                    <h2>Something went wrong. <a role="button" onClick={this.relaunch}>Click to reload</a></h2>
                     <details style={{ whiteSpace: "pre-wrap" }}>
                         {this.state.error && this.state.error.toString()}
                         <br />
                         {this.state.errorInfo.componentStack}
                     </details>
-                    }
                 </div>
             );
         }
         // Normally, just render children
         return this.props.children;
+    }
+
+    private readonly relaunch = () => {
+        this.setState({ error: null, errorInfo: null });
     }
 }
 

@@ -5,6 +5,8 @@ import axios from "axios";
 
 import { MenubarApp } from "./menubar";
 
+import { version } from "../../package.json";
+
 import {
     dim,
     highlight,
@@ -12,7 +14,9 @@ import {
     reset,
 } from "./mainIpc";
 
-import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, GetVersionRequest, GetVersionResponse, IPC, Message, SwapRequest, SwapResponse } from "common/ipc";
+import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, IPC, Message, SwapRequest, SwapResponse } from "common/ipc";
+
+const PORT = 7928;
 
 const swapperdEndpoint = (networkIn: string) => {
     const network = networkIn || "mainnet";
@@ -43,7 +47,6 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     });
 
     expressApp.get("/version", async (_req, res) => {
-        const version = await ipc.sendSyncWithTimeout<GetVersionRequest, GetVersionResponse>(Message.GetVersion, 10, null);
         res.status(200);
         res.send(version);
     });
@@ -54,7 +57,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
         mb.showWindow();
 
         // tslint:disable-next-line: no-any
-        const response: any = await ipc.sendSyncWithTimeout<SwapRequest, SwapResponse>(Message.Swap, 0, {
+        const response = await ipc.sendSyncWithTimeout<SwapRequest, SwapResponse>(Message.Swap, 0, {
             body: req.body,
             network: req.query.network,
             origin: req.get("origin")
@@ -103,5 +106,5 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
         res.send(postResponse.data);
     });
 
-    expressApp.listen(7928);
+    expressApp.listen(PORT);
 };

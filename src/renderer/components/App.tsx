@@ -15,12 +15,12 @@ import { Swaps } from "@/components/Swaps";
 import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
-import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse, Network } from "@/lib/swapperd";
+import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 import { AppContainer } from "@/store/containers/appContainer";
-import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, GetVersionRequest, GetVersionResponse, Message, NotifyRequest, SwapRequest, SwapResponse, SwapResponseValue } from "common/ipc";
+import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, Message, NotifyRequest, SwapRequest } from "common/ipc";
+import { Network } from "common/types";
 
 // import { version } from "../../../package.json";
-const version = "";
 
 export class NetworkDetails extends Record({
     balances: null as IBalances | null,
@@ -42,7 +42,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     constructor(props: IAppProps) {
         super(props);
         this.state = {
-            network: Network.Mainnet,
             networkDetails: new NetworkState(),
             origin: "",
             mnemonic: "",
@@ -62,15 +61,16 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly componentDidMount = async () => {
         // Attach event to swap
 
-        ipc.on<SwapRequest, SwapResponse>(Message.Swap, (swap: SwapResponseValue) => {
+        ipc.delayedOn<SwapRequest>(Message.Swap, async (swap) => {
             try {
-                const network = swap.network ? swap.network : this.state.network;
+                const network = swap.network ? swap.network : this.props.container.state.trader.network;
                 const origin = swap.origin ? swap.origin : this.state.origin;
-                this.setState({ swapDetails: swap.body, network, origin });
+                await this.props.container.setNetwork(network);
+                this.setState({ swapDetails: swap.body, origin });
             } catch (error) {
                 console.error(error);
             }
-        }, { dontReply: true });
+        });
 
         ipc.on<GetPasswordRequest, GetPasswordResponse>(Message.GetPassword, () => {
             const { password } = this.props.container.state.login;
@@ -86,20 +86,16 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         // });
 
         ipc.on<GetNetworkRequest, GetNetworkResponse>(Message.GetNetwork, () => {
-            return this.state.network;
-        });
-
-        ipc.on<GetVersionRequest, GetVersionResponse>(Message.GetVersion, () => {
-            return version;
+            return this.props.container.state.trader.network;
         });
 
         this.callGetAccount().catch(console.error);
 
         // Check balances and swaps on an interval
         const callGetBalances = async () => {
-            const { password } = this.props.container.state.login;
+            const { login: { password }, trader: { network } } = this.props.container.state;
 
-            const { accountExists, network } = this.state;
+            const { accountExists } = this.state;
 
             if (accountExists && password !== null) {
                 try {
@@ -130,7 +126,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
             if (accountExists && password !== null) {
                 try {
-                    const { network } = this.state;
+                    const { network } = this.props.container.state.trader;
                     const swaps = await getSwaps({ network, password: password });
 
                     const { networkDetails } = this.state;
@@ -139,7 +135,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     console.error(e.response && e.response.data.error || e);
                 }
                 try {
-                    const { network } = this.state;
+                    const { network } = this.props.container.state.trader;
                     const transfers = await getTransfers({ network: network, password: password });
 
                     const { networkDetails } = this.state;
@@ -156,9 +152,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     public readonly render = (): JSX.Element => {
-        const { password } = this.props.container.state.login;
+        const { login: { password }, trader: { network } } = this.props.container.state;
 
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails, network } = this.state;
+        const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
         if (mnemonic !== "") {
@@ -217,23 +213,25 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         return <div className="app">An error occurred.</div>;
     }
 
-    private readonly setUnlocked = (password: string): void => {
-        this.props.container.setPassword(password)
-            .catch(console.error);
+    private readonly setUnlocked = async (password: string): Promise<void> => {
+        await this.props.container.setPassword(password);
     }
 
-    private readonly setNetwork = (network: Network): void => {
-        this.setState({ network }, async () => this.callGetAccount().catch(console.error));
+    private readonly setNetwork = async (network: Network): Promise<void> => {
+        await this.props.container.setNetwork(
+            network,
+        );
+
+        await this.callGetAccount().catch(console.error);
     }
 
     private readonly mnemonicSaved = (): void => {
         this.setState({ mnemonic: "" });
     }
 
-    private readonly accountCreated = (mnemonic: string, password: string): void => {
+    private readonly accountCreated = async (mnemonic: string, password: string): Promise<void> => {
         this.setState({ accountExists: true, mnemonic });
-        this.props.container.setPassword(password)
-            .catch(console.error);
+        await this.props.container.setPassword(password);
         ipc.sendToMain<NotifyRequest>(
             Message.Notify,
             {
@@ -255,8 +253,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
-        const { password } = this.props.container.state.login;
-        const { network } = this.state;
+        const { login: { password }, trader: { network } } = this.props.container.state;
         try {
             const response = await fetchInfo({ network: network, password: password || "" });
 
@@ -293,8 +290,6 @@ interface IAppProps {
 }
 
 interface IAppState {
-    network: Network;
-
     networkDetails: NetworkState;
 
     origin: string;

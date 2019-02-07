@@ -1,17 +1,12 @@
 import { IpcMain, IpcRenderer, WebContents } from "electron";
 
+import { Network } from "common/types";
+
 // tslint:disable: no-any
 
 // import { ipcRenderer } from "electron";
 
 export type IPCResponse<T> = [T, Error];
-
-export interface SwapResponseValue {
-    body: any;
-    network: any;
-    origin: any;
-}
-
 declare global {
     interface Window {
         ipcRenderer: IpcRenderer;
@@ -23,12 +18,14 @@ export enum Message {
     CreateAccount = "create-account",
     Notify = "notify",
     VerifyPassword = "verify-password",
+    Relaunch = "relaunch",
 
     // main to renderer
     GetPassword = "get-password",
     Swap = "swap",
+    SwapResponse = "swap-response", // must be `${Message.Swap}-response`
     GetNetwork = "get-network",
-    GetVersion = "get-version",
+    UpdateReady = "update-ready",
 }
 
 export type CreateAccountRequest = { mnemonic: string | null; password: string };
@@ -40,17 +37,20 @@ export type NotifyResponse = void;
 export type VerifyPasswordRequest = { password: string };
 export type VerifyPasswordResponse = boolean;
 
+export type RelaunchRequest = null;
+export type RelaunchResponse = void;
+
 export type GetPasswordRequest = null;
 export type GetPasswordResponse = string;
 
-export type SwapRequest = any;
-export type SwapResponse = any;
+export type SwapRequest = { body: any; network: Network; origin: any };
+export type SwapResponse = { status: number; response?: any };
 
-export type GetNetworkRequest = any;
-export type GetNetworkResponse = any;
+export type GetNetworkRequest = null;
+export type GetNetworkResponse = string;
 
-export type GetVersionRequest = any;
-export type GetVersionResponse = any;
+export type UpdateReadyRequest = string;
+export type UpdateReadyResponse = null;
 
 export class IPC {
 
@@ -109,6 +109,8 @@ export class IPC {
             }
         });
     }
+
+    public delayedOn = <Input>(route: string, callback: (params: Input, error: Error) => void | Promise<void>) => { this.on(route, callback, { dontReply: true }); };
 
     public once = <Input>(route: string, callback: (params: Input | null, error?: Error) => void | Promise<void>) => {
         this.self.once(route, async (_event: any, ...args: IPCResponse<Input>) => {

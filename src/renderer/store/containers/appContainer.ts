@@ -1,24 +1,20 @@
 import { Container } from "unstated";
 
-import { initialState } from "../initialState";
-import { ApplicationData } from "../storeTypes";
+import { initialState } from "@/store/initialState";
+import { ApplicationData } from "@/store/storeTypes";
+import { Network } from "common/types";
 
 export class AppContainer extends Container<ApplicationData> {
     public state = initialState;
 
-    public setPassword = async (password: string) => {
-        return this.setState({
-            login: {
-                password,
-            }
-        });
-    }
+    // Login data
+    public setPassword = async (password: string) =>
+        this.setState({ login: { ...this.state.login, password } })
+    public clearPassword = async () =>
+        this.setState({ login: { ...this.state.login, password: null } })
 
-    public clearPassword = async () => {
-        return this.setState({
-            login: {
-                password: null,
-            }
-        });
-    }
+    // Trader data
+    public setNetwork = async (network: Network) =>
+        this.setState({ trader: { ...this.state.trader, network } })
+
 }
