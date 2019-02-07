@@ -16,11 +16,13 @@
       "resources"
     ],
     "productName": "SwapperD Native",
-    "publish": [{
-      "provider": "github",
-      "owner": "republicprotocol",
-      "repo": "swapperd-native-releases"
-    }]
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "republicprotocol",
+        "repo": "swapperd-native-releases"
+      }
+    ]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
