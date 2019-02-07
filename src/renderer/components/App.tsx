@@ -3,7 +3,6 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { OrderedMap } from "immutable";
-import { Subscribe } from "unstated";
 
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
@@ -16,8 +15,8 @@ import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
 import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
-import { AppContainer } from "@/store/containers/appContainer";
-import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, Message, NotifyRequest, SwapRequest } from "common/ipc";
+import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
+import { GetNetworkRequest, GetNetworkResponse, GetPasswordRequest, GetPasswordResponse, Message, NotifyRequest, SwapRequest, UpdateReadyRequest, UpdateReadyResponse } from "common/ipc";
 import { Network } from "common/types";
 
 // import { version } from "../../../package.json";
@@ -80,13 +79,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             return password;
         });
 
-        // on("get-balances", () => {
-        //     const { networkDetails, network } = this.state;
-        //     return networkDetails.get(network).balances || {};
-        // });
-
         ipc.on<GetNetworkRequest, GetNetworkResponse>(Message.GetNetwork, () => {
             return this.props.container.state.trader.network;
+        });
+
+        ipc.on<UpdateReadyRequest, UpdateReadyResponse>(Message.UpdateReady, async (version: string) => {
+            await this.props.container.setUpdateReady(version);
+            return;
         });
 
         this.callGetAccount().catch(console.error);
@@ -285,8 +284,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 }
 
-interface IAppProps {
-    container: AppContainer;
+interface IAppProps extends ConnectedProps {
 }
 
 interface IAppState {
@@ -299,12 +297,4 @@ interface IAppState {
     withdrawRequest: IPartialWithdrawRequest | null;
 }
 
-export const App = () => {
-    return (
-        <Subscribe to={[AppContainer]}>
-            {(container: AppContainer) => (
-                <AppClass container={container} />
-            )}
-        </Subscribe>
-    );
-};
+export const App = connect(AppContainer)(AppClass);

@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
-import { IPC } from "common/ipc";
+import { IPC, Message, UpdateReadyRequest, UpdateReadyResponse } from "common/ipc";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 //////////////////////////////// Swapperd Daemon ///////////////////////////////
@@ -100,7 +100,9 @@ Download speed: ${progressObj.bytesPerSecond} \
          * `mb.app.relaunch();` not tested
          */
 
-        // TODO: notify user
+        const newVersion = "";
+
+        ipc.sendToMain<UpdateReadyRequest>(Message.UpdateReady, newVersion);
     });
 
     const interval = async () => {
