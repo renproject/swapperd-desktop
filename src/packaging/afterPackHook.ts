@@ -1,3 +1,4 @@
+import * as extract from "extract-zip";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -15,7 +16,7 @@ interface AfterPackContext {
 
 const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
 
-async function downloadFile (url: string, outputFile: string) {
+async function downloadFile(url: string, outputFile: string) {
     console.log(`Downloading file ${url} to ${outputFile}`);
     const outPath = path.resolve(outputFile);
     // tslint:disable-next-line:non-literal-fs-path
@@ -33,7 +34,22 @@ async function downloadFile (url: string, outputFile: string) {
       writer.on("finish", resolve);
       writer.on("error", reject);
     });
-  }
+}
+
+async function extractZip(zipFile: string, outputDir: string) {
+    console.log(`Extracting ${zipFile} to ${outputDir}`);
+    return new Promise((resolve, reject) => {
+        extract(`./${zipFile}`, {
+            dir: outputDir
+        }, (error: any) => {
+            if (error) {
+                reject(error);
+            }
+            console.log(`Finished extracting.`);
+            resolve();
+        });
+    });
+}
 
 // tslint:disable-next-line:no-default-export
 export default async function (context: AfterPackContext) {
@@ -54,6 +70,7 @@ export default async function (context: AfterPackContext) {
                 if (asset.name === fileName) {
                     console.log(asset.browser_download_url);
                     await downloadFile(asset.browser_download_url, `./${fileName}`);
+                    await extractZip(`./${fileName}`, outputDir);
                 }
             });
         } catch (error) {
