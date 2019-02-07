@@ -1,7 +1,7 @@
 {
   "name": "swapperd-native",
   "version": "0.0.1",
-  "description": "",
+  "description": "The native Desktop interface for SwapperD",
   "author": "Ren",
   "license": "MIT",
   "build": {
