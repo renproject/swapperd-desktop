@@ -1,12 +1,12 @@
 import { MenubarApp } from "./menubar";
 
-export const getMenuTemplate = (mb: MenubarApp) => {
+export const getMenuTemplate = (mb: MenubarApp): Electron.MenuItemConstructorOptions[] => {
 
     const application: Electron.MenuItemConstructorOptions = {
         label: "Application",
         submenu: [{
             label: "About",
-            // selector: "orderFrontStandardAboutPanel:"
+            role: "orderFrontStandardAboutPanel"
         },
         {
             type: "separator"
@@ -26,12 +26,12 @@ export const getMenuTemplate = (mb: MenubarApp) => {
         submenu: [{
             label: "Undo",
             accelerator: "CmdOrCtrl+Z",
-            // selector: "undo:"
+            role: "undo"
         },
         {
             label: "Redo",
             accelerator: "Shift+CmdOrCtrl+Z",
-            // selector: "redo:"
+            role: "redo"
         },
         {
             type: "separator"
@@ -39,32 +39,29 @@ export const getMenuTemplate = (mb: MenubarApp) => {
         {
             label: "Cut",
             accelerator: "CmdOrCtrl+X",
-            // selector: "cut:"
+            role: "cut"
         },
         {
             label: "Copy",
             accelerator: "CmdOrCtrl+C",
-            // selector: "copy:"
+            role: "copy"
         },
         {
             label: "Paste",
             accelerator: "CmdOrCtrl+V",
-            // selector: "paste:"
+            role: "paste"
         },
         {
             label: "Select All",
             accelerator: "CmdOrCtrl+A",
-            // selector: "selectAll:"
+            role: "selectAll"
         }
         ]
     };
 
-    const template: Electron.MenuItemConstructorOptions[] = [
+    return [
         application,
-        edit
-    ];
-
-    const contextTemplate: Electron.MenuItemConstructorOptions[] = [
+        edit,
         {
             type: "separator"
         },
@@ -75,6 +72,4 @@ export const getMenuTemplate = (mb: MenubarApp) => {
             }
         }
     ];
-
-    return [template, contextTemplate];
 };
