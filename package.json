@@ -18,13 +18,9 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
-      "oneClick": false,
       "runAfterFinish": true,
       "warningsAsErrors": false,
-      "allowElevation": true,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "include": "build/installer.nsh"
+      "createDesktopShortcut": true
     },
     "files": [
       "resources"
