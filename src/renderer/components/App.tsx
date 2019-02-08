@@ -84,10 +84,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         this.callGetAccount().catch(console.error);
-
-        // Check balances and swaps on an interval
-        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
         this.callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
@@ -239,6 +235,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
             }
         }
+
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
+        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
     }
 
     // Check if user has an account set-up
