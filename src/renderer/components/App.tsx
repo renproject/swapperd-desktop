@@ -86,33 +86,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         this.callGetAccount().catch(console.error);
 
         // Check balances and swaps on an interval
-        const callGetBalances = async () => {
-            const { login: { password }, trader: { network } } = this.props.container.state;
-
-            const { accountExists } = this.state;
-
-            if (accountExists && password !== null) {
-                try {
-                    const balances = await getBalances({ network: network, password });
-
-                    const { networkDetails } = this.state;
-
-                    const currentBalances = networkDetails.get(network).balances;
-                    if (!balances.equals(currentBalances)) {
-                        this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
-                    }
-
-                } catch (e) {
-                    console.error(e);
-                    const { networkDetails } = this.state;
-                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
-                }
-            }
-
-            if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-            this.callGetBalancesTimeout = setTimeout(callGetBalances, 10 * 1000);
-        };
-        callGetBalances().catch(console.error);
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
+        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
+        this.callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
             const { password } = this.props.container.state.login;
@@ -243,6 +219,25 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly setWithdrawRequest = (withdrawRequest: IPartialWithdrawRequest | null): void => {
         this.setState({ withdrawRequest });
+    }
+
+    private readonly callGetBalances = async () => {
+        const { login: { password }, trader: { network } } = this.props.container.state;
+        const { networkDetails, accountExists } = this.state;
+
+        if (accountExists && password !== null) {
+            try {
+                const balances = await getBalances({ network, password });
+                const currentBalances = networkDetails.get(network).balances;
+                if (!balances.equals(currentBalances)) {
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
+                }
+
+            } catch (e) {
+                console.error(e);
+                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
+            }
+        }
     }
 
     // Check if user has an account set-up
