@@ -3,7 +3,7 @@ import * as path from "path";
 import {
     app,
     Menu,
-    shell,
+    shell
 } from "electron";
 import menubar from "menubar";
 
@@ -76,8 +76,8 @@ export const setupMenubar = () => {
     }
 
     mb.on("ready", async () => {
-        const [, template] = getMenuTemplate(mb);
-
+        // Create the Application's main menu
+        const template = getMenuTemplate(mb);
         Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
         // Set any anchor links to open in default web browser
@@ -101,9 +101,8 @@ export const setupMenubar = () => {
         }
 
         // tslint:disable-next-line: whitespace
-        const [contextTemplate,] = getMenuTemplate(mb);
-
-        const contextMenu = Menu.buildFromTemplate(contextTemplate);
+        const template = getMenuTemplate(mb);
+        const contextMenu = Menu.buildFromTemplate(template);
         mb.tray.on("right-click", () => {
             mb.tray.popUpContextMenu(contextMenu);
         });

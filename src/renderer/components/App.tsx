@@ -1,9 +1,5 @@
 import * as React from "react";
 
-import BigNumber from "bignumber.js";
-
-import { OrderedMap } from "immutable";
-
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
 import { ApproveWithdraw } from "@/components/ApproveWithdraw";
@@ -88,35 +84,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         this.callGetAccount().catch(console.error);
-
-        // Check balances and swaps on an interval
-        const callGetBalances = async () => {
-            const { login: { password }, trader: { network } } = this.props.container.state;
-
-            const { accountExists } = this.state;
-
-            if (accountExists && password !== null) {
-                try {
-                    const balances = await getBalances({ network: network, password });
-
-                    const { networkDetails } = this.state;
-
-                    const currentBalances = networkDetails.get(network).balances;
-                    if (!balances.equals(currentBalances)) {
-                        this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
-                    }
-
-                } catch (e) {
-                    console.error(e);
-                    const { networkDetails } = this.state;
-                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
-                }
-            }
-
-            if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-            this.callGetBalancesTimeout = setTimeout(callGetBalances, 10 * 1000);
-        };
-        callGetBalances().catch(console.error);
+        this.callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
             const { password } = this.props.container.state.login;
@@ -219,7 +187,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         await this.props.container.setNetwork(
             network,
         );
-
+        // Fetch new balances immediately
+        await this.callGetBalances().catch(console.error);
         await this.callGetAccount().catch(console.error);
     }
 
@@ -249,29 +218,39 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         this.setState({ withdrawRequest });
     }
 
+    private readonly callGetBalances = async () => {
+        const { login: { password }, trader: { network } } = this.props.container.state;
+        const { networkDetails, accountExists } = this.state;
+
+        if (accountExists && password !== null) {
+            try {
+                const balances = await getBalances({ network, password });
+                const currentBalances = networkDetails.get(network).balances;
+                if (!balances.equals(currentBalances)) {
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
+                }
+
+            } catch (e) {
+                console.error(e);
+                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
+            }
+        }
+
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
+        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
+    }
+
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
         const { login: { password }, trader: { network } } = this.props.container.state;
         try {
-            const response = await fetchInfo({ network: network, password: password || "" });
+            await fetchInfo({ network: network, password: password || "" });
 
             const { networkDetails } = this.state;
-            let balances: IBalances | null = networkDetails.get(network).balances;
-
-            if (!balances || balances.size === 0) {
-
-                balances = OrderedMap();
-
-                const supportedTokens = response.supportedTokens;
-                for (const token of supportedTokens) {
-                    balances = balances.set(token.name, {
-                        address: "",
-                        balance: new BigNumber(0),
-                    });
-                }
-
-                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
-            }
+            const balances: IBalances | null = networkDetails.get(network).balances;
+            this.setState({
+                networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
+            });
 
             if (!this.state.accountExists) { this.setState({ accountExists: true }); }
         } catch (e) {
