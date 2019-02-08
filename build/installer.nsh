@@ -1,8 +1,6 @@
-!macro preInit
-    SetRegView 64
-    WriteRegExpandStr HKLM "${INSTALL_REGISTRY_KEY}" InstallLocation "$PROGRAMFILES\Swapperd"
-    WriteRegExpandStr HKCU "${INSTALL_REGISTRY_KEY}" InstallLocation "$PROGRAMFILES\Swapperd"
-    SetRegView 32
-    WriteRegExpandStr HKLM "${INSTALL_REGISTRY_KEY}" InstallLocation "$PROGRAMFILES\Swapperd"
-    WriteRegExpandStr HKCU "${INSTALL_REGISTRY_KEY}" InstallLocation "$PROGRAMFILES\Swapperd"
+; run the swapperd uninstaller to deregister services
+!macro customUnInstall
+    IfFileExists "$INSTDIR\bin\uninstaller.exe" 0 end_of_test
+    ExecWait "$INSTDIR\bin\uninstaller.exe"
+    end_of_test:
 !macroend
