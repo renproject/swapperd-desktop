@@ -215,16 +215,30 @@ button:not(:disabled):hover {
 }
 
 .header--lock {
+  &:hover {
+    width: 50px;
+  }
+  position: absolute;
+  width: 15px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.header--lock--logo {
   background-image: url(images/lock.svg);
   background-size: contain;
   background-repeat: no-repeat;
   height: 20px;
   width: 15px;
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
+}
+
+.header--lock:hover .header--lock--logo::after {
+  content: "Lock";
+  margin-left: 20px;
+  color: #cccccc;
 }
 
 .balances--transfer {

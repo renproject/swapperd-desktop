@@ -24,9 +24,11 @@ class HeaderClass extends React.Component<Props, State> {
                 }
                 {container.state.login.password && !hideNetwork ?
                     container.state.app.updateReady ?
-                        <a onClick={this.update}>Update available</a> :
-                        <div role="button" className="header--lock" onClick={container.clearPassword} /> :
-                    <></>
+                        <div role="button" onClick={this.update}>Update available</div> :
+                        <div role="button" className="header--lock" onClick={container.clearPassword}>
+                            <div className="header--lock--logo" />
+                        </div> :
+                        <></>
                 }
             </div>
         );
