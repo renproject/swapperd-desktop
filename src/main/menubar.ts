@@ -31,9 +31,14 @@ const installExtensions = async () => {
 };
 
 export const setupMenubar = () => {
-    const icon = process.platform === "win32" ? "resources/WhiteIconTemplate.png" : "resources/IconTemplate.png";
+    let icon = "resources/IconTemplate.png";
+    let windowPosition: Menubar.Position = "trayCenter";
+    if (process.platform === "win32") {
+        icon = "resources/WhiteIconTemplate.png";
+        windowPosition = "trayBottomRight";
+    }
 
-    const mb = menubar({
+    const options: Menubar.MenubarOptions = {
         tooltip: "Swapperd",
         preloadWindow: true,
         resizable: devMode,
@@ -42,6 +47,7 @@ export const setupMenubar = () => {
             // preload: `${app.getAppPath()}/dist/main/preload.js`,
             webSecurity: false,
         },
+        windowPosition,
         alwaysOnTop: process.env.NODE_ENV === "development",
         icon: devMode ? icon : path.join(app.getAppPath(), icon),
         index: devMode ? `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` : formatUrl({
@@ -55,7 +61,8 @@ export const setupMenubar = () => {
         minHeight: 500,
         //   resizable: true,
         // transparent: true,
-    });
+    };
+    const mb = menubar(options);
 
     // Restrict to a single instance
     const gotTheLock = mb.app.requestSingleInstanceLock();
