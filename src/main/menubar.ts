@@ -30,9 +30,8 @@ const installExtensions = async () => {
     }
 };
 
-const icon = "resources/IconTemplate.png";
-
 export const setupMenubar = () => {
+    const icon = process.platform === "win32" ? "resources/WhiteIconTemplate.png" : "resources/IconTemplate.png";
 
     const mb = menubar({
         tooltip: "Swapperd",
