@@ -191,7 +191,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         await this.props.container.setNetwork(
             network,
         );
-
+        // Fetch new balances immediately
+        await this.callGetBalances().catch(console.error);
         await this.callGetAccount().catch(console.error);
     }
 
