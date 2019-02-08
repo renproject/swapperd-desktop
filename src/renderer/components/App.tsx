@@ -1,9 +1,5 @@
 import * as React from "react";
 
-import BigNumber from "bignumber.js";
-
-import { OrderedMap } from "immutable";
-
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
 import { ApproveWithdraw } from "@/components/ApproveWithdraw";
@@ -253,25 +249,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private readonly callGetAccount = async () => {
         const { login: { password }, trader: { network } } = this.props.container.state;
         try {
-            const response = await fetchInfo({ network: network, password: password || "" });
+            await fetchInfo({ network: network, password: password || "" });
 
             const { networkDetails } = this.state;
-            let balances: IBalances | null = networkDetails.get(network).balances;
-
-            if (!balances || balances.size === 0) {
-
-                balances = OrderedMap();
-
-                const supportedTokens = response.supportedTokens;
-                for (const token of supportedTokens) {
-                    balances = balances.set(token.name, {
-                        address: "",
-                        balance: new BigNumber(0),
-                    });
-                }
-
-                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
-            }
+            const balances: IBalances | null = networkDetails.get(network).balances;
+            this.setState({
+                networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
+            });
 
             if (!this.state.accountExists) { this.setState({ accountExists: true }); }
         } catch (e) {
