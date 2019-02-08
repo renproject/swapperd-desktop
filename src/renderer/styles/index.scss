@@ -167,8 +167,9 @@ button:not(:disabled):hover {
 /* Balances */
 
 .balances {
+  position: relative;
   border-bottom: 1px solid #ccc;
-  max-height: 220px;
+  height: 220px;
   width: 100%;
   overflow-y: scroll;
 }
