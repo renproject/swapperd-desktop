@@ -8,7 +8,8 @@
     "appId": "com.github.republicprotocol.swapperd-native",
     "afterPack": "./packaging/afterPackHook.js",
     "linux": {
-      "category": "Utility"
+      "category": "Utility",
+      "icon": "resources/icon.png"
     },
     "mac": {
       "icon": "resources/app.icns"
