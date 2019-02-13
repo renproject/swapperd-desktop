@@ -5,6 +5,7 @@ import * as rimraf from "rimraf";
 
 import axios from "axios";
 
+// tslint:disable:non-literal-fs-path
 // tslint:disable:no-any
 interface AfterPackContext {
     outDir: string;
@@ -21,7 +22,6 @@ const WINDOWS_SWAPPERD_FILENAME = "swapper_windows_amd64.zip";
 async function downloadFile(url: string, outputFile: string) {
     console.log(`Downloading file ${url} to ${outputFile}`);
     const outPath = path.resolve(outputFile);
-    // tslint:disable-next-line:non-literal-fs-path
     const writer = fs.createWriteStream(outPath);
 
     const response = await axios({
@@ -96,3 +96,4 @@ export default async function (context: AfterPackContext) {
 }
 
 // tslint:enable:no-any
+// tslint:enable:non-literal-fs-path
