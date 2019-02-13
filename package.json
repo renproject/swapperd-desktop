@@ -19,6 +19,8 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
       "runAfterFinish": true,
       "warningsAsErrors": false,
       "createDesktopShortcut": true,
