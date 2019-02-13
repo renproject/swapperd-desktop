@@ -22,7 +22,7 @@
       "runAfterFinish": true,
       "warningsAsErrors": false,
       "createDesktopShortcut": true,
-      "include": "build/uninstaller.nsh"
+      "include": "build/include.nsh"
     },
     "files": [
       "resources"
