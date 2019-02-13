@@ -1,7 +1,7 @@
 import * as extract from "extract-zip";
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
-import * as rimraf from "rimraf";
 
 import axios from "axios";
 
@@ -17,7 +17,9 @@ interface AfterPackContext {
 }
 
 const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
-const WINDOWS_SWAPPERD_FILENAME = "swapper_windows_amd64.zip";
+const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64";
+const WINDOWS_SWAPPERD_FILE_EXT = `.zip`;
+const WINDOWS_SWAPPERD_FILE_WITH_EXT = `${WINDOWS_SWAPPERD_FILE}${WINDOWS_SWAPPERD_FILE_EXT}`;
 
 async function downloadFile(url: string, outputFile: string) {
     console.log(`Downloading file ${url} to ${outputFile}`);
@@ -56,14 +58,18 @@ async function extractZip(zipFile: string, outputDir: string) {
     });
 }
 
-async function remove(filePath: string) {
+async function checkFileExists(pathString: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        rimraf(filePath, {}, (error: any) => {
-            if (error) {
-                reject(error);
+        fs.stat(pathString, (err, _stat) => {
+            if (!err) {
+                // File exists
+                resolve(true);
+            } else if (err.code === "ENOENT") {
+                // File does not exist
+                resolve(false);
+            } else {
+                reject(err);
             }
-            console.log(`Removed: ${filePath}`);
-            resolve();
         });
     });
 }
@@ -78,16 +84,20 @@ export default async function (context: AfterPackContext) {
                 url: SWAPPERD_RELEASES_URL,
             });
             const data = postResponse.data;
-            const downloadFileName = path.resolve(`./${WINDOWS_SWAPPERD_FILENAME}`);
             for (const asset of data.assets) {
-                if (asset.name === WINDOWS_SWAPPERD_FILENAME) {
-                    await downloadFile(asset.browser_download_url, downloadFileName);
+                if (asset.name === WINDOWS_SWAPPERD_FILE_WITH_EXT) {
+                    const fileName = `${WINDOWS_SWAPPERD_FILE}_${asset.id}_${asset.node_id}${WINDOWS_SWAPPERD_FILE_EXT}`;
+                    const downloadFileName = path.resolve((path.join(os.tmpdir(), fileName)));
+                    if (await checkFileExists(downloadFileName)) {
+                        console.log(`${downloadFileName} already exists.`);
+                    } else {
+                        await downloadFile(asset.browser_download_url, downloadFileName);
+                    }
                     await extractZip(downloadFileName, context.appOutDir);
-                    await remove(downloadFileName);
                     return;
                 }
             }
-            console.error(`Failed to find a release with the name: ${WINDOWS_SWAPPERD_FILENAME}`);
+            console.error(`Failed to find a release with the name: ${WINDOWS_SWAPPERD_FILE_WITH_EXT}`);
         } catch (error) {
             console.error(error);
             return;
