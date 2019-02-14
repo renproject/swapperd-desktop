@@ -16,6 +16,19 @@ import { MenubarApp } from "./menubar";
 const sqlite3 = sqlite3All.verbose();
 
 export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
+    ipc.on(Message.CheckSetup, async (_value, _error?: Error) => {
+        // Check if the sqlite database has been initialised successfully
+        if (_error) {
+            throw new Error("Should not have received error");
+        }
+        try {
+            await getPasswordHash("master");
+            return true;
+        } catch (err) {
+            return false;
+        }
+    });
+
     ipc.on(Message.CreateAccount, async (value, _error?: Error) => {
         if (_error) {
             throw new Error("Should not have received error");

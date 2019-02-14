@@ -6,6 +6,7 @@ export enum Network {
 
 export enum Message {
     // renderer to main
+    CheckSetup = "check-setup",
     CreateAccount = "create-account",
     Notify = "notify",
     VerifyPassword = "verify-password",
@@ -21,6 +22,7 @@ export enum Message {
 
 export type ResponseType<X extends Message> =
     // renderer to main
+    X extends Message.CheckSetup ? boolean :
     X extends Message.CreateAccount ? string :
     X extends Message.Notify ? void :
     X extends Message.VerifyPassword ? boolean :
@@ -36,6 +38,7 @@ export type ResponseType<X extends Message> =
 
 export type RequestType<X extends Message> =
     // renderer to main
+    X extends Message.CheckSetup ? null :
     X extends Message.CreateAccount ? { mnemonic: string | null; password: string } :
     X extends Message.Notify ? { notification: string } :
     X extends Message.VerifyPassword ? { password: string } :
