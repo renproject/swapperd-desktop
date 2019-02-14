@@ -12,7 +12,6 @@ import { Message } from "common/types";
 
 const sqlite3 = sqlite3All.verbose();
 
-import { installOrUpdateSwapperd } from "./autoUpdater";
 import { MenubarApp } from "./menubar";
 
 export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
@@ -27,7 +26,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             // username
         } = value;
 
-        await installOrUpdateSwapperd(mnemonic);
+        await updateMnemonic(mnemonic);
         return handleAccountCreation(password);
     });
 
@@ -143,3 +142,32 @@ async function handleAccountCreation(password: string): Promise<string> {
 
     return JSON.parse(data).mnemonic;
 }
+
+async function updateMnemonic(mnemonic: string | null): Promise<void> {
+    const testnetJSON = path.join(swapperdHome(), "testnet.json");
+    const mainnetJSON = path.join(swapperdHome(), "mainnet.json");
+    await updateMnemonicJsonFile(mnemonic || "", testnetJSON);
+    await updateMnemonicJsonFile(mnemonic || "", mainnetJSON);
+}
+
+// tslint:disable:non-literal-fs-path
+async function updateMnemonicJsonFile(mnemonic: string, filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, {
+            encoding: "utf-8"
+        }, (rerr, data) => {
+            if (rerr) {
+                reject(rerr);
+            }
+            const file = JSON.parse(data);
+            file.mnemonic = mnemonic;
+            fs.writeFile(filePath, JSON.stringify(file), (werr) => {
+                if (werr) {
+                    reject(werr);
+                }
+                resolve();
+            });
+        });
+    });
+}
+// tslint:enable:non-literal-fs-path
