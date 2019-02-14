@@ -43,6 +43,7 @@
     "start": "electron-webpack dev",
     "build": "npm run prebuild && electron-webpack && electron-builder",
     "build:all": "npm run prebuild && electron-webpack && electron-builder -wml --x64",
+    "build:win": "npm run prebuild && electron-webpack && electron-builder -w --x64",
     "build:dir": "npm run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
     "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck"
