@@ -19,7 +19,7 @@
       "icon": "resources/icon.ico"
     },
     "nsis": {
-      "oneClick": false,
+      "oneClick": true,
       "allowElevation": true,
       "runAfterFinish": true,
       "warningsAsErrors": false,
