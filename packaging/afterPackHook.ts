@@ -80,6 +80,15 @@ export default async function (context: AfterPackContext) {
     const platform = context.packager.platform.nodeName;
     if (platform === "win32") {
         try {
+            // Prefer local windows SwapperD for test builds
+            const localSwapperZip = `./${WINDOWS_SWAPPERD_FILE_WITH_EXT}`;
+            if (await checkFileExists(localSwapperZip)) {
+                console.log(`Found local SwapperD zip: ${path.resolve(localSwapperZip)}`);
+                await extractZip(localSwapperZip, context.appOutDir);
+                return;
+            }
+
+            // Local SwapperD zip does not exist so fetch it from Github
             const postResponse = await axios({
                 method: "GET",
                 url: SWAPPERD_RELEASES_URL,
