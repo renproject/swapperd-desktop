@@ -43,12 +43,17 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             // username
         } = value;
 
-        await installSwapperd();
-        // Update the mnemonic if it's not null
-        if (mnemonic) {
-            await updateMnemonic(mnemonic);
+        try {
+            await installSwapperd();
+            // Update the mnemonic if it's not null
+            if (mnemonic) {
+                await updateMnemonic(mnemonic);
+            }
+            return await handleAccountCreation(password);
+        } catch (err) {
+            console.error(err);
+            return "";
         }
-        return handleAccountCreation(password);
     });
 
     ipc.on(Message.Notify, (value, _error?: Error) => {
@@ -109,20 +114,23 @@ function swapperdHome() {
     }
 }
 
-const connectToDB = (): Database => {
-    // tslint:disable-next-line: no-bitwise
-    return new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-            console.error(`Failed to connect to the SQLite database: ${err.message}`);
-            return;
-        }
+async function connectToDB(): Promise<Database> {
+    return new Promise((resolve, reject) => {
+        let db: Database;
+        // tslint:disable-next-line: no-bitwise
+        db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(db);
+        });
     });
-};
+}
 
 async function getPasswordHash(account: string) {
     let nonce, passwordHash = "";
 
-    const db: Database = connectToDB();
+    const db: Database = await connectToDB();
 
     // tslint:disable-next-line: no-any
     const row: any = await new Promise((resolve, reject) => {
@@ -151,7 +159,7 @@ async function handleAccountCreation(password: string): Promise<string> {
     // tslint:disable-next-line: non-literal-fs-path
     fs.writeFileSync(path.join(swapperdHome(), "sqlite.db"), "");
 
-    const db: Database = connectToDB();
+    const db: Database = await connectToDB();
 
     db.run("CREATE TABLE IF NOT EXISTS accounts(account TEXT, passwordHash TEXT, nonce TEXT)");
 
