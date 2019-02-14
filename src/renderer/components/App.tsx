@@ -137,11 +137,19 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (accountExists && password === null) {
-            return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
-                <UnlockScreen resolve={this.setUnlocked} />
-            </div>;
+        if (accountExists) {
+            if (password === null) {
+                return <div className="app">
+                    <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                    <UnlockScreen resolve={this.setUnlocked} />
+                </div>;
+            } else {
+                return <div className="app">
+                    <Header network={network} setNetwork={this.setNetwork} />
+                    <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
+                    <Swaps swaps={swaps} transfers={transfers} />
+                </div>;
+            }
         }
 
         if (swapDetails) {
@@ -165,14 +173,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     withdrawRequest={withdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
                 />
-            </div>;
-        }
-
-        if (accountExists && password !== null) {
-            return <div className="app">
-                <Header network={network} setNetwork={this.setNetwork} />
-                <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
-                <Swaps swaps={swaps} transfers={transfers} />
             </div>;
         }
 
