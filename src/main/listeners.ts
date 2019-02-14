@@ -50,12 +50,19 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             throw new Error("Should not have received error");
         }
 
-        const {
-            passwordHash,
-            // nonce
-        } = await getPasswordHash("master");
+        try {
+            const {
+                passwordHash,
+                // nonce
+            } = await getPasswordHash("master");
 
-        return bcrypt.compare(value.password, passwordHash);
+            return bcrypt.compare(value.password, passwordHash);
+        } catch (err) {
+            // getPasswordHash will throw an error if it couldn't access the sqlite database
+            // or if it could not retrieve the requested value
+            console.error(err);
+            throw new Error("Failed to verify password");
+        }
     });
 
     ipc.on(Message.Relaunch, (_value, _error?: Error) => {
@@ -97,24 +104,20 @@ async function getPasswordHash(account: string) {
 
     const db: Database = connectToDB();
 
-    try {
+    // tslint:disable-next-line: no-any
+    const row: any = await new Promise((resolve, reject) => {
         // tslint:disable-next-line: no-any
-        const row: any = await new Promise((resolve, reject) => {
-            // tslint:disable-next-line: no-any
-            db.get(`SELECT * FROM accounts WHERE account="${account}"`, (err: Error, innerRow: any) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(innerRow);
-                }
-            });
+        db.get(`SELECT * FROM accounts WHERE account="${account}"`, (err: Error, innerRow: any) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(innerRow);
+            }
         });
-        // FIXME: row may be undefined
-        nonce = row.nonce;
-        passwordHash = row.passwordHash;
-    } catch (err) {
-        console.error(err);
-    }
+    });
+    // FIXME: row may be undefined
+    nonce = row.nonce;
+    passwordHash = row.passwordHash;
 
     db.close();
 
