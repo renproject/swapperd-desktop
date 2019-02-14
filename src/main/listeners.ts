@@ -11,6 +11,7 @@ import { checkFileExists } from "common/functions";
 import { IPC, } from "common/ipc";
 import { Message } from "common/types";
 
+import { installSwapperd } from "./autoUpdater";
 import { MenubarApp } from "./menubar";
 
 const sqlite3 = sqlite3All.verbose();
@@ -40,6 +41,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             // username
         } = value;
 
+        await installSwapperd();
         await updateMnemonic(mnemonic);
         return handleAccountCreation(password);
     });

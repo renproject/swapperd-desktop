@@ -54,7 +54,6 @@
     "bcryptjs": "^2.4.3",
     "bignumber.js": "^8.0.2",
     "body-parser": "^1.18.3",
-    "electron-first-run": "^2.0.0",
     "electron-updater": "^4.0.6",
     "express": "^4.16.4",
     "immutable": "^4.0.0-rc.12",

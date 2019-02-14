@@ -1,5 +1,3 @@
-import * as firstRun from "electron-first-run";
-
 import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
@@ -55,10 +53,6 @@ export const checkForUpdates = async (_ipc: IPC): Promise<UpdateCheckResult | nu
 
 // tslint:disable-next-line: no-any
 export const setupAutoUpdater = (ipc: IPC) => {
-    if (firstRun()) {
-        installSwapperd();
-    }
-
     autoUpdater.on("checking-for-update", () => {
         console.log("Checking for updates...");
     });
