@@ -16,6 +16,8 @@ import { MenubarApp } from "./menubar";
 
 const sqlite3 = sqlite3All.verbose();
 
+const DEFAULT_ACCOUNT = "master";
+
 export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
     ipc.on(Message.CheckSetup, async (_value, _error?: Error) => {
         // Check if the sqlite database has been initialised successfully
@@ -23,7 +25,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             throw new Error("Should not have received error");
         }
         try {
-            await getPasswordHash("master");
+            await getPasswordHash(DEFAULT_ACCOUNT);
             return true;
         } catch (err) {
             return false;
@@ -72,7 +74,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             const {
                 passwordHash,
                 // nonce
-            } = await getPasswordHash("master");
+            } = await getPasswordHash(DEFAULT_ACCOUNT);
 
             return bcrypt.compare(value.password, passwordHash);
         } catch (err) {
@@ -158,7 +160,7 @@ async function handleAccountCreation(password: string): Promise<string> {
         encoding: "utf-8"
     });
 
-    await storePasswordHash(db, "master", password, "");
+    await storePasswordHash(db, DEFAULT_ACCOUNT, password, "");
 
     db.close();
 
