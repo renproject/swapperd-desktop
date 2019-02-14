@@ -6,6 +6,8 @@ import bcrypt from "bcryptjs";
 import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
+import { app } from "electron";
+
 import { IPC, } from "common/ipc";
 import { Message } from "common/types";
 
@@ -73,7 +75,12 @@ async function storePasswordHash(db: Database, account: string, password: string
 }
 
 function swapperdHome() {
-    return process.platform === "win32" ? path.join(process.env["programfiles(x86)"] || "", "Swapperd") : path.join(os.homedir(), ".swapperd");
+    switch (process.platform) {
+        case "win32":
+            return path.resolve(path.dirname(app.getPath("exe")));
+        default:
+            return path.join(os.homedir(), ".swapperd");
+    }
 }
 
 const connectToDB = (): Database => {
