@@ -3,7 +3,7 @@ import * as React from "react";
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
-import { bootload, swapperdReady } from "@/lib/swapperd";
+import { swapperdReady } from "@/lib/swapperd";
 import { Message } from "common/types";
 
 interface ICreateAccountProps {
@@ -109,7 +109,6 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                 return;
             }
             await swapperdReady(password);
-            await bootload(password);
             this.setState({ loading: false });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
