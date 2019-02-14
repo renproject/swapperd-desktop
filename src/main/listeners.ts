@@ -42,7 +42,10 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         } = value;
 
         await installSwapperd();
-        await updateMnemonic(mnemonic);
+        // Update the mnemonic if it's not null
+        if (mnemonic) {
+            await updateMnemonic(mnemonic);
+        }
         return handleAccountCreation(password);
     });
 
@@ -162,7 +165,7 @@ async function handleAccountCreation(password: string): Promise<string> {
     return JSON.parse(data).mnemonic;
 }
 
-async function updateMnemonic(mnemonic: string | null): Promise<void> {
+async function updateMnemonic(mnemonic: string): Promise<void> {
     const testnetJSON = path.join(swapperdHome(), "testnet.json");
     const mainnetJSON = path.join(swapperdHome(), "mainnet.json");
     for (const file of [testnetJSON, mainnetJSON]) {
