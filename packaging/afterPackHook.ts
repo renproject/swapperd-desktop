@@ -8,6 +8,8 @@ import * as path from "path";
 
 import axios from "axios";
 
+import { checkFileExists } from "../src/common/functions";
+
 const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
 const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64";
 const WINDOWS_SWAPPERD_FILE_EXT = `.zip`;
@@ -55,22 +57,6 @@ async function extractZip(zipFile: string, outputDir: string) {
             }
             console.log(`Finished extracting.`);
             resolve();
-        });
-    });
-}
-
-async function checkFileExists(pathString: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-        fs.stat(pathString, (err, _stat) => {
-            if (!err) {
-                // File exists
-                resolve(true);
-            } else if (err.code === "ENOENT") {
-                // File does not exist
-                resolve(false);
-            } else {
-                reject(err);
-            }
         });
     });
 }
