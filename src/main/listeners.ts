@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as os from "os";
 import * as path from "path";
 
 import bcrypt from "bcryptjs";
@@ -79,7 +78,7 @@ function swapperdHome() {
         case "win32":
             return path.resolve(path.dirname(app.getPath("exe")));
         default:
-            return path.join(os.homedir(), ".swapperd");
+            return path.join(app.getPath("home"), ".swapperd");
     }
 }
 
