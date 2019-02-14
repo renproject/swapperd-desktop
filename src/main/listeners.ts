@@ -7,12 +7,13 @@ import sqlite3All, { Database } from "sqlite3";
 
 import { app } from "electron";
 
+import { checkFileExists } from "common/functions";
 import { IPC, } from "common/ipc";
 import { Message } from "common/types";
 
-const sqlite3 = sqlite3All.verbose();
-
 import { MenubarApp } from "./menubar";
+
+const sqlite3 = sqlite3All.verbose();
 
 export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
     ipc.on(Message.CreateAccount, async (value, _error?: Error) => {
@@ -146,8 +147,13 @@ async function handleAccountCreation(password: string): Promise<string> {
 async function updateMnemonic(mnemonic: string | null): Promise<void> {
     const testnetJSON = path.join(swapperdHome(), "testnet.json");
     const mainnetJSON = path.join(swapperdHome(), "mainnet.json");
-    await updateMnemonicJsonFile(mnemonic || "", testnetJSON);
-    await updateMnemonicJsonFile(mnemonic || "", mainnetJSON);
+    for (const file of [testnetJSON, mainnetJSON]) {
+        if (await checkFileExists(file)) {
+            await updateMnemonicJsonFile(mnemonic || "", file);
+        } else {
+            console.error(`Could not find file: ${file}`);
+        }
+    }
 }
 
 // tslint:disable:non-literal-fs-path
