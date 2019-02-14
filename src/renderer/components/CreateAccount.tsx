@@ -95,7 +95,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
 
     private readonly createAccount = async (): Promise<void> => {
         setTimeout(async () => {
-            const { mnemonic, password } = this.state;
+            const { useMnemonic, mnemonic, password } = this.state;
             // const { username } = this.state;
             let newMnemonic: string;
             try {
@@ -110,9 +110,9 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             }
             await swapperdReady(password);
             await bootload(password);
-            // If the user provided a mnemonic, there is no point passing the new one to the parent
-            this.props.resolve(mnemonic === "" ? newMnemonic : "", password);
             this.setState({ loading: false });
+            // If the user provided a mnemonic, there is no point passing the new one to the parent
+            this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         });
     }
 
