@@ -1,8 +1,6 @@
-import * as path from "path";
-import * as sudo from "sudo-prompt";
+import * as firstRun from "electron-first-run";
 
 import { exec } from "child_process";
-import { app } from "electron";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
@@ -31,35 +29,9 @@ const run = async (command: string) => new Promise((resolve, reject) => {
     });
 });
 
-export const installOrUpdateSwapperd = async (mnemonic: string | null): Promise<void> => {
-    let mnemonicFlag = "";
-    switch (process.platform) {
-        case "win32":
-            if (mnemonic) {
-                mnemonicFlag = `--mnemonic ${mnemonic}`;
-            }
-
-            const installerPath = path.join(path.dirname(app.getPath("exe")), "bin", "installer.exe");
-            const options = {
-                name: "SwapperD Desktop",
-            };
-            sudo.exec(
-                `"${installerPath}" ${mnemonicFlag}`,
-                options,
-                // tslint:disable-next-line:no-any
-                (error: any, _stdout: any, _stderr: any) => {
-                    if (error) {
-                        throw error;
-                    }
-                }
-            );
-            return;
-        default:
-            if (mnemonic) {
-                mnemonicFlag = `-s "${mnemonic}"`;
-            }
-            await run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`);
-            return;
+export const installSwapperd = async (): Promise<void | {}> => {
+    if (process.platform !== "win32") {
+        return run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh`);
     }
 };
 
@@ -83,6 +55,9 @@ export const checkForUpdates = async (_ipc: IPC): Promise<UpdateCheckResult | nu
 
 // tslint:disable-next-line: no-any
 export const setupAutoUpdater = (ipc: IPC) => {
+    if (firstRun()) {
+        installSwapperd();
+    }
 
     autoUpdater.on("checking-for-update", () => {
         console.log("Checking for updates...");

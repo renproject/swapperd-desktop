@@ -1,6 +1,6 @@
 declare module "bn.js";
 declare module "react-copy-to-clipboard";
-declare module "sudo-prompt";
+declare module "electron-first-run";
 
 declare module "*.svg"
 declare module "*.png"
