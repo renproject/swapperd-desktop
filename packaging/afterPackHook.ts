@@ -1,3 +1,6 @@
+// tslint:disable:non-literal-fs-path
+// tslint:disable:no-any
+
 import * as extract from "extract-zip";
 import * as fs from "fs";
 import * as os from "os";
@@ -5,8 +8,11 @@ import * as path from "path";
 
 import axios from "axios";
 
-// tslint:disable:non-literal-fs-path
-// tslint:disable:no-any
+const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
+const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64";
+const WINDOWS_SWAPPERD_FILE_EXT = `.zip`;
+const WINDOWS_SWAPPERD_FILE_WITH_EXT = `${WINDOWS_SWAPPERD_FILE}${WINDOWS_SWAPPERD_FILE_EXT}`;
+
 interface AfterPackContext {
     outDir: string;
     appOutDir: string;
@@ -15,11 +21,6 @@ interface AfterPackContext {
     arch: any;
     targets: any;
 }
-
-const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
-const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64";
-const WINDOWS_SWAPPERD_FILE_EXT = `.zip`;
-const WINDOWS_SWAPPERD_FILE_WITH_EXT = `${WINDOWS_SWAPPERD_FILE}${WINDOWS_SWAPPERD_FILE_EXT}`;
 
 async function downloadFile(url: string, outputFile: string) {
     console.log(`Downloading file ${url} to ${outputFile}`);
@@ -46,9 +47,9 @@ async function downloadFile(url: string, outputFile: string) {
 async function extractZip(zipFile: string, outputDir: string) {
     console.log(`Extracting ${zipFile} to ${outputDir}`);
     return new Promise((resolve, reject) => {
-        extract(`${zipFile}`, {
+        extract(zipFile, {
             dir: outputDir
-        }, (error: any) => {
+        }, (error) => {
             if (error) {
                 reject(error);
             }
