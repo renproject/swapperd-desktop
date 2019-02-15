@@ -137,19 +137,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (accountExists) {
-            if (password === null) {
-                return <div className="app">
-                    <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
-                    <UnlockScreen resolve={this.setUnlocked} />
-                </div>;
-            } else {
-                return <div className="app">
-                    <Header network={network} setNetwork={this.setNetwork} />
-                    <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
-                    <Swaps swaps={swaps} transfers={transfers} />
-                </div>;
-            }
+        if (password === null) {
+            return <div className="app">
+                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <UnlockScreen resolve={this.setUnlocked} />
+            </div>;
         }
 
         if (swapDetails) {
@@ -176,7 +168,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        return <div className="app">An error occurred.</div>;
+        return <div className="app">
+            <Header network={network} setNetwork={this.setNetwork} />
+            <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
+            <Swaps swaps={swaps} transfers={transfers} />
+        </div>;
     }
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
