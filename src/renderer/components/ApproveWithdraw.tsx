@@ -63,7 +63,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                         <button type="submit">Accept</button>
                                     </form>
                                     :
-                                    <button onClick={this.onWithdraw}>Transfer</button>
+                                    <button disabled={!to || !amount} onClick={this.onWithdraw}>Transfer</button>
                                 }
                             </div>
                             {error ? <p className="error">{error}</p> : null}
