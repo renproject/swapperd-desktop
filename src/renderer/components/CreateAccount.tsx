@@ -14,6 +14,7 @@ interface ICreateAccountState {
     mnemonic: string | null;
     username: string;
     password: string;
+    password2: string;
     useMnemonic: boolean;
     loading: boolean;
     error: null | string;
@@ -26,6 +27,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
             mnemonic: null,
             username: "",
             password: "",
+            password2: "",
             useMnemonic: false,
             loading: false,
             error: null,
@@ -36,11 +38,22 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
     }
 
     public render(): JSX.Element {
-        const { useMnemonic, loading, error, username, password, mnemonic } = this.state;
+        const { useMnemonic, loading, username, password, password2, mnemonic } = this.state;
+        let error = this.state.error;
 
-        const disabled = useMnemonic ?
-            !mnemonic || !password || !username :
-            !password || !username || password.length < 8;
+        const passwordValid = password.length >= 8;
+        const passwordsMatch = password && password2 && password === password2;
+
+        if (!error) {
+            if (password && !passwordValid) {
+                error = "Your password needs to be at least 8 characters long";
+            } else if (password2 && !passwordsMatch) {
+                error = "Your passwords do not match";
+            }
+        }
+
+        const validForm = username && passwordsMatch && passwordValid;
+        const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
 
         return (
             <>
@@ -53,13 +66,14 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                             }
                             <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                             <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
+                            <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
+                            {error ? <p className="error">{error}</p> : null}
                             <button disabled={disabled} onClick={this.handleSubmit}>{useMnemonic ? "Import" : "Create"} account</button>
                             {!useMnemonic ?
                                 <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
                                 :
                                 <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
                             }
-                            {error ? <p className="error">{error}</p> : null}
                         </>
                         :
                         <>
@@ -106,6 +120,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                 );
             } catch (error) {
                 console.error(`Got error instead!!!: ${error}`);
+                this.setState({ error });
                 return;
             }
             await swapperdReady(password);
