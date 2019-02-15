@@ -37,11 +37,13 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    // tslint:disable-next-line:cyclomatic-complexity
     public render(): JSX.Element {
         const { useMnemonic, loading, username, password, password2, mnemonic } = this.state;
         let error = this.state.error;
 
-        const passwordValid = password.length >= 8;
+        // Disable password length enforcing for account restoration
+        const passwordValid = useMnemonic || password.length >= 8;
         const passwordsMatch = password && password2 && password === password2;
 
         if (!error) {
