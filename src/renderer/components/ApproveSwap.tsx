@@ -67,7 +67,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                         <form onSubmit={this.onAccept}>
                             <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                             <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                            <button type="submit" disabled={loading}>Swap</button>
+                            <button type="submit" disabled={loading || !password}>Swap</button>
                         </form>
                     </div>
                     {error ? <p className="error">{error}</p> : null}
