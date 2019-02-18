@@ -43,6 +43,8 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
     public render(): JSX.Element {
         const { withdrawRequest } = this.props;
         const { gettingPassword, password, loading, amount, to, error } = this.state;
+        const available = this.getAvailable().toFixed();
+        const sendAll = amount === available;
         return (
             <>
                 <Banner title="Transfer" disabled={loading} reject={this.onReject} />
@@ -50,12 +52,15 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                     {!loading ?
                         <>
                             <div className="withdraw--balance">
-                                <img src={getLogo(withdrawRequest.token)} />
-                                <p>Available: {this.getAvailable().toFixed()} {withdrawRequest.token}</p>
+                                <img alt="" role="presentation" src={getLogo(withdrawRequest.token)} />
+                                <p>Available: {available} {withdrawRequest.token}</p>
                             </div>
                             <div className="withdraw--inputs">
                                 <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} />
                                 <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
+                                <label>
+                            <input type="checkbox" checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
+                        </label>
                                 {gettingPassword ?
                                     <form onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
@@ -109,6 +114,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         }
     }
 
+    private handleCheckBox = (): void => {
+        const available = this.getAvailable().toFixed();
+        this.setState({ amount: available });
+    }
+
     private async onAccept(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
@@ -116,10 +126,13 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         const { password, to, amount } = this.state;
         this.setState({ error: null, loading: true });
 
+        const available = this.getAvailable().toFixed();
+        const sendAll = amount === available;
         const request: IWithdrawRequest = {
             token: withdrawRequest.token,
             to,
             amount,
+            sendAll,
         };
 
         try {
