@@ -18,12 +18,19 @@ interface IBalanceItemState {
 }
 
 export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItemState> {
+    private clipboardTimeout: NodeJS.Timer | undefined;
+
     constructor(props: IBalanceItemProps) {
         super(props);
         this.state = {
             copied: "",
         };
         this.handleWithdraw = this.handleWithdraw.bind(this);
+    }
+
+    public readonly componentWillUnmount = () => {
+        // Clear timeouts
+        if (this.clipboardTimeout) { clearTimeout(this.clipboardTimeout); }
     }
 
     public render() {
@@ -40,7 +47,7 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
                     <p>{amount.toFixed(Math.min(10, Math.max(2, (amount.toFixed().split(".")[1] || []).length)))}</p>
                 </div>
                 <div className="balances--address" onClick={this.consumeClick}>
-                    <CopyToClipboard text={address} onCopy={this.handleCopy.bind(this, address)}>
+                    <CopyToClipboard text={address} onCopy={this.handleCopy}>
                         {address === "" ?
                             <p className="address" />
                             : copied === address ?
@@ -54,9 +61,9 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
         );
     }
 
-    private handleCopy(address: string): void {
-        this.setState({ copied: address });
-        setTimeout(() => {
+    private handleCopy = (): void => {
+        this.setState({ copied: this.props.address });
+        this.clipboardTimeout = setTimeout(() => {
             this.setState({ copied: "" });
         }, 1000);
     }

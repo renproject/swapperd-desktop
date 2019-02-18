@@ -146,12 +146,12 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
         try {
             await submitWithdraw(request, { password, network });
+            this.setState({ loading: false });
             this.props.setWithdrawRequest(null);
         } catch (e) {
             console.error(e);
-            this.setState({ error: e.response && e.response.data.error || e });
+            this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
-        this.setState({ loading: false });
     }
 
     private onReject(): void {
