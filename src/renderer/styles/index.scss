@@ -86,10 +86,35 @@ button {
   min-width: 200px;
   cursor: pointer;
   border: none;
+
+  &.cancel {
+    background-color: lightgrey;
+    color: grey;
+  }
 }
 
 button:not(:disabled):hover {
   background-color: #0D41FF;
+  &.cancel {
+    background-color: red;
+    color: white;
+  }
+}
+
+.input-group {
+  & > button {
+    width: 50%;
+    &:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right-width: 0;
+    }
+    &:last-child {
+      border-left-width: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
 }
 
 .error {
@@ -468,6 +493,10 @@ button:not(:disabled):hover {
 
 .withdraw--inputs form {
   margin-top: -1px;
+}
+
+.withdraw--confirm {
+  padding-top: 10px;
 }
 
 /* Swap */

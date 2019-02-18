@@ -56,19 +56,24 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                 <p>Available: {available} {withdrawRequest.token}</p>
                             </div>
                             <div className="withdraw--inputs">
-                                <input type="text" placeholder="To" value={to} name="to" onChange={this.handleInput} />
-                                <input type="number" placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
+                                <input type="text" disabled={gettingPassword} placeholder="To" value={to} name="to" onChange={this.handleInput} />
+                                <input type="number" disabled={gettingPassword} placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
                                 <label>
-                            <input type="checkbox" checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
-                        </label>
+                                    <input type="checkbox" disabled={gettingPassword} checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
+                                </label>
                                 {gettingPassword ?
-                                    <form onSubmit={this.onAccept}>
+                                    <form className="withdraw--confirm" onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
                                         <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                                        <button type="submit">Accept</button>
+                                        <div className="input-group">
+                                            <button className="cancel" onClick={this.cancelWithdraw}>Cancel</button>
+                                            <button disabled={!password} type="submit">Transfer</button>
+                                        </div>
                                     </form>
                                     :
-                                    <button disabled={!to || !amount} onClick={this.onWithdraw}>Transfer</button>
+                                    <>
+                                        <button disabled={!to || !amount} onClick={this.onWithdraw}>Confirm</button>
+                                    </>
                                 }
                             </div>
                             {error ? <p className="error">{error}</p> : null}
@@ -79,6 +84,10 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                 </div>
             </>
         );
+    }
+
+    private cancelWithdraw = () => {
+        this.setState({gettingPassword : false, password: ""});
     }
 
     private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -107,7 +116,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             return;
         }
         if (amountBN.gt(0) && amountBN.lte(available)) {
-            this.setState({ gettingPassword: true });
+            this.setState({ error: null, gettingPassword: true });
         } else {
             this.setState({ error: "Please enter a valid amount." });
             return;
