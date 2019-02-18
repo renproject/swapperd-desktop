@@ -157,6 +157,10 @@ button:not(:disabled):hover {
   width: 40px;
 }
 
+.header img.clickable:hover {
+  cursor: pointer;
+}
+
 .header select {
   font-size: 12px;
   font-weight: 500;

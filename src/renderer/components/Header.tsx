@@ -7,16 +7,33 @@ import { NETWORKS } from "@/lib/swapperd";
 import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 import { Message, Network } from "common/types";
 
+interface Props extends ConnectedProps {
+    network: Network;
+    hideNetwork?: boolean;
+    disableNetwork?: boolean;
+    logoOnClick?(): void;
+    setNetwork(network: Network): void;
+}
+
+interface State {
+}
+
 class HeaderClass extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
     }
 
     public render(): JSX.Element {
-        const { hideNetwork, container, disableNetwork } = this.props;
+        const { logoOnClick, hideNetwork, container, disableNetwork } = this.props;
+        // tslint:disable-next-line:no-any
+        const logoProps: any = {};
+        if (logoOnClick) {
+            logoProps.role = "button";
+            logoProps.onClick = logoOnClick;
+        }
         return (
             <div className="header">
-                <img src={logo} alt="Swapperd" />
+                <img className="clickable" src={logo} alt="Swapperd" {...logoProps} />
                 {!hideNetwork &&
                     <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
@@ -42,16 +59,6 @@ class HeaderClass extends React.Component<Props, State> {
     private readonly update = () => {
         ipc.sendMessage(Message.Relaunch, null);
     }
-}
-
-interface Props extends ConnectedProps {
-    network: Network;
-    hideNetwork?: boolean;
-    disableNetwork?: boolean;
-    setNetwork(network: Network): void;
-}
-
-interface State {
 }
 
 export const Header = connect<Props>(AppContainer)(HeaderClass);
