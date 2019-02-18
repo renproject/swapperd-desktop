@@ -13,12 +13,12 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { hideNetwork, container } = this.props;
+        const { hideNetwork, container, disableNetwork } = this.props;
         return (
             <div className="header">
                 <img src={logo} alt="Swapperd" />
                 {!hideNetwork &&
-                    <select value={this.props.network} onChange={this.handleChange}>
+                    <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
@@ -47,6 +47,7 @@ class HeaderClass extends React.Component<Props, State> {
 interface Props extends ConnectedProps {
     network: Network;
     hideNetwork?: boolean;
+    disableNetwork?: boolean;
     setNetwork(network: Network): void;
 }
 
