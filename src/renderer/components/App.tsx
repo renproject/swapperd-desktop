@@ -137,7 +137,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <Header hideNetwork={true} {...headerProps} />
                 <div>
                     <p>Swapperd version: {swapperdVersion}</p>
-                    <p>Swapperd Native version: {this.props.version}</p>
+                    <p>Swapperd Native version: {this.props.version || "Unknown"}</p>
                 </div>
             </div>;
         }
@@ -298,7 +298,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 }
 
 interface IAppProps extends ConnectedProps {
-    version: string;
+    version?: string;
 }
 
 interface IAppState {
