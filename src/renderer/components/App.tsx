@@ -123,30 +123,36 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
+        // tslint:disable-next-line:no-any
+        const headerProps: any = {
+            network,
+            setNetwork: this.setNetwork,
+        };
+
         if (mnemonic !== "") {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (password === null) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <UnlockScreen resolve={this.setUnlocked} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <ApproveSwap
                     origin={origin}
                     network={network}
@@ -158,7 +164,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header network={network} hideNetwork={false} disableNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={false} disableNetwork={true} {...headerProps} />
                 <ApproveWithdraw
                     network={network}
                     balances={balances}
@@ -169,7 +175,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         }
 
         return <div className="app">
-            <Header network={network} setNetwork={this.setNetwork} />
+            <Header {...headerProps} />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={swaps} transfers={transfers} />
         </div>;
