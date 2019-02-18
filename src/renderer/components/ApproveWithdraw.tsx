@@ -1,5 +1,7 @@
-import BigNumber from "bignumber.js";
 import * as React from "react";
+
+import BigNumber from "bignumber.js";
+import KeyBinding from "react-keybinding-component";
 
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
@@ -47,6 +49,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         const sendAll = amount === available;
         return (
             <>
+                <KeyBinding onKey={this.onEscape} />
                 <Banner title="Transfer" disabled={loading} reject={this.onReject} />
                 <div className="withdraw">
                     {!loading ?
@@ -84,6 +87,12 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                 </div>
             </>
         );
+    }
+
+    private onEscape = (event: KeyboardEvent) : void => {
+        if (event.keyCode === 27) {
+            this.onReject();
+        }
     }
 
     private cancelWithdraw = () => {
