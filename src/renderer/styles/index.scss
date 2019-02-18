@@ -176,6 +176,10 @@ button:not(:disabled):hover {
   cursor: pointer;
 }
 
+select[disabled] {
+  cursor: not-allowed;
+}
+
 /* Banner */
 
 .banner {
