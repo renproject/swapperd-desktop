@@ -42,6 +42,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
+            swapperdVersion: "",
+            showAbout: false,
         };
     }
 
@@ -120,14 +122,24 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly render = (): JSX.Element => {
         const { login: { password }, trader: { network } } = this.props.container.state;
 
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
+        const { showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
         // tslint:disable-next-line:no-any
         const headerProps: any = {
             network,
             setNetwork: this.setNetwork,
+            logoOnClick: this.logoClick,
         };
+
+        if (showAbout) {
+            return <div className="app">
+                <Header hideNetwork={true} {...headerProps} />
+                <div>
+                    <p>Swapperd version: {swapperdVersion}</p>
+                </div>
+            </div>;
+        }
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -242,6 +254,10 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
     }
 
+    private readonly logoClick = () => {
+        this.setState({ showAbout: !this.state.showAbout });
+    }
+
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
         const { login: { password }, trader: { network } } = this.props.container.state;
@@ -258,12 +274,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 }
             } else {
                 // We can try to login since we know an account exists
-                await fetchInfo({ network: network, password: password || "" });
+                const infoResponse = await fetchInfo({ network: network, password: password || "" });
 
                 const { networkDetails } = this.state;
                 const balances: IBalances | null = networkDetails.get(network).balances;
                 this.setState({
                     networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
+                    swapperdVersion: infoResponse.version,
                 });
 
                 if (!this.state.accountExists) {
@@ -290,6 +307,8 @@ interface IAppState {
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
+    swapperdVersion: string;
+    showAbout: boolean;
 }
 
 export const App = connect<IAppProps>(AppContainer)(AppClass);
