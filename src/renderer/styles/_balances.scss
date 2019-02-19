@@ -1,0 +1,93 @@
+/* Balances */
+
+.balances {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  height: 220px;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.balances--item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.balances--item:hover {
+  background-color: #fafafa;
+}
+
+.balances--token {
+  display: flex;
+  align-items: center;
+  width: 75px;
+}
+
+.balances--token img {
+  width: 20px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.balances--amount p {
+  font-weight: 500;
+  width: 130px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.balances--address {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.balances--address:hover p.address {
+  text-decoration: underline;
+}
+
+.header--lock {
+  &:hover {
+    width: 50px;
+  }
+  position: absolute;
+  width: 15px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.header--lock--logo {
+  background-image: url(images/lock.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 20px;
+  width: 15px;
+}
+
+.header--lock:hover .header--lock--logo::after {
+  content: "Lock";
+  margin-left: 20px;
+  color: #cccccc;
+}
+
+.balances--transfer {
+  background-image: url(images/arrow.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 15px;
+  width: 10px;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.balances .error {
+  padding: 0 10px;
+}
