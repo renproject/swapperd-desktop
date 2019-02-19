@@ -3,7 +3,7 @@ import * as React from "react";
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
-import { bootload, getInfo } from "@/lib/swapperd";
+import { getInfo } from "@/lib/swapperd";
 import { Message } from "common/types";
 
 interface IUnlockScreenProps {
@@ -83,15 +83,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
         this.setState({ submitting: true });
 
         try {
-            const bootloaded = await getInfo(password);
-            if (!bootloaded) {
-
-                const bootloadSuccessful = await bootload(password);
-                if (!bootloadSuccessful) {
-                    error = "Bootload failed";
-                }
-
-            }
+            await getInfo(password);
         } catch (err) {
             console.error(err);
         }

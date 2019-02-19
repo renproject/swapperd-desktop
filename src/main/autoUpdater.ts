@@ -1,8 +1,9 @@
 import { exec } from "child_process";
+import { autoUpdater, UpdateCheckResult } from "electron-updater";
+
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
-import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 //////////////////////////////// Swapperd Daemon ///////////////////////////////
 
@@ -26,25 +27,9 @@ const run = async (command: string) => new Promise((resolve, reject) => {
     });
 });
 
-export const installOrUpdateSwapperd = async (mnemonic: string | null): Promise<void> => {
-
-    let mnemonicFlag = "";
-
-    if (process.platform === "win32") {
-        if (mnemonic) {
-            mnemonicFlag = ` --mnemonic ${mnemonic}`;
-        }
-
-        await run(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe"${mnemonicFlag}`);
-        await run("sc create swapperd binpath= \"%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe\"");
-        await run("sc start swapperd");
-        return;
-    } else {
-        if (mnemonic) {
-            mnemonicFlag = `-s "${mnemonic}"`;
-        }
-        await run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh ${mnemonicFlag}`);
-        return;
+export const installSwapperd = async (): Promise<void | {}> => {
+    if (process.platform !== "win32") {
+        return run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh`);
     }
 };
 
@@ -68,7 +53,6 @@ export const checkForUpdates = async (_ipc: IPC): Promise<UpdateCheckResult | nu
 
 // tslint:disable-next-line: no-any
 export const setupAutoUpdater = (ipc: IPC) => {
-
     autoUpdater.on("checking-for-update", () => {
         console.log("Checking for updates...");
     });

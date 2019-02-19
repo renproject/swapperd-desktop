@@ -137,7 +137,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (accountExists && password === null) {
+        if (password === null) {
             return <div className="app">
                 <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
                 <UnlockScreen resolve={this.setUnlocked} />
@@ -168,15 +168,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (accountExists && password !== null) {
-            return <div className="app">
-                <Header network={network} setNetwork={this.setNetwork} />
-                <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
-                <Swaps swaps={swaps} transfers={transfers} />
-            </div>;
-        }
-
-        return <div className="app">An error occurred.</div>;
+        return <div className="app">
+            <Header network={network} setNetwork={this.setNetwork} />
+            <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
+            <Swaps swaps={swaps} transfers={transfers} />
+        </div>;
     }
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
@@ -244,15 +240,30 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private readonly callGetAccount = async () => {
         const { login: { password }, trader: { network } } = this.props.container.state;
         try {
-            await fetchInfo({ network: network, password: password || "" });
+            const accountIsSetup = await ipc.sendSyncWithTimeout(
+                Message.CheckSetup,
+                0, // timeout
+                null
+            );
+            if (!accountIsSetup) {
+                // If there is no account then make sure the state reflects that
+                if (this.state.accountExists) {
+                    this.setState({accountExists: false});
+                }
+            } else {
+                // We can try to login since we know an account exists
+                await fetchInfo({ network: network, password: password || "" });
 
-            const { networkDetails } = this.state;
-            const balances: IBalances | null = networkDetails.get(network).balances;
-            this.setState({
-                networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
-            });
+                const { networkDetails } = this.state;
+                const balances: IBalances | null = networkDetails.get(network).balances;
+                this.setState({
+                    networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
+                });
 
-            if (!this.state.accountExists) { this.setState({ accountExists: true }); }
+                if (!this.state.accountExists) {
+                    this.setState({ accountExists: true });
+                }
+            }
         } catch (e) {
             console.error(e.response && e.response.data.error || e);
         }

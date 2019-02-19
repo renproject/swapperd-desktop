@@ -6,11 +6,25 @@
   "license": "MIT",
   "build": {
     "appId": "com.github.republicprotocol.swapperd-native",
+    "afterPack": "./packaging/afterPackHook.js",
     "linux": {
-      "category": "Utility"
+      "category": "Utility",
+      "icon": "resources/icon.png"
     },
     "mac": {
       "icon": "resources/app.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "resources/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowElevation": true,
+      "runAfterFinish": true,
+      "warningsAsErrors": false,
+      "createDesktopShortcut": true,
+      "include": "build/include.nsh"
     },
     "files": [
       "resources"
@@ -27,9 +41,12 @@
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
     "start": "electron-webpack dev",
-    "build": "electron-webpack && electron-builder",
+    "build": "npm run prebuild && electron-webpack && electron-builder",
+    "build:all": "npm run prebuild && electron-webpack && electron-builder -wml --x64",
+    "build:win": "npm run prebuild && electron-webpack && electron-builder -w --x64",
     "build:dir": "npm run build --dir -c.compression=store -c.mac.identity=null",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck"
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
@@ -57,6 +74,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.17.0",
     "@types/express": "^4.16.1",
+    "@types/extract-zip": "^1.6.2",
     "@types/menubar": "^5.1.6",
     "@types/node": "^10.12.21",
     "@types/node-notifier": "^0.0.28",
@@ -69,6 +87,7 @@
     "electron-builder": "20.38.5",
     "electron-webpack": "^2.6.2",
     "electron-webpack-ts": "^3.1.1",
+    "extract-zip": "^1.6.7",
     "node-sass": "^4.11.0",
     "prop-types": "^15.0.0",
     "react-hot-loader": "4.6.5",

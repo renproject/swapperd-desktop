@@ -27,3 +27,6 @@ yarn-error.log*
 # environment variables
 .env
 
+# prebuild scripts
+/packaging/*.js
+/src/common/*.js

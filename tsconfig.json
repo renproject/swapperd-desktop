@@ -9,7 +9,6 @@
                 "common/*"
             ],
         },
-
         "baseUrl": "src/",
         "jsx": "react",
         "forceConsistentCasingInFileNames": true,
@@ -27,5 +26,9 @@
         "strictFunctionTypes": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "packaging"
+  ]
 }

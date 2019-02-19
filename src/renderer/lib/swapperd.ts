@@ -347,24 +347,6 @@ export async function submitSwap(swapRequest: IPartialSwapRequest, options: IOpt
     });
 }
 
-export async function bootload(password: string): Promise<boolean> {
-    return Promise.all(Object.keys(NETWORKS).map(async (network) => {
-        return axios({
-            method: "POST",
-            url: `${swapperEndpoint(network)}/bootload`,
-            auth: {
-                username: "",
-                password,
-            },
-        }).then(resp => {
-            return resp.status === 200;
-        });
-    })).then((results) => results.every(status => status)).catch(err => {
-        console.error(err);
-        return false;
-    });
-}
-
 export async function getInfo(password: string): Promise<boolean> {
     return Promise.all(Object.keys(NETWORKS).map(async (network) => {
         return axios({
