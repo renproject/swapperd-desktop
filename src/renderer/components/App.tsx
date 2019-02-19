@@ -14,7 +14,7 @@ import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwap
 import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 import { Message, Network } from "common/types";
 
-// import { version } from "../../../package.json";
+import { version as APP_VERSION } from "../../../package.json";
 
 export class NetworkDetails extends Record({
     balances: null as IBalances | null,
@@ -137,7 +137,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <Header hideNetwork={true} {...headerProps} />
                 <div>
                     <p>Swapperd version: {swapperdVersion}</p>
-                    <p>Swapperd Native version: {this.props.version || "Unknown"}</p>
+                    <p>Swapperd Native version: {APP_VERSION}</p>
                 </div>
             </div>;
         }
@@ -298,7 +298,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 }
 
 interface IAppProps extends ConnectedProps {
-    version?: string;
 }
 
 interface IAppState {

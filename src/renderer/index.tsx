@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
 ReactDOM.render(
     _catch_(
         <Provider>
-            <App version={process.env.npm_package_version} />
+            <App />
         </Provider>
     ),
     document.getElementById("app") as HTMLElement
