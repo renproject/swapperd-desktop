@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { AboutPage } from "@/components/AboutPage";
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
 import { ApproveWithdraw } from "@/components/ApproveWithdraw";
@@ -135,10 +136,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         if (showAbout) {
             return <div className="app">
                 <Header hideNetwork={true} {...headerProps} />
-                <div>
-                    <p>Swapperd version: {swapperdVersion}</p>
-                    <p>Swapperd Native version: {APP_VERSION}</p>
-                </div>
+                <AboutPage swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
             </div>;
         }
 
