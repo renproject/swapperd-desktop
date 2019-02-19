@@ -91,13 +91,12 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         try {
             const mainResponse = await submitSwap(swapDetails, { password, network });
             ipc.sendMessage(Message._SwapResponse, { status: mainResponse.status, response: mainResponse.data });
+            this.setState({ loading: false });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
-            this.setState({ error: e.response && e.response.data.error || e });
+            this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
-
-        this.setState({ loading: false });
     }
 
     private onReject(): void {
