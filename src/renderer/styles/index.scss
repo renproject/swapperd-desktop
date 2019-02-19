@@ -540,6 +540,22 @@ select[disabled] {
   padding: 0 10px;
 }
 
+.swap--origin {
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 15px;
+    padding-bottom: 10px;
+    img {
+      width: 32px;
+    }
+  }
+  p {
+    text-align: center;
+  }
+}
+
 .swap--details {
   display: flex;
   justify-content: space-around;

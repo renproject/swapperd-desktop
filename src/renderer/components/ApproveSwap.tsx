@@ -51,7 +51,13 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
                 <div className="swap">
-                    <p>{origin} is proposing the following swap on {NETWORKS[network]}:</p>
+                    <div className="swap--origin">
+                        <div>
+                            <img className="swap--favicon" alt="" role="presentation" src={`${origin}/favicon.ico`} />
+                            <a rel="noopener noreferrer" target="_blank" href={origin}>{origin}</a>
+                        </div>
+                        <p>is proposing the following swap on {NETWORKS[network]}:</p>
+                    </div>
                     <div className="swap--details">
                         <div>
                             <img role="presentation" alt="" src={getLogo(swapDetails.sendToken)} />
