@@ -61,7 +61,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
         const response = await ipc.sendSyncWithTimeout(Message.Swap, 0, {
             body: req.body,
             network: req.query.network,
-            origin: req.get("origin")
+            origin: req.headers.origin,
         });
 
         res.status(response.status);

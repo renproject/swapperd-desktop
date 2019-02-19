@@ -122,7 +122,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly render = (): JSX.Element => {
         const { login: { password }, trader: { network } } = this.props.container.state;
 
-        const { showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
+        const { origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
         // tslint:disable-next-line:no-any
