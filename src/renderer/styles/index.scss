@@ -87,8 +87,8 @@ button {
   cursor: pointer;
   border: none;
 
-  &.cancel {
-    background-color: lightgrey;
+  &.cancel, &.secondary {
+    background-color: #ccc;
     color: grey;
   }
 }
@@ -98,6 +98,10 @@ button:not(:disabled):hover {
   &.cancel {
     background-color: red;
     color: white;
+  }
+  &.secondary {
+    background-color: lightgrey;
+    color: grey;
   }
 }
 
@@ -464,6 +468,25 @@ select[disabled] {
 
 .mnemonic .confirmation {
   padding-bottom: 10px;
+}
+
+.mnemonic--word--input {
+  border-width: 2px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+
+  &.valid {
+    border-color: green;
+    border-style: solid;
+  }
+  &.invalid {
+    border-color: red;
+    border-style: solid;
+  }
+}
+
+.mnemonic--check {
+  padding-top: 10px;
 }
 
 /* Withdraw */

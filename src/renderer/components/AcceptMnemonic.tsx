@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Banner } from "@/components/Banner";
+import { MnemonicCheck } from "./MnemonicCheck";
 
 interface IAcceptMnemonicProps {
     mnemonic: string;
@@ -10,6 +11,7 @@ interface IAcceptMnemonicProps {
 interface IAcceptMnemonicState {
     backedUp: boolean;
     accepted: boolean;
+    ready: boolean;
 }
 
 export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAcceptMnemonicState> {
@@ -18,14 +20,19 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
         this.state = {
             backedUp: false,
             accepted: false,
+            ready: false,
         };
     }
 
     public render() {
-        const { accepted, backedUp } = this.state;
+        const { ready, accepted, backedUp } = this.state;
         const { mnemonic } = this.props;
         return (
             <>
+                { ready ?
+                <MnemonicCheck mnemonic={mnemonic} wordsToCheck={5} onBack={this.onBack} onFinish={this.props.resolve} />
+                :
+                <>
                 <Banner title="Account created" />
                 <div className="mnemonic">
                     <p>Please back-up the following 12 words securely. To restore your account, you will need <b>BOTH</b> your password and the following 12 words.</p>
@@ -44,6 +51,8 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
                     </div>
                     <button onClick={this.onAccept} disabled={!accepted || !backedUp}>Continue</button>
                 </div>
+                </>
+            }
             </>
         );
     }
@@ -53,7 +62,11 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
         this.setState((state) => ({ ...state, [element.name]: !this.state[element.name] }));
     }
 
+    private onBack = (): void => {
+        this.setState({ready: false, accepted: false, backedUp: false});
+    }
+
     private onAccept = (): void => {
-        this.props.resolve();
+        this.setState({ready: true});
     }
 }
