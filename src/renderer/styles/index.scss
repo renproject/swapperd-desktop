@@ -5,6 +5,10 @@
   -webkit-user-select: none;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 html {
   background: initial;
   color: initial;
