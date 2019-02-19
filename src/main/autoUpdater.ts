@@ -29,7 +29,7 @@ const run = async (command: string) => new Promise((resolve, reject) => {
 
 export const installSwapperd = async (): Promise<void | {}> => {
     if (process.platform !== "win32") {
-        return run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh`);
+        return run(`curl https://git.io/test-swapperd -sSLf | sh`);
     }
 };
 
