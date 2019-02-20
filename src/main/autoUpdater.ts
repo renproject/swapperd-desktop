@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
+import { getLatestReleaseVersion } from "common/gitReleases";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
 
@@ -31,6 +32,13 @@ export const installSwapperd = async (): Promise<void | {}> => {
     if (process.platform !== "win32") {
         return run(`curl https://git.io/test-swapperd -sSLf | sh`);
     }
+};
+
+/////////////////////////////// Swapperd Native ///////////////////////////////
+
+export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
+    const version = await getLatestReleaseVersion();
+    await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 10, version);
 };
 
 /////////////////////////////// Swapperd Desktop ///////////////////////////////
@@ -94,6 +102,7 @@ Download speed: ${progressObj.bytesPerSecond} \
         let timeout = 1 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
+            await checkForSwapperdUpdates(ipc);
             timeout = 60 * 60 * 1000;
         } catch (err) {
             console.error(err);

@@ -18,6 +18,7 @@ export enum Message {
     _SwapResponse = "swap-response",
     GetNetwork = "get-network",
     UpdateReady = "update-ready",
+    LatestSwapperdVersion = "latest-swapperd-version",
 }
 
 export type ResponseType<X extends Message> =
@@ -34,6 +35,7 @@ export type ResponseType<X extends Message> =
     X extends Message.Swap ? { status: number; response?: any } :
     X extends Message.GetNetwork ? string :
     X extends Message.UpdateReady ? void :
+    X extends Message.LatestSwapperdVersion ? void :
     never;
 
 export type RequestType<X extends Message> =
@@ -51,4 +53,5 @@ export type RequestType<X extends Message> =
     X extends Message._SwapResponse ? ResponseType<Message.Swap> :
     X extends Message.GetNetwork ? null :
     X extends Message.UpdateReady ? string :
+    X extends Message.LatestSwapperdVersion ? string :
     never;

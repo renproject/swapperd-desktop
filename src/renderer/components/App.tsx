@@ -44,6 +44,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             swapDetails: null,
             withdrawRequest: null,
             swapperdVersion: "",
+            latestSwapperdVersion: "",
             showAbout: false,
         };
     }
@@ -86,6 +87,10 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             return;
         });
 
+        ipc.on(Message.LatestSwapperdVersion, async (version: string) => {
+            this.setState({latestSwapperdVersion: version});
+        });
+
         this.callGetAccount().catch(console.error);
         this.callGetBalances().catch(console.error);
 
@@ -123,7 +128,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly render = (): JSX.Element => {
         const { login: { password }, trader: { network } } = this.props.container.state;
 
-        const { origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
+        const { latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
         // tslint:disable-next-line:no-any
@@ -136,7 +141,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         if (showAbout) {
             return <div className="app">
                 <Header hideNetwork={true} {...headerProps} />
-                <AboutPage swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
+                <AboutPage latestSwapperdVersion={latestSwapperdVersion} swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
             </div>;
         }
 
@@ -308,6 +313,7 @@ interface IAppState {
     withdrawRequest: IPartialWithdrawRequest | null;
     swapperdVersion: string;
     showAbout: boolean;
+    latestSwapperdVersion: string;
 }
 
 export const App = connect<IAppProps>(AppContainer)(AppClass);
