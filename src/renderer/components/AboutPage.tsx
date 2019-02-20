@@ -24,7 +24,7 @@ export class AboutPage extends React.Component<IAboutPageProps, IAboutPageState>
         super(props);
         this.state = {
             updateComplete: false,
-            updating: true,
+            updating: false,
             error: null,
         };
     }
