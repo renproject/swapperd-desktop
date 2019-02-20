@@ -9,8 +9,8 @@ import * as path from "path";
 import axios from "axios";
 
 import { checkFileExists } from "../src/common/functions";
+import { getLatestAssets, GitAsset } from "../src/common/gitReleases";
 
-const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
 const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64.zip";
 const CONFIG_FILE = "config.json";
 
@@ -21,22 +21,6 @@ interface AfterPackContext {
     electronPlatformName: string;
     arch: any;
     targets: any;
-}
-
-interface GitAsset {
-    url: string;
-    id: number;
-    node_id: string;
-    name: string;
-    label: any;
-    uploader: any;
-    content_type: string;
-    state: string;
-    size: number;
-    download_count: number;
-    created_at: string;
-    updated_at: string;
-    browser_download_url: string;
 }
 
 async function downloadFile(url: string, outputFile: string) {
@@ -106,12 +90,7 @@ export default async function (context: AfterPackContext) {
     const platform = context.packager.platform.nodeName;
     if (platform === "win32") {
         try {
-            const postResponse = await axios({
-                method: "GET",
-                url: SWAPPERD_RELEASES_URL,
-            });
-            const assets: GitAsset[] = postResponse.data.assets;
-
+            const assets: GitAsset[] = await getLatestAssets();
             for (const asset of assets) {
                 let file: string;
                 switch (asset.name) {
