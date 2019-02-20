@@ -258,7 +258,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 const balances = await getBalances({ network, password });
                 const currentBalances = networkDetails.get(network).balances;
                 if (!balances.equals(currentBalances)) {
-                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
+                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances).set("balancesError", null)) });
                 }
 
             } catch (e) {
