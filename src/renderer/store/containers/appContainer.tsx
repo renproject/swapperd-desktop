@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Container, Subscribe } from "unstated";
 
+import { getBalances } from "@/lib/swapperd";
 import { initialState } from "@/store/initialState";
 import { ApplicationData } from "@/store/storeTypes";
 import { Network } from "common/types";
@@ -28,6 +29,23 @@ export class AppContainer extends Container<ApplicationData> {
     // Trader data
     public setNetwork = async (network: Network) =>
         this.setState({ trader: { ...this.state.trader, network } })
+
+    /**
+     * updateBalances fetches and updates the balances from Swapperd.
+     *
+     * @throws an error if the call to getBalances() failed
+     */
+    public updateBalances = async (): Promise<void> => {
+        const { login: { password }, trader: { network }  } = this.state;
+        if (password !== null) {
+            const balances = await getBalances({ network, password });
+            const currentBalances = this.state.trader.balances.get(network);
+            if (!balances.equals(currentBalances)) {
+                const newBalances = this.state.trader.balances.set(network, balances);
+                await this.setState({ trader: {...this.state.trader, balances: newBalances}});
+            }
+        }
+    }
 
 }
 

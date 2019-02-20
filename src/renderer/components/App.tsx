@@ -13,15 +13,13 @@ import { Swaps } from "@/components/Swaps";
 import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
-import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
+import { fetchInfo, getSwaps, getTransfers, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 import { Message, Network } from "common/types";
 
 import { version as APP_VERSION } from "../../../package.json";
 
 export class NetworkDetails extends Record({
-    balances: null as IBalances | null,
-    balancesError: null as string | null,
     swaps: null as ISwapsResponse | null,
     transfers: null as ITransfersResponse | null,
 }) { }
@@ -48,6 +46,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             swapperdVersion: "",
             latestSwapperdVersion: "",
             showAbout: false,
+            balancesError: null,
         };
     }
 
@@ -130,8 +129,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     public readonly render = (): JSX.Element => {
         const { login: { password }, trader: { network } } = this.props.container.state;
 
-        const { latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
-        const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
+        const { balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
+        const { swaps, transfers } = networkDetails.get(network);
+        const balances = this.props.container.state.trader.balances.get(network) || null;
 
         const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
 
@@ -249,22 +249,19 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly callGetBalances = async () => {
         if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-        const { login: { password }, trader: { network } } = this.props.container.state;
-        const { networkDetails, accountExists } = this.state;
+        const { login: { password } } = this.props.container.state;
+        const { accountExists } = this.state;
         let timeout = 10 * 1000;
-
         if (accountExists && password !== null) {
             try {
-                const balances = await getBalances({ network, password });
-                const currentBalances = networkDetails.get(network).balances;
-                if (!balances.equals(currentBalances)) {
-                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances).set("balancesError", null)) });
+                await this.props.container.updateBalances();
+                if (this.state.balancesError) {
+                    this.setState({ balancesError: null });
                 }
-
             } catch (e) {
                 console.error(e);
                 timeout = 1 * 1000;
-                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
+                this.setState({ balancesError: `Your balances may be out of date! The most recent attempt to update balances failed.` });
             }
         }
         this.callGetBalancesTimeout = setTimeout(this.callGetBalances, timeout);
@@ -293,11 +290,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             } else {
                 // We can try to login since we know an account exists
                 const infoResponse = await fetchInfo({ network: network, password: password || "" });
-
-                const { networkDetails } = this.state;
-                const balances: IBalances | null = networkDetails.get(network).balances;
                 this.setState({
-                    networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
                     swapperdVersion: infoResponse.version,
                 });
 
@@ -327,6 +320,7 @@ interface IAppState {
     swapperdVersion: string;
     showAbout: boolean;
     latestSwapperdVersion: string;
+    balancesError: string | null;
 }
 
 export const App = connect<IAppProps>(AppContainer)(AppClass);

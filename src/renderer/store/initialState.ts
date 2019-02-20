@@ -1,3 +1,4 @@
+import { IBalances } from "@/lib/swapperd";
 import { ApplicationData } from "@/store/storeTypes";
 import { Network } from "common/types";
 
@@ -11,5 +12,6 @@ export const initialState: ApplicationData = {
     },
     trader: {
         network: Network.Mainnet,
+        balances: new Map<Network, IBalances>(),
     }
 };
