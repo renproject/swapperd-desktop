@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import logo from "@/styles/images/logo.png";
+import alertImage from "@/styles/images/alert.png";
 
 import { ipc } from "@/ipc";
 import { NETWORKS } from "@/lib/swapperd";
@@ -9,6 +10,7 @@ import { Message, Network } from "common/types";
 
 interface Props extends ConnectedProps {
     network: Network;
+    updateAvailable?: boolean;
     hideNetwork?: boolean;
     disableNetwork?: boolean;
     logoOnClick?(): void;
@@ -24,7 +26,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { logoOnClick, hideNetwork, container, disableNetwork } = this.props;
+        const { updateAvailable, logoOnClick, hideNetwork, container, disableNetwork } = this.props;
         // tslint:disable-next-line:no-any
         const logoProps: any = {};
         if (logoOnClick) {
@@ -33,7 +35,10 @@ class HeaderClass extends React.Component<Props, State> {
         }
         return (
             <div className="header">
-                <img className="clickable" src={logo} alt="Swapperd" {...logoProps} />
+                <div className="clickable">
+                    <img className="logo" src={logo} alt="Swapperd" {...logoProps} />
+                    {updateAvailable && <img alt="alert" className="header--alert" src={alertImage} />}
+                </div>
                 {!hideNetwork &&
                     <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}

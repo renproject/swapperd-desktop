@@ -1,6 +1,7 @@
 import * as React from "react";
 
 interface IAboutPageProps {
+    updateAvailable: boolean;
     latestSwapperdVersion: string;
     swapperdBinaryVersion: string;
     swapperdDesktopVersion: string;
@@ -15,8 +16,7 @@ export class AboutPage extends React.Component<IAboutPageProps, IAboutPageState>
     }
 
     public render() {
-        const { latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
-        const updateAvailable = latestSwapperdVersion && latestSwapperdVersion !== swapperdBinaryVersion;
+        const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
         return (
             <div className="about--page">
                 {updateAvailable && <p>An update to SwapperD is available! Latest version: {latestSwapperdVersion}</p>}

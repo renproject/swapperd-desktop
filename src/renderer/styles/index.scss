@@ -150,11 +150,18 @@ button:not(:disabled):hover {
   left: 0;
 }
 
-.header img {
+.header img.logo {
   width: 40px;
 }
 
-.header img.clickable:hover {
+.header .header--alert {
+  position: absolute;
+  width: 20px;
+  bottom: 10px;
+  left: 35px;
+}
+
+.header .clickable:hover {
   cursor: pointer;
 }
 

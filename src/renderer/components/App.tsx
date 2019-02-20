@@ -131,17 +131,20 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
+        const updateAvailable = latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
+
         // tslint:disable-next-line:no-any
         const headerProps: any = {
             network,
             setNetwork: this.setNetwork,
             logoOnClick: this.logoClick,
+            updateAvailable,
         };
 
         if (showAbout) {
             return <div className="app">
                 <Header hideNetwork={true} {...headerProps} />
-                <AboutPage latestSwapperdVersion={latestSwapperdVersion} swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
+                <AboutPage updateAvailable={updateAvailable} latestSwapperdVersion={latestSwapperdVersion} swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
             </div>;
         }
 
