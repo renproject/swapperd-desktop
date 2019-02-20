@@ -88,6 +88,8 @@
   cursor: pointer;
 }
 
-.balances .error {
-  padding: 0 10px;
+.balances .balances--error {
+  padding: 5px 10px;
+  background-color: pink;
+  color: darkred;
 }

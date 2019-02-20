@@ -22,18 +22,20 @@ export class Balances extends React.Component<IBalancesProps> {
             <div className="balances">
                 {balances === null ?
                     <Loading />
-                    : balancesError ?
-                        <p className="error">{balancesError}</p>
-                        :
-                        balances.sort().map((details, token) => {
-                            return <BalanceItem
-                                key={token}
-                                token={token}
-                                amount={details.balance}
-                                address={details.address}
-                                setWithdrawRequest={this.props.setWithdrawRequest}
-                            />;
-                        }).valueSeq().toArray()
+                    : <>
+                        {balancesError && <div className="balances--error">{balancesError}</div>}
+                        {
+                            balances.sort().map((details, token) => {
+                                return <BalanceItem
+                                    key={token}
+                                    token={token}
+                                    amount={details.balance}
+                                    address={details.address}
+                                    setWithdrawRequest={this.props.setWithdrawRequest}
+                                />;
+                            }).valueSeq().toArray()
+                        }
+                    </>
                 }
             </div>
         );
