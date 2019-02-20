@@ -4,6 +4,7 @@ import { Network } from "common/types";
 export const initialState: ApplicationData = {
     app: {
         updateReady: null,
+        updatingSwapperd: false,
     },
     login: {
         password: null,

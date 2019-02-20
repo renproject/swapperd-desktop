@@ -8,6 +8,7 @@ export interface ApplicationData {
 
 export interface AppData {
     updateReady: string | null;
+    updatingSwapperd: boolean;
 }
 
 export interface LoginData {

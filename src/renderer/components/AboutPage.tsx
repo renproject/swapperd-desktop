@@ -1,11 +1,12 @@
 import * as React from "react";
 
 import { ipc } from "@/ipc";
+import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 
 import { Message } from "common/types";
 import { Loading } from "./Loading";
 
-interface IAboutPageProps {
+interface IAboutPageProps extends ConnectedProps {
     updateAvailable: boolean;
     latestSwapperdVersion: string;
     swapperdBinaryVersion: string;
@@ -15,23 +16,22 @@ interface IAboutPageProps {
 
 interface IAboutPageState {
     updateComplete: boolean;
-    updating: boolean;
     error: string | null;
 }
 
-export class AboutPage extends React.Component<IAboutPageProps, IAboutPageState> {
+class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
     constructor(props: IAboutPageProps) {
         super(props);
         this.state = {
             updateComplete: false,
-            updating: false,
             error: null,
         };
     }
 
     public render() {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
-        const { error, updating, updateComplete } = this.state;
+        const { error, updateComplete } = this.state;
+        const { updatingSwapperd } = this.props.container.state.app;
 
         const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "";
         return (
@@ -40,7 +40,7 @@ export class AboutPage extends React.Component<IAboutPageProps, IAboutPageState>
                 <pre>{swapperdBinaryVersion}</pre>
                 {showUpdate && <>
                     {error && <p className="error">{error}</p>}
-                    {updating ? <div className="updating"><p>Updating... </p><Loading /></div> :
+                    {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
                     <>
                         <p>A new Swapperd version is available!</p>
                         <button className="update" onClick={this.onClickHandler}>Update</button>
@@ -55,21 +55,26 @@ export class AboutPage extends React.Component<IAboutPageProps, IAboutPageState>
 
     private onClickHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
-        this.setState({error: null, updating: true});
+        this.setState({error: null});
+        await this.props.container.setUpdatingSwapperd(true);
         try {
             await ipc.sendSyncWithTimeout(
                 Message.UpdateSwapperd,
                 0, // timeout
                 null
             );
-            this.setState({updating: false, updateComplete: true});
+            await this.props.container.setUpdatingSwapperd(false);
+            this.setState({updateComplete: true});
             if (updateCompleteCallback) {
                 updateCompleteCallback();
             }
         } catch (error) {
             console.error(`Got error instead!!!: ${error}`);
-            this.setState({ error, updating: false });
+            await this.props.container.setUpdatingSwapperd(false);
+            this.setState({ error });
             return;
         }
     }
 }
+
+export const AboutPage = connect<IAboutPageProps>(AppContainer)(AboutPageClass);

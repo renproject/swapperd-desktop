@@ -21,6 +21,10 @@ export class AppContainer extends Container<ApplicationData> {
     public clearPassword = async () =>
         this.setState({ login: { ...this.state.login, password: null } })
 
+    // Swapperd Updating state
+    public setUpdatingSwapperd = async (updating: boolean) =>
+        this.setState({ app: { ...this.state.app, updatingSwapperd: updating } })
+
     // Trader data
     public setNetwork = async (network: Network) =>
         this.setState({ trader: { ...this.state.trader, network } })
