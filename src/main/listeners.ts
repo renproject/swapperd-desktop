@@ -93,6 +93,10 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
     ipc.on(Message.Relaunch, (_value, _error?: Error) => {
         mb.app.relaunch();
     });
+
+    ipc.on(Message.UpdateSwapperd, async (_value, _error?: Error) => {
+        await installSwapperd();
+    });
 };
 
 async function storePasswordHash(db: Database, account: string, password: string, nonce: string) {

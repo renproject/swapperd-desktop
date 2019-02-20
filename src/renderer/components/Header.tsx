@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import logo from "@/styles/images/logo.png";
 import alertImage from "@/styles/images/alert.png";
+import logo from "@/styles/images/logo.png";
 
 import { ipc } from "@/ipc";
 import { NETWORKS } from "@/lib/swapperd";

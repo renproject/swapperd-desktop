@@ -11,6 +11,7 @@ export enum Message {
     Notify = "notify",
     VerifyPassword = "verify-password",
     Relaunch = "relaunch",
+    UpdateSwapperd = "update-swapperd",
 
     // main to renderer
     GetPassword = "get-password",
@@ -28,6 +29,7 @@ export type ResponseType<X extends Message> =
     X extends Message.Notify ? void :
     X extends Message.VerifyPassword ? boolean :
     X extends Message.Relaunch ? void :
+    X extends Message.UpdateSwapperd ? void :
 
     // main to renderer
     X extends Message.GetPassword ? string :
@@ -45,6 +47,7 @@ export type RequestType<X extends Message> =
     X extends Message.Notify ? { notification: string } :
     X extends Message.VerifyPassword ? { password: string } :
     X extends Message.Relaunch ? null :
+    X extends Message.UpdateSwapperd ? null :
 
     // main to renderer
     X extends Message.GetPassword ? null :

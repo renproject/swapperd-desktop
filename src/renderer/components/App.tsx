@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { remote } from "electron";
+
 import { AboutPage } from "@/components/AboutPage";
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
@@ -131,7 +133,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
 
-        const updateAvailable = latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
+        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
 
         // tslint:disable-next-line:no-any
         const headerProps: any = {
@@ -144,7 +146,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         if (showAbout) {
             return <div className="app">
                 <Header hideNetwork={true} {...headerProps} />
-                <AboutPage updateAvailable={updateAvailable} latestSwapperdVersion={latestSwapperdVersion} swapperdBinaryVersion={swapperdVersion} swapperdDesktopVersion={APP_VERSION} />
+                <AboutPage
+                    updateCompleteCallback={this.callGetAccount}
+                    updateAvailable={updateAvailable}
+                    latestSwapperdVersion={latestSwapperdVersion}
+                    swapperdBinaryVersion={swapperdVersion}
+                    swapperdDesktopVersion={APP_VERSION}
+                />
             </div>;
         }
 
@@ -240,8 +248,10 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     private readonly callGetBalances = async () => {
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
         const { login: { password }, trader: { network } } = this.props.container.state;
         const { networkDetails, accountExists } = this.state;
+        let timeout = 10 * 1000;
 
         if (accountExists && password !== null) {
             try {
@@ -253,12 +263,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
             } catch (e) {
                 console.error(e);
+                timeout = 1 * 1000;
                 this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
             }
         }
-
-        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
+        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, timeout);
     }
 
     private readonly logoClick = () => {
@@ -267,6 +276,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
+        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
+
         const { login: { password }, trader: { network } } = this.props.container.state;
         try {
             const accountIsSetup = await ipc.sendSyncWithTimeout(
@@ -298,7 +309,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             console.error(e.response && e.response.data.error || e);
         }
 
-        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
         this.callGetAccountTimeout = setTimeout(this.callGetAccount, 10 * 1000);
     }
 }

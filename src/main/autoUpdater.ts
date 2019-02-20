@@ -38,7 +38,7 @@ export const installSwapperd = async (): Promise<void | {}> => {
 
 export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
     const version = await getLatestReleaseVersion();
-    await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 10, version);
+    await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 5, version);
 };
 
 /////////////////////////////// Swapperd Desktop ///////////////////////////////
@@ -99,12 +99,12 @@ Download speed: ${progressObj.bytesPerSecond} \
     });
 
     const interval = async () => {
-        let timeout = 1 * 60 * 1000;
+        let timeout = 60 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
             await checkForSwapperdUpdates(ipc);
-            timeout = 60 * 60 * 1000;
         } catch (err) {
+            timeout = 10 * 1000;
             console.error(err);
         }
 
