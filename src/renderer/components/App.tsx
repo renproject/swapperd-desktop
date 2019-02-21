@@ -126,6 +126,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         callGetTransactions().catch(console.error);
     }
 
+    // tslint:disable:jsx-no-lambda
+    // tslint:disable:react-this-binding-issue
     public readonly render = (): JSX.Element => {
         const { login: { password }, trader: { network } } = this.props.container.state;
 
@@ -152,6 +154,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     latestSwapperdVersion={latestSwapperdVersion}
                     swapperdBinaryVersion={swapperdVersion}
                     swapperdDesktopVersion={APP_VERSION}
+                    onClose={() => { this.setState({showAbout: false}); }}
                 />
             </div>;
         }
@@ -207,6 +210,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             <Swaps swaps={swaps} transfers={transfers} />
         </div>;
     }
+    // tslint:enable:jsx-no-lambda
+    // tslint:enable:react-this-binding-issue
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
         await this.props.container.setPassword(password);
