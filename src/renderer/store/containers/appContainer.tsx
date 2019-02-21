@@ -35,8 +35,9 @@ export class AppContainer extends Container<ApplicationData> {
      *
      * @throws an error if the call to getBalances() failed
      */
-    public updateBalances = async (): Promise<void> => {
-        const { login: { password }, trader: { network }  } = this.state;
+    public updateBalances = async (whichNetwork?: Network): Promise<void> => {
+        const network = (whichNetwork) ? whichNetwork : this.state.trader.network;
+        const { login: { password } } = this.state;
         if (password !== null) {
             const balances = await getBalances({ network, password });
             const currentBalances = this.state.trader.balances.get(network);

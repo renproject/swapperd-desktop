@@ -58,6 +58,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     public readonly componentDidMount = async () => {
+        await this.props.container.updateBalances(Network.Mainnet);
+        await this.props.container.updateBalances(Network.Testnet);
+
         // Attach event to swap
 
         ipc.delayedOn(Message.Swap, async (swap) => {
