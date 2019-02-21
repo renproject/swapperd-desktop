@@ -204,13 +204,29 @@ select[disabled] {
   padding: 10px;
 }
 
-.banner--cross:before {
-  content: "\2715";
-  font-size: 18px;
+.banner--cross {
+  &:hover {
+    width: 50px;
+  }
+  display: flex;
+  align-items: center;
+  width: 15px;
+  transition: all 0.2s;
   cursor: pointer;
 }
 
-.banner--cross.disabled:before {
+.banner--cross::before {
+  content: "\2715";
+  font-size: 18px;
+}
+
+.banner--cross:hover::after {
+  content: "Close";
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.banner--cross.disabled::before {
   cursor: not-allowed;
 }
 
