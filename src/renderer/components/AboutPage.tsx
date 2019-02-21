@@ -4,6 +4,7 @@ import { ipc } from "@/ipc";
 import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
 
 import { Message } from "common/types";
+import { Banner } from "./Banner";
 import { Loading } from "./Loading";
 
 interface IAboutPageProps extends ConnectedProps {
@@ -12,6 +13,7 @@ interface IAboutPageProps extends ConnectedProps {
     swapperdBinaryVersion: string;
     swapperdDesktopVersion: string;
     updateCompleteCallback?(): void;
+    onClose?(): void;
 }
 
 interface IAboutPageState {
@@ -35,21 +37,24 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
 
         const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "";
         return (
-            <div className="about--page">
-                <h2>Swapperd Version</h2>
-                <pre>{swapperdBinaryVersion}</pre>
-                {showUpdate && <>
-                    {error && <p className="error">{error}</p>}
-                    {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
-                    <>
-                        <p>A new Swapperd version is available!</p>
-                        <button className="update" onClick={this.onClickHandler}>Update</button>
-                    </>
-                    }
-                </>}
-                <h2>Swapperd Desktop Version</h2>
-                <pre>{swapperdDesktopVersion}</pre>
-            </div>
+            <>
+                {this.props.onClose && <Banner reject={this.props.onClose} />}
+                <div className="about--page">
+                    <h2>Swapperd Version</h2>
+                    <pre>{swapperdBinaryVersion}</pre>
+                    {showUpdate && <>
+                        {error && <p className="error">{error}</p>}
+                        {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
+                        <>
+                            <p>A new Swapperd version is available!</p>
+                            <button className="update" onClick={this.onClickHandler}>Update</button>
+                        </>
+                        }
+                    </>}
+                    <h2>Swapperd Desktop Version</h2>
+                    <pre>{swapperdDesktopVersion}</pre>
+                </div>
+            </>
         );
     }
 
