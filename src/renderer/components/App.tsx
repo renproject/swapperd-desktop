@@ -58,9 +58,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     public readonly componentDidMount = async () => {
-        await this.props.container.updateBalances(Network.Mainnet);
-        await this.props.container.updateBalances(Network.Testnet);
-
         // Attach event to swap
 
         ipc.delayedOn(Message.Swap, async (swap) => {
@@ -213,6 +210,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
         await this.props.container.setPassword(password);
+        // Fetch the balances for the first time
+        await this.props.container.updateBalances(Network.Mainnet);
+        await this.props.container.updateBalances(Network.Testnet);
     }
 
     private readonly setNetwork = async (network: Network): Promise<void> => {
@@ -230,7 +230,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly accountCreated = async (mnemonic: string, password: string): Promise<void> => {
         this.setState({ accountExists: true, mnemonic });
-        await this.props.container.setPassword(password);
+        await this.setUnlocked(password);
         ipc.sendMessage(
             Message.Notify,
             {
