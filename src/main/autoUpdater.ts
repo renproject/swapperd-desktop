@@ -104,7 +104,7 @@ Download speed: ${progressObj.bytesPerSecond} \
             await checkForUpdates(ipc);
             await checkForSwapperdUpdates(ipc);
         } catch (err) {
-            timeout = 10 * 1000;
+            timeout = 5 * 60 * 1000;
             console.error(err);
         }
 

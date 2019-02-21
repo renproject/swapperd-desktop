@@ -2,21 +2,23 @@ import AutoLaunch from "auto-launch";
 
 import { MenubarApp } from "./menubar";
 
-export const setupAutoLaunch = (mb: MenubarApp) => {
+export const setupAutoLaunch = async (mb: MenubarApp) => {
 
     if (process.platform === "linux") {
         // We use auto-launch because `setLoginItemSettings` doesn't support Linux
-        const autoLauncher = new AutoLaunch({ name: "Swapperd Desktop" });
 
-        autoLauncher.isEnabled()
-            .then((isEnabled: boolean) => {
-                if (isEnabled) {
-                    return;
-                }
-                autoLauncher.enable().catch(console.error);
-            })
-            .catch(console.error);
+        // https://github.com/Teamwork/node-auto-launch/issues/85#issuecomment-403974827
+        interface AutoLaunchOptions {
+            name: string;
+            path?: string;
+        }
+        const autoLaunchConfig: AutoLaunchOptions = { name: "Swapperd Desktop" };
+        if (process.env.APPIMAGE) {
+            autoLaunchConfig.path = process.env.APPIMAGE.replace(" ", "\\ ");
+        }
 
+        const autoLauncher = new AutoLaunch(autoLaunchConfig);
+        await autoLauncher.enable();
     } else {
         // // Set app to auto-launch
         mb.app.setLoginItemSettings({
