@@ -9,14 +9,18 @@
     "afterPack": "./packaging/afterPackHook.js",
     "linux": {
       "category": "Utility",
-      "icon": "resources/icon.png"
+      "icon": "resources/icon.png",
+      "artifactName": "swapperd-desktop-linux.AppImage",
+      "target": "AppImage"
     },
     "mac": {
-      "icon": "resources/app.icns"
+      "icon": "resources/app.icns",
+      "artifactName": "swapperd-desktop-mac.dmg"
     },
     "win": {
       "target": "nsis",
-      "icon": "resources/icon.ico"
+      "icon": "resources/icon.ico",
+      "artifactName": "swapperd-desktop-windows.exe"
     },
     "nsis": {
       "oneClick": true,
@@ -30,13 +34,11 @@
       "resources"
     ],
     "productName": "SwapperD Native",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "republicprotocol",
-        "repo": "swapperd-native-releases"
-      }
-    ]
+    "publish": [{
+      "provider": "github",
+      "owner": "republicprotocol",
+      "repo": "swapperd-native-releases"
+    }]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
