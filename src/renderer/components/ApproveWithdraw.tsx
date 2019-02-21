@@ -61,9 +61,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                             <div className="withdraw--inputs">
                                 <input type="text" disabled={gettingPassword} placeholder="To" value={to} name="to" onChange={this.handleInput} />
                                 <input type="number" disabled={gettingPassword} placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
-                                <label>
-                                    <input type="checkbox" disabled={gettingPassword} checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
-                                </label>
+                                <div className="fill--amount">
+                                    <label>
+                                        <input type="checkbox" disabled={gettingPassword} checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
+                                    </label>
+                                </div>
                                 {gettingPassword ?
                                     <form className="withdraw--confirm" onSubmit={this.onAccept}>
                                         <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} />
