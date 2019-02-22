@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { BalanceItem } from "@/components/BalanceItem";
 import { Loading } from "@/components/Loading";
-import { IBalances, IPartialWithdrawRequest } from "@/lib/swapperd";
+import { IBalances, IPartialWithdrawRequest, Token } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
 
@@ -31,7 +31,8 @@ export class BalancesClass extends React.Component<IBalancesProps> {
                         {balancesError && <div className="notice notice--error">{balancesError}</div>}
                         {
                             balances.sort().map((details, token) => {
-                                if (this.optionsContainer.state.hideZeroBalances && details.balance.isZero()) {
+                                if (!(token === Token.BTC || token === Token.ETH) &&
+                                    this.optionsContainer.state.hideZeroBalances && details.balance.isZero()) {
                                     return;
                                 }
                                 return <BalanceItem

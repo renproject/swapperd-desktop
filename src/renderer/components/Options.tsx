@@ -23,7 +23,8 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
                 <h2>Balances</h2>
                 <div className="balances--options">
                     <label>
-                        <input type="checkbox" checked={this.optionsContainer.state.hideZeroBalances} onChange={this.handleCheckBox} /> Hide zero balances
+                        <input type="checkbox" checked={this.optionsContainer.state.hideZeroBalances} onChange={this.handleCheckBox} />
+                        Hide zero balances (BTC and ETH are always shown)
                     </label>
                 </div>
             </div>
