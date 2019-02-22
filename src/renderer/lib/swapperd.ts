@@ -30,6 +30,7 @@ export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
     amount: string;
     sendAll?: boolean;
+    speed?: number;
 }
 
 export interface IPartialSwapRequest {
