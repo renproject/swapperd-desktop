@@ -39,7 +39,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const { error, updateComplete } = this.state;
         const { updatingSwapperd } = this.appContainer.state.app;
 
-        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "";
+        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "" && swapperdBinaryVersion !== "";
         return (
             <>
                 {this.props.onClose && <Banner reject={this.props.onClose} />}
