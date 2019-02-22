@@ -1,0 +1,16 @@
+.options--page {
+  padding: 10px;
+}
+
+.options--page .input-group button.secondary {
+  background-color: white;
+  color: #0E61EC;
+  border: solid 2px #0E61EC;
+  &:last-child {
+    border-left-width: 0;
+  }
+  &.active, &:hover {
+    background-color: #0E61EC;
+    color: white;
+  }
+}

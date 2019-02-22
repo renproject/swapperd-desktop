@@ -24,4 +24,5 @@ export interface TraderData {
 export interface OptionsData {
     network: Network;
     hideZeroBalances: boolean;
+    defaultTransactionSpeed: number;
 }

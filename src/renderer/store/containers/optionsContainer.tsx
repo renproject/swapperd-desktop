@@ -12,6 +12,7 @@ const STORAGE_KEY = "userOptions";
 const initialState: OptionsData = {
     network: Network.Mainnet,
     hideZeroBalances: false,
+    defaultTransactionSpeed: 3,  // 1 = slow, 2 = medium, 3 = fast
 };
 
 export class OptionsContainer extends Container<OptionsData> {
@@ -33,6 +34,14 @@ export class OptionsContainer extends Container<OptionsData> {
         await this.setState({ hideZeroBalances });
         // Preserve the network state in local storage
         await this.preserve();
+    }
+
+    public setDefaultTransactionSpeed = async (speed: number) => {
+        if (speed >= 1 && speed <= 3) {
+            await this.setState({ defaultTransactionSpeed: speed });
+            // Preserve the network state in local storage
+            await this.preserve();
+        }
     }
 
     private preserve = async (): Promise<void> => {
