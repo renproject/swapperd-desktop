@@ -36,7 +36,7 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
                         <Banner title="Account created" />
                         <div className="mnemonic">
                             <p>Please back-up the following 12 words securely.</p>
-                            <textarea disabled={true} value={"consider consider consider consider consider consider consider consider consider consider consider consider "} />
+                            <textarea disabled={true} value={mnemonic} />
                             <p className="mnemonic-warning">To restore your account, you will need <b>BOTH</b> your password and the following 12 words.</p>
                             <div className="confirmation">
                                 <label>
