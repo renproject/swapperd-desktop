@@ -40,6 +40,8 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
         const { error, updateComplete, restarting } = this.state;
         const { updatingSwapperd, updateReady } = this.appContainer.state.app;
+        const { password } = this.appContainer.state.login;
+        const locked = password === "" || password === null;
 
         const binaryNeedsUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
         const desktopNeedsUpdate = updateReady !== null;
@@ -47,8 +49,8 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner title={showUpdate ? "Notice" : "Options"} reject={this.props.onClose} />}
-                {showUpdate ? <>
+                {this.props.onClose && <Banner title={locked ? "" : showUpdate ? "Notice" : "Options"} reject={this.props.onClose} />}
+                {locked ? "" : showUpdate ? <>
                     <div className="notice notice--alert">{noticeMessage}</div>
                     <div className="about--page">
                         {error && <p className="error">{error}</p>}
