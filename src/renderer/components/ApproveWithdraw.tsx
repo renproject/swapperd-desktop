@@ -22,6 +22,7 @@ interface IApproveWithdrawState {
     amount: string;
     loading: boolean;
     error: null | string;
+    sendAllChecked: boolean;
 }
 
 export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApproveWithdrawState> {
@@ -34,6 +35,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             password: "",
             loading: false,
             error: null,
+            sendAllChecked: false,
         };
 
         this.handleInput = this.handleInput.bind(this);
@@ -44,9 +46,8 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
     public render(): JSX.Element {
         const { withdrawRequest } = this.props;
-        const { gettingPassword, password, loading, amount, to, error } = this.state;
+        const { sendAllChecked, gettingPassword, password, loading, amount, to, error } = this.state;
         const available = this.getAvailable().toFixed();
-        const sendAll = amount === available;
         return (
             <>
                 <KeyBinding onKey={this.onEscape} />
@@ -63,7 +64,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
                                 <input type="number" disabled={gettingPassword} placeholder="Amount" value={amount} name="amount" onChange={this.handleInput} />
                                 <div className="fill--amount">
                                     <label>
-                                        <input type="checkbox" disabled={gettingPassword} checked={sendAll} onChange={this.handleCheckBox} /> Transfer all available funds
+                                        <input type="checkbox" disabled={gettingPassword} checked={sendAllChecked} onChange={this.handleCheckBox} /> Transfer all available funds
                                     </label>
                                 </div>
                                 {gettingPassword ?
@@ -103,7 +104,9 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
 
     private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         const element = (event.target as HTMLInputElement);
-        this.setState((state) => ({ ...state, [element.name]: element.value }));
+        const available = this.getAvailable().toFixed();
+        const sendAll = element.name === "amount" && element.value === available;
+        this.setState((state) => ({ ...state, [element.name]: element.value, sendAllChecked: sendAll }));
     }
 
     private getAvailable(): BigNumber {
@@ -135,8 +138,11 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
     }
 
     private handleCheckBox = (): void => {
-        const available = this.getAvailable().toFixed();
-        this.setState({ amount: available });
+        if (!this.state.sendAllChecked) {
+            const available = this.getAvailable().toFixed();
+            this.setState({ amount: available });
+        }
+        this.setState({ sendAllChecked: !this.state.sendAllChecked });
     }
 
     private async onAccept(event: React.FormEvent<HTMLFormElement>): Promise<void> {
