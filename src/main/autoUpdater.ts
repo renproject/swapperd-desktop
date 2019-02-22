@@ -99,14 +99,14 @@ Download speed: ${progressObj.bytesPerSecond} \
     });
 
     const interval = async () => {
-        // By default we will check for updates every hour
-        let timeout = 60 * 60 * 1000;
+        // Update check is every two minutes until it actually succeeds
+        let timeout = 2 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
             await checkForSwapperdUpdates(ipc);
+            // The update check succeeded so don't check again for another hour
+            timeout = 60 * 60 * 1000;
         } catch (err) {
-            // Update check failed so try again in one minute
-            timeout = 1 * 60 * 1000;
             console.error(err);
         }
 
