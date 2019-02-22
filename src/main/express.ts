@@ -3,7 +3,7 @@ import express from "express";
 
 import axios from "axios";
 
-import { MenubarApp } from "./menubar";
+import { MenubarApp, showWindow } from "./menubar";
 
 import { version } from "../../package.json";
 
@@ -55,7 +55,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     expressApp.post("/swaps", async (req, res) => {
         log(`${highlight}expressApp${reset}${dim}: ${req.url}`);
 
-        mb.showWindow();
+        showWindow(mb);
 
         // tslint:disable-next-line: no-any
         const response = await ipc.sendSyncWithTimeout(Message.Swap, 0, {

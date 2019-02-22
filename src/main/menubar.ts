@@ -43,7 +43,7 @@ export const setupMenubar = () => {
     const options: Menubar.MenubarOptions = {
         tooltip: "Swapperd",
         preloadWindow: true,
-        resizable: devMode,
+        resizable: true, // devMode,
         webPreferences: {
             // nodeIntegration: false,
             // preload: `${app.getAppPath()}/dist/main/preload.js`,
@@ -172,3 +172,10 @@ export const setupMenubar = () => {
 
     return mb;
 };
+
+export const showWindow = (mb: Menubar.MenubarApp) => {
+    if (!devMode) { mb.window.setAlwaysOnTop(true); }
+    mb.showWindow();
+    if (!devMode) { mb.window.setAlwaysOnTop(false); }
+    mb.app.focus();
+}

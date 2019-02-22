@@ -152,7 +152,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             updateAvailable,
         };
 
-        if (showAbout) {
+        if (showAbout && swapDetails !== null) {
             return <div className="app">
                 <Header hideNetwork={true} {...headerProps} />
                 <AboutPage
