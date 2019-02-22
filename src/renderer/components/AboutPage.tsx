@@ -1,8 +1,9 @@
 import * as React from "react";
 
 import { ipc } from "@/ipc";
-import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
+import { AppContainer } from "@/store/containers/appContainer";
 
+import { connect, ConnectedProps } from "@/store/connect";
 import { Message } from "common/types";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
@@ -22,18 +23,21 @@ interface IAboutPageState {
 }
 
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
+    private appContainer: AppContainer;
+
     constructor(props: IAboutPageProps) {
         super(props);
         this.state = {
             updateComplete: false,
             error: null,
         };
+        [this.appContainer] = this.props.containers;
     }
 
     public render() {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
         const { error, updateComplete } = this.state;
-        const { updatingSwapperd } = this.props.container.state.app;
+        const { updatingSwapperd } = this.appContainer.state.app;
 
         const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "";
         return (
@@ -61,25 +65,25 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
     private onClickHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({error: null});
-        await this.props.container.setUpdatingSwapperd(true);
+        await this.appContainer.setUpdatingSwapperd(true);
         try {
             await ipc.sendSyncWithTimeout(
                 Message.UpdateSwapperd,
                 0, // timeout
                 null
             );
-            await this.props.container.setUpdatingSwapperd(false);
+            await this.appContainer.setUpdatingSwapperd(false);
             this.setState({updateComplete: true});
             if (updateCompleteCallback) {
                 updateCompleteCallback();
             }
         } catch (error) {
             console.error(`Got error instead!!!: ${error}`);
-            await this.props.container.setUpdatingSwapperd(false);
+            await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ error });
             return;
         }
     }
 }
 
-export const AboutPage = connect<IAboutPageProps>(AppContainer)(AboutPageClass);
+export const AboutPage = connect<IAboutPageProps>([AppContainer])(AboutPageClass);

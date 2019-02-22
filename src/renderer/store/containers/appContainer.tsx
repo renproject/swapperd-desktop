@@ -1,6 +1,4 @@
-import * as React from "react";
-
-import { Container, Subscribe } from "unstated";
+import { Container } from "unstated";
 
 import { getBalances } from "@/lib/swapperd";
 import { initialState } from "@/store/initialState";
@@ -48,18 +46,4 @@ export class AppContainer extends Container<ApplicationData> {
         }
     }
 
-}
-
-export interface ConnectedProps {
-    container: AppContainer;
-}
-
-// Typesafe version of https://github.com/goncy/unstated-connect
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export function connect<X extends ConnectedProps>(_container: typeof AppContainer) {
-    return (Component: React.ComponentClass<X>) => (props: Omit<X, "container">) => (
-        <Subscribe to={[_container]}>
-            {(...containers) => <Component {...({ ...props, container: containers[0] } as unknown as X)} />}
-        </Subscribe>
-    );
 }
