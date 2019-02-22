@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-copy-to-clipboard/lib/Component.js b/node_modules/react-copy-to-clipboard/lib/Component.js
+index 74e9430..be7b1c2 100644
+--- a/node_modules/react-copy-to-clipboard/lib/Component.js
++++ b/node_modules/react-copy-to-clipboard/lib/Component.js
+@@ -51,6 +51,7 @@ var CopyToClipboard = exports.CopyToClipboard = function (_React$PureComponent)
+ 
+       var elem = _react2.default.Children.only(children);
+ 
++      (0, _copyToClipboard2.default)(text, options);
+       var result = (0, _copyToClipboard2.default)(text, options);
+ 
+       if (onCopy) {
