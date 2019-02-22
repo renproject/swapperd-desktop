@@ -1,5 +1,5 @@
 {
-  "name": "swapperd-native",
+  "name": "swapperd-desktop",
   "version": "0.0.1",
   "description": "The native Desktop interface for SwapperD",
   "author": "Ren",
@@ -9,7 +9,7 @@
     "afterPack": "./packaging/afterPackHook.js",
     "linux": {
       "category": "Utility",
-      "icon": "resources/icon.png",
+      "icon": "resources/app.icns",
       "artifactName": "swapperd-desktop-linux.AppImage",
       "target": "AppImage"
     },
@@ -33,11 +33,11 @@
     "files": [
       "resources"
     ],
-    "productName": "SwapperD Native",
+    "productName": "SwapperD Desktop",
     "publish": [{
       "provider": "github",
       "owner": "republicprotocol",
-      "repo": "swapperd-native-releases"
+      "repo": "swapperd-desktop-releases"
     }]
   },
   "scripts": {

@@ -3,7 +3,8 @@ import * as path from "path";
 import {
     app,
     Menu,
-    shell
+    shell,
+    nativeImage
 } from "electron";
 import menubar from "menubar";
 
@@ -32,6 +33,7 @@ const installExtensions = async () => {
 
 export const setupMenubar = () => {
     let icon = "resources/IconTemplate.png";
+    let icon2 = "resources/icon.png";
     let windowPosition: Menubar.Position = "trayCenter";
     if (process.platform === "win32") {
         icon = "resources/WhiteIconTemplate.png";
@@ -100,6 +102,12 @@ export const setupMenubar = () => {
     });
 
     mb.on("after-create-window", () => {
+        // Set icon on Linux
+        if (process.platform === "linux") {
+            let image = nativeImage.createFromPath(devMode ? icon2 : path.join(app.getAppPath(), icon2));
+            mb.window.setIcon(image);
+        }
+
         if (devMode) {
             // @ts-ignore
             mb.window.openDevTools();
