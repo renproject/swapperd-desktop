@@ -47,7 +47,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner title="Options" reject={this.props.onClose} />}
+                {this.props.onClose && <Banner title={showUpdate ? "Notice" : "Options"} reject={this.props.onClose} />}
                 {showUpdate ? <>
                     <div className="notice notice--alert">{noticeMessage}</div>
                     <div className="about--page">
