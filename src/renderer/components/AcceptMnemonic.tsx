@@ -29,30 +29,31 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
         const { mnemonic } = this.props;
         return (
             <>
-                { ready ?
-                <MnemonicCheck mnemonic={mnemonic} wordsToCheck={5} onBack={this.onBack} onFinish={this.props.resolve} />
-                :
-                <>
-                <Banner title="Account created" />
-                <div className="mnemonic">
-                    <p>Please back-up the following 12 words securely. To restore your account, you will need <b>BOTH</b> your password and the following 12 words.</p>
-                    <textarea disabled={true} value={mnemonic} />
-                    <div className="confirmation">
-                        <label>
-                            <input type="checkbox" name="backedUp" checked={this.state.backedUp} onChange={this.handleInputChange} />
-                            I have backed up <b>BOTH</b> my password and my 12 words.
+                {ready ?
+                    <MnemonicCheck mnemonic={mnemonic} wordsToCheck={5} onBack={this.onBack} onFinish={this.props.resolve} />
+                    :
+                    <>
+                        <Banner title="Account created" />
+                        <div className="mnemonic">
+                            <p>Please back-up the following 12 words securely.</p>
+                            <textarea disabled={true} value={"consider consider consider consider consider consider consider consider consider consider consider consider "} />
+                            <p className="mnemonic-warning">To restore your account, you will need <b>BOTH</b> your password and the following 12 words.</p>
+                            <div className="confirmation">
+                                <label>
+                                    <input type="checkbox" name="backedUp" checked={this.state.backedUp} onChange={this.handleInputChange} />
+                                    I have backed up <b>BOTH</b> my password and my 12 words.
                         </label>
-                    </div>
-                    <div className="confirmation">
-                        <label>
-                            <input type="checkbox" name="accepted" checked={this.state.accepted} onChange={this.handleInputChange} />
-                            I understand that I am solely responsible for any loss of funds due to their failed safekeeping.
+                            </div>
+                            <div className="confirmation">
+                                <label>
+                                    <input type="checkbox" name="accepted" checked={this.state.accepted} onChange={this.handleInputChange} />
+                                    I understand that I am solely responsible for any loss of funds due to their failed safekeeping.
                         </label>
-                    </div>
-                    <button onClick={this.onAccept} disabled={!accepted || !backedUp}>Continue</button>
-                </div>
-                </>
-            }
+                            </div>
+                            <button onClick={this.onAccept} disabled={!accepted || !backedUp}>Continue</button>
+                        </div>
+                    </>
+                }
             </>
         );
     }
@@ -63,10 +64,10 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
     }
 
     private onBack = (): void => {
-        this.setState({ready: false, accepted: false, backedUp: false});
+        this.setState({ ready: false, accepted: false, backedUp: false });
     }
 
     private onAccept = (): void => {
-        this.setState({ready: true});
+        this.setState({ ready: true });
     }
 }

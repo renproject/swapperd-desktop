@@ -1,7 +1,8 @@
-@import 'fonts';
+@import 'scss/variables';
+@import 'scss/fonts';
 
-@import 'about';
-@import 'balances';
+@import 'scss/about';
+@import 'scss/balances';
 
 /* General */
 
@@ -96,7 +97,8 @@ button {
   cursor: pointer;
   border: none;
 
-  &.cancel, &.secondary {
+  &.cancel,
+  &.secondary {
     background-color: #ccc;
     color: grey;
   }
@@ -104,10 +106,12 @@ button {
 
 button:not(:disabled):hover {
   background-color: #0D41FF;
+
   &.cancel {
     background-color: red;
     color: white;
   }
+
   &.secondary {
     background-color: lightgrey;
     color: grey;
@@ -118,17 +122,19 @@ button:not(:disabled):hover {
   width: 100%;
   display: flex;
 
-  & > button {
+  &>button {
     min-width: initial;
 
     &:not(:first-child):not(:last-child) {
       border-left-width: 0;
       border-radius: 0;
     }
+
     &:first-child {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
+
     &:last-child {
       border-left-width: 0;
       border-top-left-radius: 0;
@@ -208,6 +214,7 @@ select[disabled] {
   &:hover {
     width: 50px;
   }
+
   display: flex;
   align-items: center;
   width: 15px;
@@ -386,17 +393,26 @@ select[disabled] {
   padding: 0 10px;
 }
 
+.mnemonic>*+* {
+  margin-top: 10px;
+}
+
 .mnemonic textarea {
-  font-size: 14px;
+  font-size: 16px;
+  background: #eee;
+  line-height: 170%;
   width: 100%;
   height: 100px;
   max-width: 100%;
   max-height: 100px;
-  margin: 10px 0;
 }
 
-.mnemonic .confirmation {
-  padding-bottom: 10px;
+.mnemonic .mnemonic-warning {
+  border: 1px solid $blue;
+  color: $blue;
+  font-weight: 500;
+  border-radius: 2px;
+  padding: 5px;
 }
 
 .mnemonic--word--input {
@@ -408,6 +424,7 @@ select[disabled] {
     border-color: green;
     border-style: solid;
   }
+
   &.invalid {
     border-color: red;
     border-style: solid;
@@ -476,10 +493,12 @@ select[disabled] {
     align-items: center;
     font-size: 15px;
     padding-bottom: 10px;
+
     img {
       width: 32px;
     }
   }
+
   p {
     text-align: center;
   }
@@ -557,4 +576,8 @@ select[disabled] {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.red {
+  color: red;
 }
