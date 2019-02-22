@@ -36,6 +36,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         [this.appContainer] = this.props.containers;
     }
 
+    // tslint:disable-next-line:cyclomatic-complexity
     public render() {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
         const { error, updateComplete, restarting } = this.state;
@@ -49,19 +50,24 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner title={locked ? "" : showUpdate ? "Notice" : "Options"} reject={this.props.onClose} />}
-                {locked ? "" : showUpdate ? <>
-                    <div className="notice notice--alert">{noticeMessage}</div>
-                    <div className="about--page">
-                        {error && <p className="error">{error}</p>}
-                        {showUpdate && binaryNeedsUpdate && <div className="update--button">
+                {this.props.onClose && <Banner title={locked ? "" : "Options"} reject={this.props.onClose} />}
+                {!locked && <Options />}
+                <div className="about--footer">
+                    {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
+                    {!locked && error && <p className="error">{error}</p>}
+                    <div className="about--footer--content">
+                        <div>
+                            <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
+                            <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
+                        </div>
+                        {!locked && showUpdate && binaryNeedsUpdate && <div className="update--button">
                             {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
                                 <>
                                     <button className="update" onClick={this.onUpdateHandler}>Update</button>
                                 </>
                             }
                         </div>}
-                        {showUpdate && desktopNeedsUpdate && <div className="update--button">
+                        {!locked && showUpdate && desktopNeedsUpdate && <div className="update--button">
                             {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
                                 <>
                                     <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
@@ -69,12 +75,6 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                             }
                         </div>}
                     </div>
-                </>
-                    : <Options />
-                }
-                <div className="about--footer">
-                    <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
-                    <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
                 </div>
             </>
         );
