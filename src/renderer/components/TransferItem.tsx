@@ -26,12 +26,9 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
 
         const costs: JSX.Element[] = [];
 
+        costs.unshift(<p className={`large`}>-{transferItem.value} {transferItem.token.name}</p>);
         Object.keys(transferItem.txCost).map((costToken, index) => {
-            if (transferItem.token.name === costToken) {
-                costs.unshift(<p key={index} className={`large`}>-{transferItem.txCost[costToken]} {costToken}</p>);
-            } else {
-                costs.push(<p key={index}>-{transferItem.txCost[costToken]} {costToken}</p>);
-            }
+            costs.push(<p key={index}>-{transferItem.txCost[costToken]} {costToken}</p>);
         });
 
         return (
