@@ -19,6 +19,7 @@ interface IAboutPageProps extends ConnectedProps {
 interface IAboutPageState {
     updateComplete: boolean;
     error: string | null;
+    restarting: boolean;
 }
 
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
@@ -29,39 +30,50 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         this.state = {
             updateComplete: false,
             error: null,
+            restarting: false,
         };
         [this.appContainer] = this.props.containers;
     }
 
     public render() {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
-        const { error, updateComplete } = this.state;
-        const { updatingSwapperd } = this.appContainer.state.app;
+        const { error, updateComplete, restarting } = this.state;
+        const { updatingSwapperd, updateReady } = this.appContainer.state.app;
 
-        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
+        const binaryNeedsUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
+        const desktopNeedsUpdate = updateReady !== null;
+        const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
+        const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
                 {this.props.onClose && <Banner reject={this.props.onClose} />}
+                {showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
                 <div className="about--page">
-                    <h2>Swapperd Version</h2>
-                    <pre>{swapperdBinaryVersion || <span className="red">Unable to connect</span>}</pre>
-                    {showUpdate && <>
-                        {error && <p className="error">{error}</p>}
-                        {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
+                    {error && <p className="error">{error}</p>}
+                    {showUpdate && binaryNeedsUpdate && <div className="update--button">
+                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
                             <>
-                                <p>A new Swapperd version is available!</p>
-                                <button className="update" onClick={this.onClickHandler}>Update</button>
+                                <button className="update" onClick={this.onUpdateHandler}>Update</button>
                             </>
                         }
-                    </>}
-                    <h2>Swapperd Desktop Version</h2>
-                    <pre>{swapperdDesktopVersion}</pre>
+                    </div>}
+                    {showUpdate && desktopNeedsUpdate && <div className="update--button">
+                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                            <>
+                                <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
+                            </>
+                        }
+                    </div>}
+                </div>
+                <div className="about--footer">
+                    <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
+                    <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
                 </div>
             </>
         );
     }
 
-    private onClickHandler = async (): Promise<void> => {
+    private onUpdateHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({ error: null });
         await this.appContainer.setUpdatingSwapperd(true);
@@ -80,6 +92,21 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             console.error(`Got error instead!!!: ${error}`);
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ error });
+            return;
+        }
+    }
+
+    private onRestartHandler = async (): Promise<void> => {
+        this.setState({ error: null, restarting: true });
+        try {
+            await ipc.sendSyncWithTimeout(
+                Message.UpdateSwapperd,
+                0, // timeout
+                { swapperd: false, restart: true }
+            );
+            this.setState({ restarting: false });
+        } catch (error) {
+            this.setState({ restarting: false, error });
             return;
         }
     }
