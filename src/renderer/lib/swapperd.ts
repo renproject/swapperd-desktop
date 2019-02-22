@@ -45,6 +45,7 @@ export interface IPartialSwapRequest {
     receiveFrom: string;
     shouldInitiateFirst: boolean;
     brokerFee?: number;
+    speed?: number;
 }
 
 export interface ISwapRequest extends IPartialSwapRequest {
