@@ -28,7 +28,7 @@ export class BalancesClass extends React.Component<IBalancesProps> {
                 {balances === null ?
                     <Loading />
                     : <>
-                        {balancesError && <div className="balances--error">{balancesError}</div>}
+                        {balancesError && <div className="notice notice--error">{balancesError}</div>}
                         {
                             balances.sort().map((details, token) => {
                                 if (this.optionsContainer.state.hideZeroBalances && details.balance.isZero()) {
