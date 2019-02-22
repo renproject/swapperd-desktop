@@ -69,7 +69,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             await ipc.sendSyncWithTimeout(
                 Message.UpdateSwapperd,
                 0, // timeout
-                null
+                { swapperd: true, restart: false }
             );
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ updateComplete: true });

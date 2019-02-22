@@ -47,7 +47,7 @@ export type RequestType<X extends Message> =
     X extends Message.Notify ? { notification: string } :
     X extends Message.VerifyPassword ? { password: string } :
     X extends Message.Relaunch ? null :
-    X extends Message.UpdateSwapperd ? null :
+    X extends Message.UpdateSwapperd ? { swapperd: boolean; restart: boolean } :
 
     // main to renderer
     X extends Message.GetPassword ? null :
