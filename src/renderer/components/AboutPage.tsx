@@ -9,8 +9,8 @@ import { Loading } from "./Loading";
 
 interface IAboutPageProps extends ConnectedProps {
     updateAvailable: boolean;
-    latestSwapperdVersion: string;
-    swapperdBinaryVersion: string;
+    latestSwapperdVersion: string | null;
+    swapperdBinaryVersion: string | null;
     swapperdDesktopVersion: string;
     updateCompleteCallback?(): void;
     onClose?(): void;
@@ -38,20 +38,20 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const { error, updateComplete } = this.state;
         const { updatingSwapperd } = this.appContainer.state.app;
 
-        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== "";
+        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
         return (
             <>
                 {this.props.onClose && <Banner reject={this.props.onClose} />}
                 <div className="about--page">
                     <h2>Swapperd Version</h2>
-                    <pre>{swapperdBinaryVersion}</pre>
+                    <pre>{swapperdBinaryVersion || <span className="red">Unable to connect</span>}</pre>
                     {showUpdate && <>
                         {error && <p className="error">{error}</p>}
                         {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
-                        <>
-                            <p>A new Swapperd version is available!</p>
-                            <button className="update" onClick={this.onClickHandler}>Update</button>
-                        </>
+                            <>
+                                <p>A new Swapperd version is available!</p>
+                                <button className="update" onClick={this.onClickHandler}>Update</button>
+                            </>
                         }
                     </>}
                     <h2>Swapperd Desktop Version</h2>
@@ -63,7 +63,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
 
     private onClickHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
-        this.setState({error: null});
+        this.setState({ error: null });
         await this.appContainer.setUpdatingSwapperd(true);
         try {
             await ipc.sendSyncWithTimeout(
@@ -72,7 +72,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                 null
             );
             await this.appContainer.setUpdatingSwapperd(false);
-            this.setState({updateComplete: true});
+            this.setState({ updateComplete: true });
             if (updateCompleteCallback) {
                 updateCompleteCallback();
             }

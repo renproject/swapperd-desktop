@@ -34,7 +34,7 @@ export const installSwapperd = async (): Promise<void | {}> => {
     }
 };
 
-/////////////////////////////// Swapperd Native ///////////////////////////////
+/////////////////////////////// Swapperd Daemon ////////////////////////////////
 
 export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
     const version = await getLatestReleaseVersion();
@@ -99,12 +99,14 @@ Download speed: ${progressObj.bytesPerSecond} \
     });
 
     const interval = async () => {
+        // By default we will check for updates every hour
         let timeout = 60 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
             await checkForSwapperdUpdates(ipc);
         } catch (err) {
-            timeout = 10 * 1000;
+            // Update check failed so try again in one minute
+            timeout = 1 * 60 * 1000;
             console.error(err);
         }
 

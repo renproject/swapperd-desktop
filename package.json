@@ -1,5 +1,5 @@
 {
-  "name": "swapperd-native",
+  "name": "swapperd-desktop",
   "version": "0.0.1",
   "description": "The native Desktop interface for SwapperD",
   "author": "Ren",
@@ -9,7 +9,7 @@
     "afterPack": "./packaging/afterPackHook.js",
     "linux": {
       "category": "Utility",
-      "icon": "resources/icon.png",
+      "icon": "resources/app.icns",
       "artifactName": "swapperd-desktop-linux.AppImage",
       "target": "AppImage"
     },
@@ -33,11 +33,11 @@
     "files": [
       "resources"
     ],
-    "productName": "SwapperD Native",
+    "productName": "SwapperD Desktop",
     "publish": [{
       "provider": "github",
       "owner": "republicprotocol",
-      "repo": "swapperd-native-releases"
+      "repo": "swapperd-desktop-releases"
     }]
   },
   "scripts": {
@@ -47,7 +47,7 @@
     "build:all": "npm run prebuild && electron-webpack && electron-builder -wml --x64",
     "build:win": "npm run prebuild && electron-webpack && electron-builder -w --x64",
     "build:dir": "npm run build --dir -c.compression=store -c.mac.identity=null",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "patch-package && electron-builder install-app-deps",
     "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck"
   },
   "dependencies": {
@@ -63,6 +63,8 @@
     "menubar": "^5.2.3",
     "moment": "^2.24.0",
     "node-notifier": "^5.4.0",
+    "patch-package": "^6.0.2",
+    "postinstall-postinstall": "^2.0.0",
     "react": "^16.7.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.7.0",
