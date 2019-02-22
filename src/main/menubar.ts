@@ -33,7 +33,7 @@ const installExtensions = async () => {
 
 export const setupMenubar = () => {
     let icon = "resources/IconTemplate.png";
-    let icon2 = "resources/icon.png";
+    const linuxDockIcon = "resources/icon.png";
     let windowPosition: Menubar.Position = "trayCenter";
     if (process.platform === "win32") {
         icon = "resources/WhiteIconTemplate.png";
@@ -98,13 +98,13 @@ export const setupMenubar = () => {
 
         await installExtensions();
 
-        console.log("app is ready");
+        console.log("SwapperD Desktop is ready.");
     });
 
     mb.on("after-create-window", () => {
         // Set icon on Linux
-        if (process.platform === "linux") {
-            let image = nativeImage.createFromPath(devMode ? icon2 : path.join(app.getAppPath(), icon2));
+        if (process.platform === "linux" && !devMode) {
+            const image = nativeImage.createFromPath(path.join(app.getAppPath(), linuxDockIcon));
             mb.window.setIcon(image);
         }
 

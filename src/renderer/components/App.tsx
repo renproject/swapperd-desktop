@@ -46,8 +46,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
-            swapperdVersion: "",
-            latestSwapperdVersion: "",
+            swapperdVersion: null,
+            latestSwapperdVersion: null,
             showAbout: false,
             balancesError: null,
         };
@@ -94,7 +94,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         ipc.on(Message.LatestSwapperdVersion, async (version: string) => {
-            this.setState({latestSwapperdVersion: version});
+            this.setState({ latestSwapperdVersion: version });
         });
 
         this.callGetAccount().catch(console.error);
@@ -140,7 +140,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { swaps, transfers } = networkDetails.get(network);
         const balances = this.appContainer.state.trader.balances.get(network) || null;
 
-        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
+        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== null && latestSwapperdVersion !== swapperdVersion;
 
         // tslint:disable-next-line:no-any
         const headerProps: any = {
@@ -159,7 +159,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     latestSwapperdVersion={latestSwapperdVersion}
                     swapperdBinaryVersion={swapperdVersion}
                     swapperdDesktopVersion={APP_VERSION}
-                    onClose={() => { this.setState({showAbout: false}); }}
+                    onClose={() => { this.setState({ showAbout: false }); }}
                 />
             </div>;
         }
@@ -298,7 +298,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             if (!accountIsSetup) {
                 // If there is no account then make sure the state reflects that
                 if (this.state.accountExists) {
-                    this.setState({accountExists: false});
+                    this.setState({ accountExists: false });
                 }
             } else {
                 // We can try to login since we know an account exists
@@ -330,9 +330,9 @@ interface IAppState {
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
-    swapperdVersion: string;
+    swapperdVersion: string | null;
     showAbout: boolean;
-    latestSwapperdVersion: string;
+    latestSwapperdVersion: string | null;
     balancesError: string | null;
 }
 
