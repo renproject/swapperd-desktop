@@ -4,10 +4,6 @@ import { setupExpress } from "./express";
 import { setupListeners } from "./listeners";
 import { setupIPC } from "./mainIpc";
 import { setupMenubar } from "./menubar";
-import { ElectronStore } from "./store";
-
-// tslint:disable-next-line:no-any
-(global as any).store = new ElectronStore();
 
 // Fix Electron menubar icons not working in Gnome
 // https://github.com/electron/electron/issues/9046#issuecomment-296169661
