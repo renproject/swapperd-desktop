@@ -2,7 +2,7 @@
 
 ## Installation
 
-Download the latest release from [SwapperD Desktop Releases](https://github.com/republicprotocol/swapperd-native-releases/releases/).
+Download the latest release from [SwapperD Desktop Releases](https://github.com/republicprotocol/swapperd-desktop-releases/releases/).
 
 ## Development
 

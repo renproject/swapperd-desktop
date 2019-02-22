@@ -34,7 +34,7 @@ export const installSwapperd = async (): Promise<void | {}> => {
     }
 };
 
-/////////////////////////////// Swapperd Daemon ///////////////////////////////
+/////////////////////////////// Swapperd Daemon ////////////////////////////////
 
 export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
     const version = await getLatestReleaseVersion();
