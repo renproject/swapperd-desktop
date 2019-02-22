@@ -1,5 +1,8 @@
 import * as React from "react";
 
+import { remote } from "electron";
+
+import { AboutPage } from "@/components/AboutPage";
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
 import { ApproveWithdraw } from "@/components/ApproveWithdraw";
@@ -10,15 +13,14 @@ import { Swaps } from "@/components/Swaps";
 import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
-import { fetchInfo, getBalances, getSwaps, getTransfers, IBalances, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
-import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
+import { fetchInfo, getSwaps, getTransfers, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
+import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { Message, Network } from "common/types";
 
-// import { version } from "../../../package.json";
+import { version as APP_VERSION } from "../../../package.json";
 
 export class NetworkDetails extends Record({
-    balances: null as IBalances | null,
-    balancesError: null as string | null,
     swaps: null as ISwapsResponse | null,
     transfers: null as ITransfersResponse | null,
 }) { }
@@ -33,6 +35,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private callGetAccountTimeout: NodeJS.Timer | undefined;
     private callGetTransactionsTimeout: NodeJS.Timer | undefined;
 
+    private appContainer: AppContainer;
+
     constructor(props: IAppProps) {
         super(props);
         this.state = {
@@ -42,7 +46,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
+            swapperdVersion: "",
+            latestSwapperdVersion: "",
+            showAbout: false,
+            balancesError: null,
         };
+
+        [this.appContainer] = this.props.containers;
     }
 
     public readonly componentWillUnmount = () => {
@@ -57,9 +67,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         ipc.delayedOn(Message.Swap, async (swap) => {
             try {
-                const network = swap.network ? swap.network : this.props.container.state.trader.network;
+                const network = swap.network ? swap.network : this.appContainer.state.trader.network;
                 const origin = swap.origin ? swap.origin : this.state.origin;
-                await this.props.container.setNetwork(network);
+                await this.appContainer.setNetwork(network);
                 this.setState({ swapDetails: swap.body, origin });
             } catch (error) {
                 console.error(error);
@@ -67,7 +77,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         ipc.on(Message.GetPassword, () => {
-            const { password } = this.props.container.state.login;
+            const { password } = this.appContainer.state.login;
             if (password === null) {
                 throw new Error("Swapperd locked");
             }
@@ -75,24 +85,28 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         ipc.on(Message.GetNetwork, () => {
-            return this.props.container.state.trader.network;
+            return this.appContainer.state.trader.network;
         });
 
         ipc.on(Message.UpdateReady, async (version: string) => {
-            await this.props.container.setUpdateReady(version);
+            await this.appContainer.setUpdateReady(version);
             return;
+        });
+
+        ipc.on(Message.LatestSwapperdVersion, async (version: string) => {
+            this.setState({latestSwapperdVersion: version});
         });
 
         this.callGetAccount().catch(console.error);
         this.callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
-            const { password } = this.props.container.state.login;
+            const { password } = this.appContainer.state.login;
             const { accountExists } = this.state;
 
             if (accountExists && password !== null) {
                 try {
-                    const { network } = this.props.container.state.trader;
+                    const { network } = this.appContainer.state.trader;
                     const swaps = await getSwaps({ network, password: password });
 
                     const { networkDetails } = this.state;
@@ -101,7 +115,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     console.error(e.response && e.response.data.error || e);
                 }
                 try {
-                    const { network } = this.props.container.state.trader;
+                    const { network } = this.appContainer.state.trader;
                     const transfers = await getTransfers({ network: network, password: password });
 
                     const { networkDetails } = this.state;
@@ -117,36 +131,63 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         callGetTransactions().catch(console.error);
     }
 
+    // tslint:disable:jsx-no-lambda
+    // tslint:disable:react-this-binding-issue
     public readonly render = (): JSX.Element => {
-        const { login: { password }, trader: { network } } = this.props.container.state;
+        const { login: { password }, trader: { network } } = this.appContainer.state;
 
-        const { mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
-        const { balances, balancesError, swaps, transfers } = networkDetails.get(network);
+        const { balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
+        const { swaps, transfers } = networkDetails.get(network);
+        const balances = this.appContainer.state.trader.balances.get(network) || null;
+
+        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
+
+        // tslint:disable-next-line:no-any
+        const headerProps: any = {
+            network,
+            setNetwork: this.setNetwork,
+            logoOnClick: this.logoClick,
+            updateAvailable,
+        };
+
+        if (showAbout) {
+            return <div className="app">
+                <Header hideNetwork={true} {...headerProps} />
+                <AboutPage
+                    updateCompleteCallback={this.callGetAccount}
+                    updateAvailable={updateAvailable}
+                    latestSwapperdVersion={latestSwapperdVersion}
+                    swapperdBinaryVersion={swapperdVersion}
+                    swapperdDesktopVersion={APP_VERSION}
+                    onClose={() => { this.setState({showAbout: false}); }}
+                />
+            </div>;
+        }
 
         if (mnemonic !== "") {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (password === null) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <UnlockScreen resolve={this.setUnlocked} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={true} {...headerProps} />
                 <ApproveSwap
                     origin={origin}
                     network={network}
@@ -158,7 +199,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header network={network} hideNetwork={true} setNetwork={this.setNetwork} />
+                <Header hideNetwork={false} disableNetwork={true} {...headerProps} />
                 <ApproveWithdraw
                     network={network}
                     balances={balances}
@@ -169,18 +210,23 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         }
 
         return <div className="app">
-            <Header network={network} setNetwork={this.setNetwork} />
+            <Header {...headerProps} />
             <Balances balances={balances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={swaps} transfers={transfers} />
         </div>;
     }
+    // tslint:enable:jsx-no-lambda
+    // tslint:enable:react-this-binding-issue
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
-        await this.props.container.setPassword(password);
+        await this.appContainer.setPassword(password);
+        // Fetch the balances for the first time
+        await this.appContainer.updateBalances(Network.Mainnet);
+        await this.appContainer.updateBalances(Network.Testnet);
     }
 
     private readonly setNetwork = async (network: Network): Promise<void> => {
-        await this.props.container.setNetwork(
+        await this.appContainer.setNetwork(
             network,
         );
         // Fetch new balances immediately
@@ -194,7 +240,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly accountCreated = async (mnemonic: string, password: string): Promise<void> => {
         this.setState({ accountExists: true, mnemonic });
-        await this.props.container.setPassword(password);
+        await this.setUnlocked(password);
         ipc.sendMessage(
             Message.Notify,
             {
@@ -215,30 +261,34 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     }
 
     private readonly callGetBalances = async () => {
-        const { login: { password }, trader: { network } } = this.props.container.state;
-        const { networkDetails, accountExists } = this.state;
-
+        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
+        const { login: { password } } = this.appContainer.state;
+        const { accountExists } = this.state;
+        let timeout = 10 * 1000;
         if (accountExists && password !== null) {
             try {
-                const balances = await getBalances({ network, password });
-                const currentBalances = networkDetails.get(network).balances;
-                if (!balances.equals(currentBalances)) {
-                    this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)) });
+                await this.appContainer.updateBalances();
+                if (this.state.balancesError) {
+                    this.setState({ balancesError: null });
                 }
-
             } catch (e) {
                 console.error(e);
-                this.setState({ networkDetails: networkDetails.set(network, networkDetails.get(network).set("balancesError", `Unable to retrieve balances. ${e}`)) });
+                timeout = 1 * 1000;
+                this.setState({ balancesError: `Your balances may be out of date! The most recent attempt to update balances failed.` });
             }
         }
+        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, timeout);
+    }
 
-        if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-        this.callGetBalancesTimeout = setTimeout(this.callGetBalances, 10 * 1000);
+    private readonly logoClick = () => {
+        this.setState({ showAbout: !this.state.showAbout });
     }
 
     // Check if user has an account set-up
     private readonly callGetAccount = async () => {
-        const { login: { password }, trader: { network } } = this.props.container.state;
+        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
+
+        const { login: { password }, trader: { network } } = this.appContainer.state;
         try {
             const accountIsSetup = await ipc.sendSyncWithTimeout(
                 Message.CheckSetup,
@@ -252,12 +302,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 }
             } else {
                 // We can try to login since we know an account exists
-                await fetchInfo({ network: network, password: password || "" });
-
-                const { networkDetails } = this.state;
-                const balances: IBalances | null = networkDetails.get(network).balances;
+                const infoResponse = await fetchInfo({ network: network, password: password || "" });
                 this.setState({
-                    networkDetails: networkDetails.set(network, networkDetails.get(network).set("balances", balances)),
+                    swapperdVersion: infoResponse.version,
                 });
 
                 if (!this.state.accountExists) {
@@ -268,7 +315,6 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             console.error(e.response && e.response.data.error || e);
         }
 
-        if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
         this.callGetAccountTimeout = setTimeout(this.callGetAccount, 10 * 1000);
     }
 }
@@ -284,6 +330,10 @@ interface IAppState {
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
+    swapperdVersion: string;
+    showAbout: boolean;
+    latestSwapperdVersion: string;
+    balancesError: string | null;
 }
 
-export const App = connect<IAppProps>(AppContainer)(AppClass);
+export const App = connect<IAppProps>([AppContainer])(AppClass);

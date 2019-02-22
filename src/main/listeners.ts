@@ -93,6 +93,10 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
     ipc.on(Message.Relaunch, (_value, _error?: Error) => {
         mb.app.relaunch();
     });
+
+    ipc.on(Message.UpdateSwapperd, async (_value, _error?: Error) => {
+        await installSwapperd();
+    });
 };
 
 async function storePasswordHash(db: Database, account: string, password: string, nonce: string) {
@@ -108,7 +112,7 @@ async function storePasswordHash(db: Database, account: string, password: string
 function swapperdHome() {
     switch (process.platform) {
         case "win32":
-            return path.resolve(path.dirname(app.getPath("exe")));
+            return path.resolve(path.join(app.getPath("appData"), "swapperd"));
         default:
             return path.join(app.getPath("home"), ".swapperd");
     }

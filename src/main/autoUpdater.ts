@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
+import { getLatestReleaseVersion } from "common/gitReleases";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
 
@@ -29,8 +30,15 @@ const run = async (command: string) => new Promise((resolve, reject) => {
 
 export const installSwapperd = async (): Promise<void | {}> => {
     if (process.platform !== "win32") {
-        return run(`curl https://releases.republicprotocol.com/swapperd/install.sh -sSf | sh`);
+        return run(`curl https://git.io/test-swapperd -sSLf | sh`);
     }
+};
+
+/////////////////////////////// Swapperd Daemon ///////////////////////////////
+
+export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
+    const version = await getLatestReleaseVersion();
+    await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 5, version);
 };
 
 /////////////////////////////// Swapperd Desktop ///////////////////////////////
@@ -91,11 +99,14 @@ Download speed: ${progressObj.bytesPerSecond} \
     });
 
     const interval = async () => {
-        let timeout = 1 * 60 * 1000;
+        // By default we will check for updates every hour
+        let timeout = 60 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
-            timeout = 60 * 60 * 1000;
+            await checkForSwapperdUpdates(ipc);
         } catch (err) {
+            // Update check failed so try again in one minute
+            timeout = 1 * 60 * 1000;
             console.error(err);
         }
 

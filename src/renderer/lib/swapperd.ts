@@ -29,6 +29,7 @@ export interface IPartialWithdrawRequest {
 export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
     amount: string;
+    sendAll?: boolean;
 }
 
 export interface IPartialSwapRequest {

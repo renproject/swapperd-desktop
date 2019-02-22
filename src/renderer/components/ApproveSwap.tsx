@@ -51,7 +51,13 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
                 <div className="swap">
-                    <p>{origin} is proposing the following swap on {NETWORKS[network]}:</p>
+                    <div className="swap--origin">
+                        <div>
+                            <img className="swap--favicon" alt="" role="presentation" src={`${origin}/favicon.ico`} />
+                            <a rel="noopener noreferrer" target="_blank" href={origin}>{origin}</a>
+                        </div>
+                        <p>is proposing the following swap on {NETWORKS[network]}:</p>
+                    </div>
                     <div className="swap--details">
                         <div>
                             <img role="presentation" alt="" src={getLogo(swapDetails.sendToken)} />
@@ -67,7 +73,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
                         <form onSubmit={this.onAccept}>
                             <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                             <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                            <button type="submit" disabled={loading}>Swap</button>
+                            <button type="submit" disabled={loading || !password}>Swap</button>
                         </form>
                     </div>
                     {error ? <p className="error">{error}</p> : null}
@@ -91,13 +97,12 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         try {
             const mainResponse = await submitSwap(swapDetails, { password, network });
             ipc.sendMessage(Message._SwapResponse, { status: mainResponse.status, response: mainResponse.data });
+            this.setState({ loading: false });
             this.props.resetSwapDetails();
         } catch (e) {
             console.error(e);
-            this.setState({ error: e.response && e.response.data.error || e });
+            this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
-
-        this.setState({ loading: false });
     }
 
     private onReject(): void {

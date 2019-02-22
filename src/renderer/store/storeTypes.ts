@@ -1,5 +1,7 @@
 import { Network } from "common/types";
 
+import { IBalances } from "@/lib/swapperd";
+
 export interface ApplicationData {
     app: AppData;
     trader: TraderData;
@@ -8,6 +10,7 @@ export interface ApplicationData {
 
 export interface AppData {
     updateReady: string | null;
+    updatingSwapperd: boolean;
 }
 
 export interface LoginData {
@@ -16,4 +19,5 @@ export interface LoginData {
 
 export interface TraderData {
     network: Network;
+    balances: Map<Network, IBalances>;
 }
