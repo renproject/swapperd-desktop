@@ -21,7 +21,7 @@ if (
 
 const mb = setupMenubar();
 const ipc = setupIPC(mb);
-setupAutoLaunch();
+setupAutoLaunch(mb);
 setupExpress(mb, ipc);
 setupListeners(mb, ipc);
 setupAutoUpdater(ipc);
