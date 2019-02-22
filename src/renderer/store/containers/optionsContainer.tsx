@@ -29,6 +29,12 @@ export class OptionsContainer extends Container<OptionsData> {
         await this.preserve();
     }
 
+    public setHideZeroBalances = async (hideZeroBalances: boolean) => {
+        await this.setState({ hideZeroBalances });
+        // Preserve the network state in local storage
+        await this.preserve();
+    }
+
     private preserve = async (): Promise<void> => {
         store.set(STORAGE_KEY, this.state);
     }

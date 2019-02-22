@@ -6,6 +6,7 @@ import { AppContainer } from "@/store/containers/appContainer";
 import { Message } from "common/types";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
+import { Options } from "./Options";
 
 interface IAboutPageProps extends ConnectedProps {
     updateAvailable: boolean;
@@ -46,25 +47,29 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner reject={this.props.onClose} />}
-                {showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
-                <div className="about--page">
-                    {error && <p className="error">{error}</p>}
-                    {showUpdate && binaryNeedsUpdate && <div className="update--button">
-                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                            <>
-                                <button className="update" onClick={this.onUpdateHandler}>Update</button>
-                            </>
-                        }
-                    </div>}
-                    {showUpdate && desktopNeedsUpdate && <div className="update--button">
-                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                            <>
-                                <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
-                            </>
-                        }
-                    </div>}
-                </div>
+                {this.props.onClose && <Banner title="Options" reject={this.props.onClose} />}
+                {showUpdate ? <>
+                    <div className="notice notice--alert">{noticeMessage}</div>
+                    <div className="about--page">
+                        {error && <p className="error">{error}</p>}
+                        {showUpdate && binaryNeedsUpdate && <div className="update--button">
+                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                                <>
+                                    <button className="update" onClick={this.onUpdateHandler}>Update</button>
+                                </>
+                            }
+                        </div>}
+                        {showUpdate && desktopNeedsUpdate && <div className="update--button">
+                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                                <>
+                                    <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
+                                </>
+                            }
+                        </div>}
+                    </div>
+                </>
+                    : <Options />
+                }
                 <div className="about--footer">
                     <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
                     <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
