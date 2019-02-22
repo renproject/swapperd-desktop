@@ -14,7 +14,9 @@ import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
 import { Record } from "@/lib/record";
 import { fetchInfo, getSwaps, getTransfers, IPartialSwapRequest, IPartialWithdrawRequest, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
-import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
+import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
+import { OptionsContainer } from "@/store/containers/optionsContainer";
 import { Message, Network } from "common/types";
 
 import { version as APP_VERSION } from "../../../package.json";
@@ -34,6 +36,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private callGetAccountTimeout: NodeJS.Timer | undefined;
     private callGetTransactionsTimeout: NodeJS.Timer | undefined;
 
+    private appContainer: AppContainer;
+    private optionsContainer: OptionsContainer;
+
     constructor(props: IAppProps) {
         super(props);
         this.state = {
@@ -48,6 +53,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             showAbout: false,
             balancesError: null,
         };
+        [this.appContainer, this.optionsContainer] = this.props.containers;
     }
 
     public readonly componentWillUnmount = () => {
@@ -62,9 +68,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         ipc.delayedOn(Message.Swap, async (swap) => {
             try {
-                const network = swap.network ? swap.network : this.props.container.state.trader.network;
+                const network = swap.network ? swap.network : this.optionsContainer.state.network;
                 const origin = swap.origin ? swap.origin : this.state.origin;
-                await this.props.container.setNetwork(network);
+                await this.optionsContainer.setNetwork(network);
                 this.setState({ swapDetails: swap.body, origin });
             } catch (error) {
                 console.error(error);
@@ -72,7 +78,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         ipc.on(Message.GetPassword, () => {
-            const { password } = this.props.container.state.login;
+            const { password } = this.appContainer.state.login;
             if (password === null) {
                 throw new Error("Swapperd locked");
             }
@@ -80,11 +86,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         });
 
         ipc.on(Message.GetNetwork, () => {
-            return this.props.container.state.trader.network;
+            return this.optionsContainer.state.network;
         });
 
         ipc.on(Message.UpdateReady, async (version: string) => {
-            await this.props.container.setUpdateReady(version);
+            await this.appContainer.setUpdateReady(version);
             return;
         });
 
@@ -96,12 +102,12 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         this.callGetBalances().catch(console.error);
 
         const callGetTransactions = async () => {
-            const { password } = this.props.container.state.login;
+            const { password } = this.appContainer.state.login;
             const { accountExists } = this.state;
 
             if (accountExists && password !== null) {
                 try {
-                    const { network } = this.props.container.state.trader;
+                    const { network } = this.optionsContainer.state;
                     const swaps = await getSwaps({ network, password: password });
 
                     const { networkDetails } = this.state;
@@ -110,7 +116,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     console.error(e.response && e.response.data.error || e);
                 }
                 try {
-                    const { network } = this.props.container.state.trader;
+                    const { network } = this.optionsContainer.state;
                     const transfers = await getTransfers({ network: network, password: password });
 
                     const { networkDetails } = this.state;
@@ -129,11 +135,12 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     // tslint:disable:jsx-no-lambda
     // tslint:disable:react-this-binding-issue
     public readonly render = (): JSX.Element => {
-        const { login: { password }, trader: { network } } = this.props.container.state;
+        const { login: { password } } = this.appContainer.state;
+        const { network } = this.optionsContainer.state;
 
         const { balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest, networkDetails } = this.state;
         const { swaps, transfers } = networkDetails.get(network);
-        const balances = this.props.container.state.trader.balances.get(network) || null;
+        const balances = this.appContainer.state.trader.balances.get(network) || null;
 
         const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== "" && latestSwapperdVersion !== swapperdVersion;
 
@@ -214,14 +221,14 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     // tslint:enable:react-this-binding-issue
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
-        await this.props.container.setPassword(password);
+        await this.appContainer.setPassword(password);
         // Fetch the balances for the first time
-        await this.props.container.updateBalances(Network.Mainnet);
-        await this.props.container.updateBalances(Network.Testnet);
+        await this.appContainer.updateBalances(Network.Mainnet);
+        await this.appContainer.updateBalances(Network.Testnet);
     }
 
     private readonly setNetwork = async (network: Network): Promise<void> => {
-        await this.props.container.setNetwork(
+        await this.optionsContainer.setNetwork(
             network,
         );
         // Fetch new balances immediately
@@ -257,12 +264,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly callGetBalances = async () => {
         if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
-        const { login: { password } } = this.props.container.state;
+        const { login: { password } } = this.appContainer.state;
+        const { network } = this.optionsContainer.state;
         const { accountExists } = this.state;
         let timeout = 10 * 1000;
         if (accountExists && password !== null) {
             try {
-                await this.props.container.updateBalances();
+                await this.appContainer.updateBalances(network);
                 if (this.state.balancesError) {
                     this.setState({ balancesError: null });
                 }
@@ -283,7 +291,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private readonly callGetAccount = async () => {
         if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
 
-        const { login: { password }, trader: { network } } = this.props.container.state;
+        const { login: { password } } = this.appContainer.state;
+        const { network } = this.optionsContainer.state;
         try {
             const accountIsSetup = await ipc.sendSyncWithTimeout(
                 Message.CheckSetup,
@@ -331,4 +340,4 @@ interface IAppState {
     balancesError: string | null;
 }
 
-export const App = connect<IAppProps>(AppContainer)(AppClass);
+export const App = connect<IAppProps>([AppContainer, OptionsContainer])(AppClass);

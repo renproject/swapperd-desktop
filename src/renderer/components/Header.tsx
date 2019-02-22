@@ -5,7 +5,8 @@ import logo from "@/styles/images/logo.png";
 
 import { ipc } from "@/ipc";
 import { NETWORKS } from "@/lib/swapperd";
-import { AppContainer, connect, ConnectedProps } from "@/store/containers/appContainer";
+import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { Message, Network } from "common/types";
 
 interface Props extends ConnectedProps {
@@ -21,12 +22,15 @@ interface State {
 }
 
 class HeaderClass extends React.Component<Props, State> {
+    private appContainer: AppContainer;
+
     constructor(props: Props) {
         super(props);
+        [this.appContainer] = this.props.containers;
     }
 
     public render(): JSX.Element {
-        const { updateAvailable, logoOnClick, hideNetwork, container, disableNetwork } = this.props;
+        const { updateAvailable, logoOnClick, hideNetwork, disableNetwork } = this.props;
         // tslint:disable-next-line:no-any
         const logoProps: any = {};
         if (logoOnClick) {
@@ -44,10 +48,10 @@ class HeaderClass extends React.Component<Props, State> {
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
-                {container.state.login.password && !hideNetwork ?
-                    container.state.app.updateReady ?
+                {this.appContainer.state.login.password && !hideNetwork ?
+                    this.appContainer.state.app.updateReady ?
                         <div role="button" onClick={this.update}>Update available</div> :
-                        <div role="button" className="header--lock" onClick={container.clearPassword}>
+                        <div role="button" className="header--lock" onClick={this.appContainer.clearPassword}>
                             <div className="header--lock--logo" />
                         </div> :
                         <></>
@@ -66,4 +70,4 @@ class HeaderClass extends React.Component<Props, State> {
     }
 }
 
-export const Header = connect<Props>(AppContainer)(HeaderClass);
+export const Header = connect<Props>([AppContainer])(HeaderClass);

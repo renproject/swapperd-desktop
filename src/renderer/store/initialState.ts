@@ -11,7 +11,6 @@ export const initialState: ApplicationData = {
         password: null,
     },
     trader: {
-        network: Network.Mainnet,
         balances: new Map<Network, IBalances>(),
-    }
+    },
 };

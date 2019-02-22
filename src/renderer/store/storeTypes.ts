@@ -18,6 +18,10 @@ export interface LoginData {
 }
 
 export interface TraderData {
-    network: Network;
     balances: Map<Network, IBalances>;
+}
+
+export interface OptionsData {
+    network: Network;
+    hideZeroBalances: boolean;
 }
