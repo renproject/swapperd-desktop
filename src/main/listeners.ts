@@ -2,10 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 
 import bcrypt from "bcryptjs";
-import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
-import { app } from "electron";
+import { app, Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 
 import { checkFileExists } from "common/functions";
@@ -62,12 +61,12 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             throw new Error("Should not have received error");
         }
 
-        notifier.notify({
+        const notification = new Notification({
             title: "Swapperd",
-            message: value.notification,
-            icon: `${__dirname}/Icon.icns`,
-            wait: true,
+            icon: "resources/icon.png",
+            body: value.notification,
         });
+        notification.show();
         return;
     });
 
