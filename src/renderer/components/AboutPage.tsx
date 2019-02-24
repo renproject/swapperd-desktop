@@ -1,12 +1,12 @@
 import * as React from "react";
 
 import { ipc } from "@/ipc";
-import { AppContainer } from "@/store/containers/appContainer";
-
 import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { Message } from "common/types";
 import { Banner } from "./Banner";
 import { Loading } from "./Loading";
+import { Options } from "./Options";
 
 interface IAboutPageProps extends ConnectedProps {
     updateAvailable: boolean;
@@ -20,6 +20,7 @@ interface IAboutPageProps extends ConnectedProps {
 interface IAboutPageState {
     updateComplete: boolean;
     error: string | null;
+    restarting: boolean;
 }
 
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
@@ -30,39 +31,56 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         this.state = {
             updateComplete: false,
             error: null,
+            restarting: false,
         };
         [this.appContainer] = this.props.containers;
     }
 
+    // tslint:disable-next-line:cyclomatic-complexity
     public render() {
         const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
-        const { error, updateComplete } = this.state;
-        const { updatingSwapperd } = this.appContainer.state.app;
+        const { error, updateComplete, restarting } = this.state;
+        const { updatingSwapperd, updateReady } = this.appContainer.state.app;
+        const { password } = this.appContainer.state.login;
+        const locked = password === "" || password === null;
 
-        const showUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
+        const binaryNeedsUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
+        const desktopNeedsUpdate = updateReady !== null;
+        const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
+        const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner reject={this.props.onClose} />}
-                <div className="about--page">
-                    <h2>Swapperd Version</h2>
-                    <pre>{swapperdBinaryVersion || <span className="red">Unable to connect</span>}</pre>
-                    {showUpdate && <>
-                        {error && <p className="error">{error}</p>}
-                        {updatingSwapperd ? <div className="updating"><p>Updating... </p><Loading /></div> :
-                            <>
-                                <p>A new Swapperd version is available!</p>
-                                <button className="update" onClick={this.onClickHandler}>Update</button>
-                            </>
-                        }
-                    </>}
-                    <h2>Swapperd Desktop Version</h2>
-                    <pre>{swapperdDesktopVersion}</pre>
+                {this.props.onClose && <Banner title={locked ? "" : "Options"} reject={this.props.onClose} />}
+                {!locked && <Options />}
+                <div className="about--footer">
+                    {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
+                    {!locked && error && <p className="error">{error}</p>}
+                    <div className="about--footer--content">
+                        <div>
+                            <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
+                            <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
+                        </div>
+                        {!locked && showUpdate && binaryNeedsUpdate && <div className="update--button">
+                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                                <>
+                                    <button className="update" onClick={this.onUpdateHandler}>Update</button>
+                                </>
+                            }
+                        </div>}
+                        {!locked && showUpdate && desktopNeedsUpdate && <div className="update--button">
+                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                                <>
+                                    <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
+                                </>
+                            }
+                        </div>}
+                    </div>
                 </div>
             </>
         );
     }
 
-    private onClickHandler = async (): Promise<void> => {
+    private onUpdateHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({ error: null });
         await this.appContainer.setUpdatingSwapperd(true);
@@ -70,7 +88,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             await ipc.sendSyncWithTimeout(
                 Message.UpdateSwapperd,
                 0, // timeout
-                null
+                { swapperd: true, restart: false }
             );
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ updateComplete: true });
@@ -81,6 +99,21 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             console.error(`Got error instead!!!: ${error}`);
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ error });
+            return;
+        }
+    }
+
+    private onRestartHandler = async (): Promise<void> => {
+        this.setState({ error: null, restarting: true });
+        try {
+            await ipc.sendSyncWithTimeout(
+                Message.UpdateSwapperd,
+                0, // timeout
+                { swapperd: false, restart: true }
+            );
+            this.setState({ restarting: false });
+        } catch (error) {
+            this.setState({ restarting: false, error });
             return;
         }
     }

@@ -6,6 +6,7 @@ import notifier from "node-notifier";
 import sqlite3All, { Database } from "sqlite3";
 
 import { app } from "electron";
+import { autoUpdater } from "electron-updater";
 
 import { checkFileExists } from "common/functions";
 import { IPC, } from "common/ipc";
@@ -94,8 +95,16 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         mb.app.relaunch();
     });
 
-    ipc.on(Message.UpdateSwapperd, async (_value, _error?: Error) => {
-        await installSwapperd();
+    ipc.on(Message.UpdateSwapperd, async (value, _error?: Error) => {
+        const {
+            swapperd,
+            restart,
+        } = value;
+        if (swapperd) {
+            await installSwapperd();
+        } else if (restart) {
+            autoUpdater.quitAndInstall();
+        }
     });
 };
 

@@ -6,9 +6,11 @@ import { Banner } from "@/components/Banner";
 import { ipc } from "@/ipc";
 import { getLogo } from "@/lib/logos";
 import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "@/lib/swapperd";
+import { connect, ConnectedProps } from "@/store/connect";
+import { OptionsContainer } from "@/store/containers/optionsContainer";
 import { Message } from "common/types";
 
-interface IApproveSwapProps {
+interface IApproveSwapProps extends ConnectedProps {
     network: string;
     origin: string;
     swapDetails: IPartialSwapRequest;
@@ -25,7 +27,9 @@ function digits(token: Token): BigNumber {
     return new BigNumber(10).pow(decimals.get(token) || 0);
 }
 
-export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwapState> {
+class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapState> {
+    private optionsContainer: OptionsContainer;
+
     constructor(props: IApproveSwapProps) {
         super(props);
         this.state = {
@@ -36,6 +40,8 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.handleInput = this.handleInput.bind(this);
         this.onAccept = this.onAccept.bind(this);
         this.onReject = this.onReject.bind(this);
+
+        [this.optionsContainer] = this.props.containers;
     }
 
     public render(): JSX.Element {
@@ -95,7 +101,7 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.setState({ error: null, loading: true });
 
         try {
-            const mainResponse = await submitSwap(swapDetails, { password, network });
+            const mainResponse = await submitSwap({...swapDetails, speed: this.optionsContainer.state.defaultTransactionSpeed}, { password, network });
             ipc.sendMessage(Message._SwapResponse, { status: mainResponse.status, response: mainResponse.data });
             this.setState({ loading: false });
             this.props.resetSwapDetails();
@@ -110,3 +116,5 @@ export class ApproveSwap extends React.Component<IApproveSwapProps, IApproveSwap
         this.props.resetSwapDetails();
     }
 }
+
+export const ApproveSwap = connect<IApproveSwapProps>([OptionsContainer])(ApproveSwapClass);

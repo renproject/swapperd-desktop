@@ -7,8 +7,10 @@ import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { getLogo } from "@/lib/logos";
 import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "@/lib/swapperd";
+import { connect, ConnectedProps } from "@/store/connect";
+import { OptionsContainer } from "@/store/containers/optionsContainer";
 
-interface IApproveWithdrawProps {
+interface IApproveWithdrawProps extends ConnectedProps {
     network: string;
     balances: null | IBalances;
     withdrawRequest: IPartialWithdrawRequest;
@@ -25,7 +27,9 @@ interface IApproveWithdrawState {
     sendAllChecked: boolean;
 }
 
-export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApproveWithdrawState> {
+class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IApproveWithdrawState> {
+    private optionsContainer: OptionsContainer;
+
     constructor(props: IApproveWithdrawProps) {
         super(props);
         this.state = {
@@ -42,6 +46,8 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         this.onWithdraw = this.onWithdraw.bind(this);
         this.onAccept = this.onAccept.bind(this);
         this.onReject = this.onReject.bind(this);
+
+        [this.optionsContainer] = this.props.containers;
     }
 
     public render(): JSX.Element {
@@ -159,6 +165,7 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
             to,
             amount,
             sendAll,
+            speed: this.optionsContainer.state.defaultTransactionSpeed,
         };
 
         try {
@@ -175,3 +182,5 @@ export class ApproveWithdraw extends React.Component<IApproveWithdrawProps, IApp
         this.props.setWithdrawRequest(null);
     }
 }
+
+export const ApproveWithdraw = connect<IApproveWithdrawProps>([OptionsContainer])(ApproveWithdrawClass);

@@ -30,6 +30,7 @@ export interface IWithdrawRequest extends IPartialWithdrawRequest {
     to: string;
     amount: string;
     sendAll?: boolean;
+    speed?: number;
 }
 
 export interface IPartialSwapRequest {
@@ -44,6 +45,7 @@ export interface IPartialSwapRequest {
     receiveFrom: string;
     shouldInitiateFirst: boolean;
     brokerFee?: number;
+    speed?: number;
 }
 
 export interface ISwapRequest extends IPartialSwapRequest {

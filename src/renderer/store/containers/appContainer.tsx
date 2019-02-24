@@ -24,17 +24,12 @@ export class AppContainer extends Container<ApplicationData> {
     public setUpdatingSwapperd = async (updating: boolean) =>
         this.setState({ app: { ...this.state.app, updatingSwapperd: updating } })
 
-    // Trader data
-    public setNetwork = async (network: Network) =>
-        this.setState({ trader: { ...this.state.trader, network } })
-
     /**
      * updateBalances fetches and updates the balances from Swapperd.
      *
      * @throws an error if the call to getBalances() failed
      */
-    public updateBalances = async (whichNetwork?: Network): Promise<void> => {
-        const network = (whichNetwork) ? whichNetwork : this.state.trader.network;
+    public updateBalances = async (network: Network): Promise<void> => {
         const { login: { password } } = this.state;
         if (password !== null) {
             const balances = await getBalances({ network, password });
@@ -45,5 +40,4 @@ export class AppContainer extends Container<ApplicationData> {
             }
         }
     }
-
 }
