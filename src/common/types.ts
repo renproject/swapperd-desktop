@@ -44,7 +44,7 @@ export type RequestType<X extends Message> =
     // renderer to main
     X extends Message.CheckSetup ? null :
     X extends Message.CreateAccount ? { mnemonic: string | null; password: string } :
-    X extends Message.Notify ? { notification: string } :
+    X extends Message.Notify ? { title?: string; notification: string } :
     X extends Message.VerifyPassword ? { password: string } :
     X extends Message.Relaunch ? null :
     X extends Message.UpdateSwapperd ? { swapperd: boolean; restart: boolean } :

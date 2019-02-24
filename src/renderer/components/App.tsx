@@ -246,7 +246,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         ipc.sendMessage(
             Message.Notify,
             {
-                notification: `Account ${mnemonic === "" ? "imported successfully!" : "creation successful!"}`
+                title: `Account ${mnemonic === "" ? "Imported" : "Created"}`,
+                notification: `Your SwapperD account has been ${mnemonic === "" ? "imported" : "created"} successfully`
             },
         );
     }

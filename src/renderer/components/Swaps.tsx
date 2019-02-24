@@ -82,7 +82,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                     const notificationMessage = `Swap from ${sendAmount} ${newSwap.sendToken} to ${receiveAmount} ${newSwap.receiveToken} ${status}.`;
                     ipc.sendMessage(
                         Message.Notify,
-                        { notification: notificationMessage },
+                        { title: `Swap ${status}`, notification: notificationMessage },
                     );
                 }
             }
@@ -101,7 +101,7 @@ export class Swaps extends React.Component<ISwapsProps, ISwapsState> {
                 for (const transfer of notPending) {
                     ipc.sendMessage(
                         Message.Notify,
-                        { notification: `${transfer.value} ${transfer.token.name} transfer confirmed.` },
+                        { title: `Transfer Confirmed`, notification: `Transfer of ${transfer.value} ${transfer.token.name} has been confirmed` },
                     );
                 }
             }

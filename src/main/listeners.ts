@@ -62,7 +62,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         }
 
         const notification = new Notification({
-            title: "Swapperd",
+            title: value.title ? value.title : "SwapperD",
             icon: "resources/icon.png",
             body: value.notification,
         });
