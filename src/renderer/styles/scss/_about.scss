@@ -1,0 +1,37 @@
+.about--page {
+  padding: 10px;
+}
+
+.about--page p {
+  padding-bottom: 10px;
+}
+
+.about--page button.update {
+  min-width: initial;
+  width: 120px;
+}
+
+.about--page .updating .loading {
+  position: relative;
+  padding-top: 20px;
+}
+
+.about--footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.version-banner {
+  font-size: 12px;
+  span {
+    font-size: 14px;
+    font-family: monospace;
+  }
+}
+
+.about--footer--content {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+}

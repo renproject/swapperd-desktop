@@ -1,44 +1,34 @@
-# Cloning the project
+# SwapperdD Desktop
+
+## Installation
+
+Download the latest release from [SwapperD Desktop Releases](https://github.com/republicprotocol/swapperd-desktop-releases/releases/).
+
+## Development
+
+#### Clone this repo
 
 ```bash
-git clone https://github.com/republicprotocol/swapperd-native
-cd swapperd-native
-npm install
+$ git clone https://github.com/republicprotocol/swapperd-native
+$ cd swapperd-native
 ```
 
-# Packaging for Mac
+#### Install dependencies
 
 ```bash
-npm run build-mac
+$ yarn install
 ```
 
-This will generate a `Swapperd.dmg` file in the `./release-builds/` folder.
-
-# Packaging for Windows
-
-You will need `wine` on your machine if building on a non-Windows operating systems.
+#### Launch dev environment
 
 ```bash
-npm run build-win
+$ yarn run start
 ```
 
-This will generate a `SwapperdInstaller.exe` file in the `./release-builds/` folder.
+#### Package application
 
-
-# Packaging for Debian
-
-You will need `fakeroot`, and `dpkg` to build on non-Debian operating systems.
-
-You can install this on Mac OS using:
+This will package it for the same OS it's being run on.
 
 ```bash
-brew install fakeroot dpkg
+$ yarn run build
 ```
-
-Once installed, you can build the Debian package using the following command:
-
-```bash
-npm run build-debian
-```
-
-This will generate a Debian installer package in the `./release-builds/` folder.
