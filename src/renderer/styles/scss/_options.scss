@@ -6,10 +6,18 @@
   background-color: white;
   color: #0E61EC;
   border: solid 2px #0E61EC;
+  transition: all 0.2s;
   &:last-child {
     border-left-width: 0;
   }
-  &.active, &:hover {
+  &:hover {
+    background-color: #0E61EC;
+    color: white;
+  }
+}
+
+.options--page .input-group:not(:hover) {
+  button.secondary.active {
     background-color: #0E61EC;
     color: white;
   }
