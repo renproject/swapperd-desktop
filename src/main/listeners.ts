@@ -71,6 +71,10 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             options.icon = path.join(app.getAppPath(), "resources/icon.png");
         }
         const n = new Notification(options);
+        // Show the main window on click
+        n.on("click", () => {
+            mb.showWindow();
+        });
         n.show();
         return;
     });
