@@ -38,7 +38,7 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
                     <button className={`secondary ${3 === this.optionsContainer.state.defaultTransactionSpeed ? "active" : ""}`} onClick={() => { this.setTransactionSpeed(3); }}>Fast</button>
                 </div>
                 <p>The transaction speed to use for swaps and token transfers. Faster transaction speeds incur higher fees.</p>
-                <h2>Lock Account</h2>
+                <h2>Lock Wallet</h2>
                 <button className="cancel" onClick={this.appContainer.clearPassword}>Lock</button>
             </div>
         );
