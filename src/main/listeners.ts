@@ -4,7 +4,7 @@ import * as path from "path";
 import bcrypt from "bcryptjs";
 import sqlite3All, { Database } from "sqlite3";
 
-import { app, Notification } from "electron";
+import { app, Notification, NotificationConstructorOptions } from "electron";
 import { autoUpdater } from "electron-updater";
 
 import { checkFileExists } from "common/functions";
@@ -61,12 +61,17 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             throw new Error("Should not have received error");
         }
 
-        const notification = new Notification({
-            title: value.title ? value.title : "SwapperD",
-            icon: "resources/icon.png",
-            body: value.notification,
-        });
-        notification.show();
+        const { title, notification } = value;
+        const options: NotificationConstructorOptions = {
+            title: title ? title : "SwapperD",
+            body: notification,
+        };
+        // Don't set the icon on MacOS or it will show up twice
+        if (process.platform !== "darwin") {
+            options.icon = path.join(app.getAppPath(), "resources/icon.png");
+        }
+        const n = new Notification(options);
+        n.show();
         return;
     });
 
