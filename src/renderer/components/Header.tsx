@@ -39,9 +39,9 @@ class HeaderClass extends React.Component<Props, State> {
         }
         return (
             <div className="header">
-                <div className="clickable">
-                    <img className="logo" src={logo} alt="Swapperd" {...logoProps} />
-                    {updateAvailable && <img alt="alert" className="header--alert" src={alertImage} />}
+                <div className="clickable" {...logoProps}>
+                    <img className="logo" src={logo} alt="Swapperd" />
+                    {password && updateAvailable && <img alt="alert" className="header--alert" src={alertImage} />}
                 </div>
                 {!hideNetwork &&
                     <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>
