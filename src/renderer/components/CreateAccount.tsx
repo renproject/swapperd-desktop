@@ -81,7 +81,7 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                         <>
                             <Loading />
                             <span>
-                                Setting up account...
+                                Setting up your account. This could take a while...
                             </span>
                         </>
                     }
