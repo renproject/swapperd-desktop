@@ -1,9 +1,23 @@
 import { Container } from "unstated";
 
-import { getBalances, getSwaps, getTransfers } from "@/lib/swapperd";
-import { initialState } from "@/store/initialState";
+import { getBalances, getSwaps, getTransfers, IBalances, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 import { ApplicationData } from "@/store/storeTypes";
 import { Network } from "common/types";
+
+const initialState: ApplicationData = {
+    app: {
+        updateReady: null,
+        updatingSwapperd: false,
+    },
+    login: {
+        password: null,
+    },
+    trader: {
+        balances: new Map<Network, IBalances>(),
+        swaps: new Map<Network, ISwapsResponse>(),
+        transfers: new Map<Network, ITransfersResponse>(),
+    },
+};
 
 export class AppContainer extends Container<ApplicationData> {
     public state = initialState;
