@@ -29,12 +29,13 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
                         Hide zero balances (BTC and ETH are always shown)
                     </label>
                 </div>
-                <h2>Transaction Fees</h2>
+                <h2>Default Transaction Speed</h2>
                 <div className="input-group">
                     <button className={`secondary ${1 === this.optionsContainer.state.defaultTransactionSpeed ? "active" : ""}`} onClick={() => { this.setTransactionSpeed(1); }}>Slow</button>
                     <button className={`secondary ${2 === this.optionsContainer.state.defaultTransactionSpeed ? "active" : ""}`} onClick={() => { this.setTransactionSpeed(2); }}>Medium</button>
                     <button className={`secondary ${3 === this.optionsContainer.state.defaultTransactionSpeed ? "active" : ""}`} onClick={() => { this.setTransactionSpeed(3); }}>Fast</button>
                 </div>
+                <p>The transaction speed to use for swaps and token transfers. Faster transaction speeds incur higher fees.</p>
             </div>
         );
     }
