@@ -9,7 +9,7 @@
     "afterPack": "./packaging/afterPackHook.js",
     "linux": {
       "category": "Utility",
-      "icon": "resources/app.icns",
+      "icon": "resources/icon.png",
       "artifactName": "swapperd-desktop-linux.AppImage",
       "target": "AppImage"
     },
