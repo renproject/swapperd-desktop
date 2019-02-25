@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
 
 interface IOptionsProps extends ConnectedProps {
@@ -12,11 +13,12 @@ interface IOptionsState {
 }
 
 class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
+    private appContainer: AppContainer;
     private optionsContainer: OptionsContainer;
 
     constructor(props: IOptionsProps) {
         super(props);
-        [this.optionsContainer] = this.props.containers;
+        [this.appContainer, this.optionsContainer] = this.props.containers;
     }
 
     public render() {
@@ -36,6 +38,8 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
                     <button className={`secondary ${3 === this.optionsContainer.state.defaultTransactionSpeed ? "active" : ""}`} onClick={() => { this.setTransactionSpeed(3); }}>Fast</button>
                 </div>
                 <p>The transaction speed to use for swaps and token transfers. Faster transaction speeds incur higher fees.</p>
+                <h2>Lock Account</h2>
+                <button className="cancel" onClick={this.appContainer.clearPassword}>Lock</button>
             </div>
         );
     }
@@ -49,7 +53,7 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
     }
 }
 
-export const Options = connect<IOptionsProps>([OptionsContainer])(OptionsClass);
+export const Options = connect<IOptionsProps>([AppContainer, OptionsContainer])(OptionsClass);
 
 // tslint:enable:react-this-binding-issue
 // tslint:enable:jsx-no-lambda
