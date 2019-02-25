@@ -63,7 +63,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
 
         const { title, notification } = value;
         const options: NotificationConstructorOptions = {
-            title: title ? title : "SwapperD",
+            title: title ? title : "SwapperD Desktop",
             body: notification,
         };
         // Don't set the icon on MacOS or it will show up twice
