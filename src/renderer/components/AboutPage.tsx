@@ -14,7 +14,6 @@ interface IAboutPageProps extends ConnectedProps {
     swapperdBinaryVersion: string | null;
     swapperdDesktopVersion: string;
     updateCompleteCallback?(): void;
-    onClose?(): void;
 }
 
 interface IAboutPageState {
@@ -50,8 +49,8 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
         return (
             <>
-                {this.props.onClose && <Banner title={locked ? "" : "Options"} reject={this.props.onClose} />}
-                {!locked && <Options />}
+                <Banner title="Settings" />
+                <Options />
                 <div className="about--footer">
                     {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
                     {!locked && error && <p className="error">{error}</p>}

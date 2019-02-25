@@ -48,12 +48,12 @@
   text-decoration: underline;
 }
 
-.header--lock {
+.header--settings {
   &:hover {
-    width: 50px;
+    width: 80px;
   }
   position: absolute;
-  width: 15px;
+  width: 30px;
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
@@ -61,18 +61,43 @@
   transition: all 0.2s;
 }
 
-.header--lock--logo {
-  background-image: url(images/lock.svg);
+.header--settings--logo {
+  background-image: url(images/settings.svg);
   background-size: contain;
   background-repeat: no-repeat;
-  height: 20px;
-  width: 15px;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  display: flex;
+  align-items: center;
 }
 
-.header--lock:hover .header--lock--logo::after {
-  content: "Lock";
-  margin-left: 20px;
-  color: #cccccc;
+.header--settings:hover .header--settings--logo::after {
+  content: "Settings";
+  margin-left: 33px;
+  color: #000;
+}
+
+.header--settings.settings--open {
+  width: 15px;
+  .header--settings--logo {
+    background-image: none;
+
+    &::before {
+      content: "\2715";
+      font-size: 18px;
+    }
+  }
+
+  &:hover {
+    width: 50px;
+
+    .header--settings--logo::after {
+      content: "Close";
+      font-size: 12px;
+      margin-left: 5px;
+    }
+  }
 }
 
 .balances--transfer {

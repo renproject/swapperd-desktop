@@ -131,23 +131,10 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const headerProps: any = {
             network,
             setNetwork: this.setNetwork,
-            logoOnClick: this.logoClick,
+            settingsOnClick: this.logoClick,
             updateAvailable,
+            settingsOpen: showAbout,
         };
-
-        if (showAbout && swapDetails === null) {
-            return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
-                <AboutPage
-                    updateCompleteCallback={this.callGetAccount}
-                    updateAvailable={updateAvailable}
-                    latestSwapperdVersion={latestSwapperdVersion}
-                    swapperdBinaryVersion={swapperdVersion}
-                    swapperdDesktopVersion={APP_VERSION}
-                    onClose={() => { this.setState({ showAbout: false }); }}
-                />
-            </div>;
-        }
 
         if (mnemonic !== "") {
             return <div className="app">
@@ -182,6 +169,19 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
+        if (password && showAbout && swapDetails === null) {
+            return <div className="app">
+                <Header hideNetwork={true} {...headerProps} />
+                <AboutPage
+                    updateCompleteCallback={this.callGetAccount}
+                    updateAvailable={updateAvailable}
+                    latestSwapperdVersion={latestSwapperdVersion}
+                    swapperdBinaryVersion={swapperdVersion}
+                    swapperdDesktopVersion={APP_VERSION}
+                />
+            </div>;
+        }
+
         if (withdrawRequest) {
             return <div className="app">
                 <Header hideNetwork={false} disableNetwork={true} {...headerProps} />
@@ -204,6 +204,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     // tslint:enable:react-this-binding-issue
 
     private readonly setUnlocked = async (password: string): Promise<void> => {
+        this.setState({ showAbout: false });
         await this.appContainer.setPassword(password);
         // Fetch the balances for the first time
         await this.appContainer.updateBalances(Network.Mainnet);

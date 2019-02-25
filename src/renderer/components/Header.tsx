@@ -10,9 +10,11 @@ import { Network } from "common/types";
 
 interface Props extends ConnectedProps {
     network: Network;
+    settingsOpen: boolean;
     updateAvailable?: boolean;
     hideNetwork?: boolean;
     disableNetwork?: boolean;
+    settingsOnClick(): void;
     logoOnClick?(): void;
     setNetwork(network: Network): void;
 }
@@ -29,7 +31,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { updateAvailable, logoOnClick, hideNetwork, disableNetwork } = this.props;
+        const { updateAvailable, logoOnClick, hideNetwork, disableNetwork, settingsOpen, settingsOnClick } = this.props;
         const { password } = this.appContainer.state.login;
         // tslint:disable-next-line:no-any
         const logoProps: any = {};
@@ -39,18 +41,18 @@ class HeaderClass extends React.Component<Props, State> {
         }
         return (
             <div className="header">
-                <div className="clickable" {...logoProps}>
+                <div className={`${logoOnClick ? "clickable" : ""}`} {...logoProps}>
                     <img className="logo" src={logo} alt="Swapperd" />
-                    {password && updateAvailable && <img alt="alert" className="header--alert" src={alertImage} />}
                 </div>
                 {!hideNetwork &&
                     <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
-                {password && !hideNetwork ?
-                    <div role="button" className="header--lock" onClick={this.appContainer.clearPassword}>
-                        <div className="header--lock--logo" />
+                {password ?
+                    <div role="button" className={`header--settings ${settingsOpen ? "settings--open" : ""}`} onClick={settingsOnClick}>
+                        <div className="header--settings--logo" />
+                        {password && updateAvailable && !settingsOpen && <img alt="alert" className="header--alert" src={alertImage} />}
                     </div> :
                     <></>
                 }
