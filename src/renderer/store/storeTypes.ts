@@ -1,6 +1,6 @@
 import { Network } from "common/types";
 
-import { IBalances } from "@/lib/swapperd";
+import { IBalances, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 
 export interface ApplicationData {
     app: AppData;
@@ -19,6 +19,8 @@ export interface LoginData {
 
 export interface TraderData {
     balances: Map<Network, IBalances>;
+    swaps: Map<Network, ISwapsResponse>;
+    transfers: Map<Network, ITransfersResponse>;
 }
 
 export interface OptionsData {

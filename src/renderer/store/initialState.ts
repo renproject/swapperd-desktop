@@ -1,4 +1,4 @@
-import { IBalances } from "@/lib/swapperd";
+import { IBalances, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 import { ApplicationData } from "@/store/storeTypes";
 import { Network } from "common/types";
 
@@ -12,5 +12,7 @@ export const initialState: ApplicationData = {
     },
     trader: {
         balances: new Map<Network, IBalances>(),
+        swaps: new Map<Network, ISwapsResponse>(),
+        transfers: new Map<Network, ITransfersResponse>(),
     },
 };

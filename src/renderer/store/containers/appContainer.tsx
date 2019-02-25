@@ -1,6 +1,6 @@
 import { Container } from "unstated";
 
-import { getBalances } from "@/lib/swapperd";
+import { getBalances, getSwaps, getTransfers } from "@/lib/swapperd";
 import { initialState } from "@/store/initialState";
 import { ApplicationData } from "@/store/storeTypes";
 import { Network } from "common/types";
@@ -38,6 +38,24 @@ export class AppContainer extends Container<ApplicationData> {
                 const newBalances = this.state.trader.balances.set(network, balances);
                 await this.setState({ trader: {...this.state.trader, balances: newBalances}});
             }
+        }
+    }
+
+    public updateTransfers = async (network: Network): Promise<void> => {
+        const { login: { password } } = this.state;
+        if (password !== null) {
+            const transfers = await getTransfers({ network, password });
+            const newTransfers = this.state.trader.transfers.set(network, transfers);
+            await this.setState({ trader: {...this.state.trader, transfers: newTransfers }});
+        }
+    }
+
+    public updateSwaps = async (network: Network): Promise<void> => {
+        const { login: { password } } = this.state;
+        if (password !== null) {
+            const swaps = await getSwaps({ network, password });
+            const newSwaps = this.state.trader.swaps.set(network, swaps);
+            await this.setState({ trader: {...this.state.trader, swaps: newSwaps }});
         }
     }
 }
