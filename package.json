@@ -33,14 +33,7 @@
     "files": [
       "resources"
     ],
-    "productName": "SwapperD Desktop",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "republicprotocol",
-        "repo": "swapperd-desktop-releases"
-      }
-    ]
+    "productName": "SwapperD Desktop"
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
