@@ -1,11 +1,3 @@
-.about--page {
-  padding: 10px;
-}
-
-.about--page p {
-  padding-bottom: 10px;
-}
-
 .about--page button.update {
   min-width: initial;
   width: 120px;
@@ -13,18 +5,18 @@
 
 .about--page .updating .loading {
   position: relative;
-  padding-top: 20px;
+  top: 10px;
 }
 
 .about--footer {
-  position: absolute;
+  position: fixed;
+  background: white;
+  box-shadow: 0px 0px 15px #00000099;
   bottom: 0;
   width: 100%;
 }
 
 .version-banner {
-  font-size: 12px;
-
   span {
     font-size: 14px;
     font-family: monospace;

@@ -1,6 +1,7 @@
 /* Balances */
 
 .balances {
+  font-size: 12px;
   position: relative;
   border-bottom: 1px solid #ccc;
   height: 220px;
@@ -52,6 +53,7 @@
   &:hover {
     width: 80px;
   }
+
   position: absolute;
   width: 30px;
   top: 50%;
@@ -80,6 +82,7 @@
 
 .header--settings.settings--open {
   width: 15px;
+
   .header--settings--logo {
     background-image: none;
 
