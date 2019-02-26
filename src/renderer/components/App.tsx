@@ -138,28 +138,28 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         if (mnemonic !== "") {
             return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
         if (!accountExists) {
             return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <CreateAccount resolve={this.accountCreated} />
             </div>;
         }
 
         if (password === null) {
             return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <UnlockScreen resolve={this.setUnlocked} />
             </div>;
         }
 
         if (swapDetails) {
             return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <ApproveSwap
                     origin={origin}
                     network={network}
@@ -171,7 +171,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         if (password && showAbout && swapDetails === null) {
             return <div className="app">
-                <Header hideNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideNetwork={true} />
                 <AboutPage
                     updateCompleteCallback={this.callGetAccount}
                     updateAvailable={updateAvailable}
@@ -184,7 +184,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         if (withdrawRequest) {
             return <div className="app">
-                <Header hideNetwork={false} disableNetwork={true} {...headerProps} />
+                <Header {...headerProps} hideNetwork={false} disableNetwork={true} />
                 <ApproveWithdraw
                     network={network}
                     balances={traderBalances}

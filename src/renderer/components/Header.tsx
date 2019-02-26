@@ -13,6 +13,7 @@ interface Props extends ConnectedProps {
     settingsOpen: boolean;
     updateAvailable?: boolean;
     hideNetwork?: boolean;
+    hideSettings?: boolean;
     disableNetwork?: boolean;
     settingsOnClick(): void;
     logoOnClick?(): void;
@@ -31,7 +32,7 @@ class HeaderClass extends React.Component<Props, State> {
     }
 
     public render(): JSX.Element {
-        const { updateAvailable, logoOnClick, hideNetwork, disableNetwork, settingsOpen, settingsOnClick } = this.props;
+        const { hideSettings, updateAvailable, logoOnClick, hideNetwork, disableNetwork, settingsOpen, settingsOnClick } = this.props;
         const { password } = this.appContainer.state.login;
         // tslint:disable-next-line:no-any
         const logoProps: any = {};
@@ -49,7 +50,7 @@ class HeaderClass extends React.Component<Props, State> {
                         {Object.keys(NETWORKS).map(key => <option key={key} value={key}>{NETWORKS[key]}</option>)}
                     </select>
                 }
-                {password ?
+                {!hideSettings && password ?
                     <div role="button" className={`header--settings ${settingsOpen ? "settings--open" : ""}`} onClick={settingsOnClick}>
                         <div className="header--settings--logo" />
                         {password && updateAvailable && !settingsOpen && <img alt="alert" className="header--alert" src={alertImage} />}
