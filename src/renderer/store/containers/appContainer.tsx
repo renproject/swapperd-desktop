@@ -8,6 +8,7 @@ const initialState: ApplicationData = {
     app: {
         updateReady: null,
         updatingSwapperd: false,
+        installProgress: null,
     },
     login: {
         password: null,
@@ -27,6 +28,8 @@ export class AppContainer extends Container<ApplicationData> {
         this.setState({ app: { ...this.state.app, updateReady: version } })
     public clearUpdateReady = async () =>
         this.setState({ app: { ...this.state.app, updateReady: null } })
+    public setInstallProgress = async (percent: number | null) =>
+        this.setState({ app: { ...this.state.app, installProgress: percent } })
 
     // Login data
     public setPassword = async (password: string) =>
@@ -50,7 +53,7 @@ export class AppContainer extends Container<ApplicationData> {
             const currentBalances = this.state.trader.balances.get(network);
             if (!balances.equals(currentBalances)) {
                 const newBalances = this.state.trader.balances.set(network, balances);
-                await this.setState({ trader: {...this.state.trader, balances: newBalances}});
+                await this.setState({ trader: { ...this.state.trader, balances: newBalances } });
             }
         }
     }
@@ -60,7 +63,7 @@ export class AppContainer extends Container<ApplicationData> {
         if (password !== null) {
             const transfers = await getTransfers({ network, password });
             const newTransfers = this.state.trader.transfers.set(network, transfers);
-            await this.setState({ trader: {...this.state.trader, transfers: newTransfers }});
+            await this.setState({ trader: { ...this.state.trader, transfers: newTransfers } });
         }
     }
 
@@ -69,7 +72,7 @@ export class AppContainer extends Container<ApplicationData> {
         if (password !== null) {
             const swaps = await getSwaps({ network, password });
             const newSwaps = this.state.trader.swaps.set(network, swaps);
-            await this.setState({ trader: {...this.state.trader, swaps: newSwaps }});
+            await this.setState({ trader: { ...this.state.trader, swaps: newSwaps } });
         }
     }
 }

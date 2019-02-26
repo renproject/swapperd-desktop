@@ -27,7 +27,7 @@ const installExtensions = async () => {
         return Promise.all(
             extensions.map(name => installer.default(installer[name],
                 forceDownload)),
-        ).catch(console.log);
+        ).catch(console.error);
     }
 };
 

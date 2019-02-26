@@ -8,7 +8,7 @@ import { Message } from "common/types";
 
 //////////////////////////////// Swapperd Daemon ///////////////////////////////
 
-const run = async (command: string) => new Promise((resolve, reject) => {
+const run = async (command: string, onErr?: (data: string) => void) => new Promise((resolve, reject) => {
     const cmd = exec(command, (error) => {
         if (error) {
             reject(error);
@@ -25,12 +25,29 @@ const run = async (command: string) => new Promise((resolve, reject) => {
 
     cmd.stderr.on("data", (data) => {
         console.error(data);
+        if (onErr) {
+            onErr(data);
+        }
     });
 });
 
-export const installSwapperd = async (): Promise<void | {}> => {
+export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
+    let last = 0;
+    const onErr = (data: string) => {
+        const match = data.match(/^#*\s*(\d+(.\d)?)%$/);
+        if (match && match.length > 1) {
+            const percent = parseFloat(match[1]);
+            if (!isNaN(percent) && percent > last) {
+                ipc.sendMessage(Message.InstallProgress, percent);
+                last = percent;
+            }
+        }
+    };
+
     if (process.platform !== "win32") {
-        return run(`curl https://git.io/test-swapperd -sSLf | sh`);
+        const result = await run(`curl https://git.io/test-swapperd -sSLf | sh`, onErr);
+        ipc.sendMessage(Message.InstallProgress, null);
+        return result;
     }
 };
 

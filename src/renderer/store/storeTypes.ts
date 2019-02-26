@@ -11,6 +11,7 @@ export interface ApplicationData {
 export interface AppData {
     updateReady: string | null;
     updatingSwapperd: boolean;
+    installProgress: number | null;
 }
 
 export interface LoginData {

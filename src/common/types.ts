@@ -20,6 +20,7 @@ export enum Message {
     GetNetwork = "get-network",
     UpdateReady = "update-ready",
     LatestSwapperdVersion = "latest-swapperd-version",
+    InstallProgress = "install-progress",
 }
 
 export type ResponseType<X extends Message> =
@@ -38,6 +39,7 @@ export type ResponseType<X extends Message> =
     X extends Message.GetNetwork ? string :
     X extends Message.UpdateReady ? void :
     X extends Message.LatestSwapperdVersion ? void :
+    X extends Message.InstallProgress ? void :
     never;
 
 export type RequestType<X extends Message> =
@@ -57,4 +59,5 @@ export type RequestType<X extends Message> =
     X extends Message.GetNetwork ? null :
     X extends Message.UpdateReady ? string :
     X extends Message.LatestSwapperdVersion ? string :
+    X extends Message.InstallProgress ? number | null :
     never;

@@ -43,17 +43,12 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             // username
         } = value;
 
-        try {
-            await installSwapperd();
-            // Update the mnemonic if it's not null
-            if (mnemonic) {
-                await updateMnemonic(mnemonic);
-            }
-            return await handleAccountCreation(password);
-        } catch (err) {
-            console.error(err);
-            return "";
+        await installSwapperd(ipc);
+        // Update the mnemonic if it's not null
+        if (mnemonic) {
+            await updateMnemonic(mnemonic);
         }
+        return handleAccountCreation(password);
     });
 
     ipc.on(Message.Notify, (value, _error?: Error) => {
@@ -109,7 +104,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             restart,
         } = value;
         if (swapperd) {
-            await installSwapperd();
+            await installSwapperd(ipc);
         } else if (restart) {
             autoUpdater.quitAndInstall();
         }

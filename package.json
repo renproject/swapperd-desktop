@@ -49,6 +49,7 @@
     "test": "echo 'No tests to run'"
   },
   "dependencies": {
+    "@types/rc-progress": "^2.2.1",
     "auto-launch": "^5.0.5",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
@@ -60,6 +61,7 @@
     "immutable": "^4.0.0-rc.12",
     "menubar": "^5.2.3",
     "moment": "^2.24.0",
+    "rc-progress": "^2.3.0",
     "react": "^16.7.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.7.0",
