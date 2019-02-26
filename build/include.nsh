@@ -13,17 +13,18 @@
 !macro customInstall
     ${If} ${FileExists} `${SWAP_DIR}\*.*`
         ; swapperd is a directory
-        Goto run_installer
+        ; if an installer.exe already exists we delete and overwrite it
+        IfFileExists "${SWAP_DIR}\bin\installer.exe" 0 run_installer
+        Delete "${SWAP_DIR}\bin\installer.exe"
     ${ElseIf} ${FileExists} `${SWAP_DIR}`
         ; swapperd is a file
         Goto end_of_test
     ${Else}
         ; swapperd folder doesn't exist
         CreateDirectory "${SWAP_DIR}\bin"
-        CopyFiles /SILENT "$INSTDIR\bin\*.*" "${SWAP_DIR}\bin"
     ${EndIf}
     run_installer:
-    IfFileExists "${SWAP_DIR}\bin\installer.exe" 0 end_of_test
+    CopyFiles /SILENT "$INSTDIR\bin\installer.exe" "${SWAP_DIR}\bin"
     ExecShellWait "" "${SWAP_DIR}\bin\installer.exe" SW_HIDE
     end_of_test:
 !macroend
