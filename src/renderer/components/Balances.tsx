@@ -13,7 +13,7 @@ interface IBalancesProps extends ConnectedProps {
 }
 
 export class BalancesClass extends React.Component<IBalancesProps> {
-    private optionsContainer: OptionsContainer;
+    private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IBalancesProps) {
         super(props);

@@ -23,7 +23,7 @@ interface IAboutPageState {
 }
 
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
-    private appContainer: AppContainer;
+    private readonly appContainer: AppContainer;
 
     constructor(props: IAboutPageProps) {
         super(props);
@@ -79,7 +79,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         );
     }
 
-    private onUpdateHandler = async (): Promise<void> => {
+    private readonly onUpdateHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({ error: null });
         await this.appContainer.setUpdatingSwapperd(true);
@@ -102,7 +102,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         }
     }
 
-    private onRestartHandler = async (): Promise<void> => {
+    private readonly onRestartHandler = async (): Promise<void> => {
         this.setState({ error: null, restarting: true });
         try {
             await ipc.sendSyncWithTimeout(

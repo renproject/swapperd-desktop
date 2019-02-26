@@ -57,37 +57,35 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         const validForm = username && passwordsMatch && passwordValid;
         const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
 
-        return (
-            <>
-                <Banner title={useMnemonic ? "Import account" : "Create account"} />
-                <div className="account">
-                    {!loading ?
-                        <form onSubmit={this.handleSubmit}>
-                            {useMnemonic &&
-                                <textarea name="mnemonic" placeholder="Please enter your 12 word mnemonic here" onChange={this.handleTextArea} />
-                            }
-                            <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
-                            <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
-                            <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
-                            {error ? <p className="error">{error}</p> : null}
-                            <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
-                            {!useMnemonic ?
-                                <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
-                                :
-                                <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
-                            }
-                        </form>
-                        :
-                        <>
-                            <Loading />
-                            <span>
-                                Setting up your account. This could take a while...
+        return <div className="create-account">
+            <Banner title={useMnemonic ? "Import account" : "Create account"} />
+            <div className="account">
+                {!loading ?
+                    <form onSubmit={this.handleSubmit}>
+                        {useMnemonic &&
+                            <textarea name="mnemonic" placeholder="Please enter your 12 word mnemonic here" onChange={this.handleTextArea} />
+                        }
+                        <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
+                        <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
+                        <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
+                        {error ? <p className="error">{error}</p> : null}
+                        <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
+                        {!useMnemonic ?
+                            <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
+                            :
+                            <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
+                        }
+                    </form>
+                    :
+                    <>
+                        <Loading />
+                        <span>
+                            Setting up your account. This could take a few minutes...
                             </span>
-                        </>
-                    }
-                </div>
-            </>
-        );
+                    </>
+                }
+            </div>
+        </div>;
     }
 
     private handleTextArea(event: React.FormEvent<HTMLTextAreaElement>): void {

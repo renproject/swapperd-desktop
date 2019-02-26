@@ -23,7 +23,7 @@ interface State {
 }
 
 class HeaderClass extends React.Component<Props, State> {
-    private appContainer: AppContainer;
+    private readonly appContainer: AppContainer;
 
     constructor(props: Props) {
         super(props);
@@ -60,7 +60,7 @@ class HeaderClass extends React.Component<Props, State> {
         );
     }
 
-    private handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    private readonly handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const network = event.target.value;
         this.props.setNetwork(network as Network);
     }

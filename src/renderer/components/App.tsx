@@ -25,8 +25,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private callGetAccountTimeout: NodeJS.Timer | undefined;
     private callGetTransactionsTimeout: NodeJS.Timer | undefined;
 
-    private appContainer: AppContainer;
-    private optionsContainer: OptionsContainer;
+    private readonly appContainer: AppContainer;
+    private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IAppProps) {
         super(props);

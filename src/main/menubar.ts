@@ -3,8 +3,8 @@ import * as path from "path";
 import {
     app,
     Menu,
-    shell,
-    nativeImage
+    nativeImage,
+    shell
 } from "electron";
 import menubar from "menubar";
 
@@ -178,4 +178,4 @@ export const showWindow = (mb: Menubar.MenubarApp) => {
     mb.showWindow();
     if (!devMode) { mb.window.setAlwaysOnTop(false); }
     mb.app.focus();
-}
+};

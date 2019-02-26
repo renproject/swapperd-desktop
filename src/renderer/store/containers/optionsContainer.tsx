@@ -20,7 +20,7 @@ export class OptionsContainer extends Container<OptionsData> {
 
     constructor() {
         super();
-        this.restore();
+        this.restore().catch(console.error);
     }
 
     // Trader data
@@ -44,11 +44,11 @@ export class OptionsContainer extends Container<OptionsData> {
         }
     }
 
-    private preserve = async (): Promise<void> => {
+    private readonly preserve = async (): Promise<void> => {
         store.set(STORAGE_KEY, this.state);
     }
 
-    private restore = async (): Promise<void> => {
+    private readonly restore = async (): Promise<void> => {
         // Restore the previous state
         const previousState = store.get(STORAGE_KEY, initialState);
         await this.setState(previousState);
