@@ -7,7 +7,6 @@ import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { Message } from "common/types";
 import { Banner } from "./Banner";
-import { Loading } from "./Loading";
 import { Options } from "./Options";
 
 interface IAboutPageProps extends ConnectedProps {
