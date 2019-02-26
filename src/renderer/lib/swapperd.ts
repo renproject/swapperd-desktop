@@ -211,17 +211,19 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
     }
 }
 
-export async function swapperdReady(password: string): Promise<boolean> {
+export async function swapperdReady(password: string): Promise<void> {
+    let timeout = 5;
     let status;
     do {
         status = await fetchAccountStatus({ network: Network.Mainnet, password });
         if (status !== "none") {
-            return true;
+            return;
         }
         // Sleep for 1 second before retrying
         await sleep(1000);
-    } while (status === "none");
-    return false;
+        timeout -= 1;
+    } while (status === "none" && timeout > 0);
+    throw new Error("Unable to connect to SwapperD back-end.");
 }
 
 export async function getSwaps(options: IOptions): Promise<ISwapsResponse> {

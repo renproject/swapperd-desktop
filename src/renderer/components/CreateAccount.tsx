@@ -21,7 +21,7 @@ interface State {
     password2: string;
     useMnemonic: boolean;
     loading: boolean;
-    error: null | string;
+    error: Error | string | null;
 }
 
 export class CreateAccountClass extends React.Component<Props, State> {
@@ -87,13 +87,16 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         }
                     </form>
                     :
-                    <>
-                        <Loading />
-                        <Circle percent={progress || 0} strokeWidth="4" className="progress" />
-                        <span>
-                            Setting up your account. This could take a few minutes...
-                        </span>
-                    </>
+                    error ?
+                        <p className="error">{error.toString()}</p>
+                        :
+                        <>
+                            <Loading />
+                            <Circle percent={progress || 0} strokeWidth="4" className="progress" />
+                            <span>
+                                Setting up your account. This could take a few minutes...
+                            </span>
+                        </>
                 }
             </div>
         </div>;
@@ -129,12 +132,13 @@ export class CreateAccountClass extends React.Component<Props, State> {
                     0, // timeout
                     { password, mnemonic }
                 );
+                await swapperdReady(password);
             } catch (error) {
-                console.error(`Got error instead!!!: ${error}`);
+                console.log(error);
+                console.error(error);
                 this.setState({ error });
                 return;
             }
-            await swapperdReady(password);
             this.setState({ loading: false });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);

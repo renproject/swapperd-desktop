@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { Circle } from "rc-progress";
+
 import { ipc } from "@/ipc";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
@@ -47,6 +49,9 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const desktopNeedsUpdate = updateReady !== null;
         const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
+
+        const progress = this.appContainer.state.app.installProgress;
+
         return <div className={`about--page ${showUpdate ? "update--available" : ""}`}>
             <Banner title="Settings" />
             <Options />
@@ -58,20 +63,18 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                         <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
                         <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
                     </div>
-                    {!locked && showUpdate && binaryNeedsUpdate && <div className="update--button">
-                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                            <>
-                                <button className="update" onClick={this.onUpdateHandler}>Update</button>
-                            </>
-                        }
-                    </div>}
-                    {!locked && showUpdate && desktopNeedsUpdate && <div className="update--button">
-                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                            <>
-                                <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
-                            </>
-                        }
-                    </div>}
+                    {!locked && showUpdate ?
+                        <div className="update--button">
+                            {updatingSwapperd ? <div className="updating">
+                                <Circle percent={progress || 0} strokeWidth="4" className="progress" /></div> :
+                                <>
+                                    {binaryNeedsUpdate ?
+                                        <button className="update" onClick={this.onUpdateHandler}>Update</button> :
+                                        <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
+                                    }
+                                </>
+                            }
+                        </div> : null}
                 </div>
             </div>
         </div>;
