@@ -44,7 +44,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         } = value;
 
         try {
-            await installSwapperd();
+            await installSwapperd(ipc);
             // Update the mnemonic if it's not null
             if (mnemonic) {
                 await updateMnemonic(mnemonic);
@@ -109,7 +109,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             restart,
         } = value;
         if (swapperd) {
-            await installSwapperd();
+            await installSwapperd(ipc);
         } else if (restart) {
             autoUpdater.quitAndInstall();
         }

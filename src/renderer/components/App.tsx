@@ -82,6 +82,11 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             return;
         });
 
+        ipc.on(Message.InstallProgress, async (percent: number | null) => {
+            await this.appContainer.setInstallProgress(percent);
+            return;
+        });
+
         ipc.on(Message.LatestSwapperdVersion, async (version: string) => {
             this.setState({ latestSwapperdVersion: version });
         });

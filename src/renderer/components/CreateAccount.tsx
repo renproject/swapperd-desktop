@@ -1,16 +1,20 @@
 import * as React from "react";
 
+import { Circle } from "rc-progress";
+
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
 import { swapperdReady } from "@/lib/swapperd";
+import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { Message } from "common/types";
 
-interface ICreateAccountProps {
+interface Props extends ConnectedProps {
     resolve(mnemonic: string, password: string): void;
 }
 
-interface ICreateAccountState {
+interface State {
     mnemonic: string | null;
     username: string;
     password: string;
@@ -20,8 +24,10 @@ interface ICreateAccountState {
     error: null | string;
 }
 
-export class CreateAccount extends React.Component<ICreateAccountProps, ICreateAccountState> {
-    constructor(props: ICreateAccountProps) {
+export class CreateAccountClass extends React.Component<Props, State> {
+    private readonly appContainer: AppContainer;
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             mnemonic: null,
@@ -35,6 +41,8 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         this.handleTextArea = this.handleTextArea.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        [this.appContainer] = this.props.containers;
     }
 
     // tslint:disable-next-line:cyclomatic-complexity
@@ -56,6 +64,8 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
 
         const validForm = username && passwordsMatch && passwordValid;
         const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
+
+        const progress = this.appContainer.state.app.installProgress;
 
         return <div className="create-account">
             <Banner title={useMnemonic ? "Import account" : "Create account"} />
@@ -79,9 +89,10 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
                     :
                     <>
                         <Loading />
+                        <Circle percent={progress || 0} strokeWidth="4" className="progress" />
                         <span>
                             Setting up your account. This could take a few minutes...
-                            </span>
+                        </span>
                     </>
                 }
             </div>
@@ -138,3 +149,5 @@ export class CreateAccount extends React.Component<ICreateAccountProps, ICreateA
         this.setState({ useMnemonic: false });
     }
 }
+
+export const CreateAccount = connect<Props>([AppContainer])(CreateAccountClass);

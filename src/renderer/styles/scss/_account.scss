@@ -28,3 +28,15 @@
 .account .error {
     margin-top: 10px;
 }
+
+.progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+
+    .rc-progress-circle-path {
+        stroke: $blue !important;
+    }
+}
