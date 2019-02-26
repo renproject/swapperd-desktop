@@ -13,8 +13,8 @@ interface IOptionsState {
 }
 
 class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
-    private appContainer: AppContainer;
-    private optionsContainer: OptionsContainer;
+    private readonly appContainer: AppContainer;
+    private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IOptionsProps) {
         super(props);
@@ -44,12 +44,14 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
         );
     }
 
-    private setTransactionSpeed = (speed: number): void => {
-        this.optionsContainer.setDefaultTransactionSpeed(speed);
+    private readonly setTransactionSpeed = (speed: number): void => {
+        this.optionsContainer.setDefaultTransactionSpeed(speed)
+            .catch(console.error);
     }
 
-    private handleCheckBox = (): void => {
-        this.optionsContainer.setHideZeroBalances(!this.optionsContainer.state.hideZeroBalances);
+    private readonly handleCheckBox = (): void => {
+        this.optionsContainer.setHideZeroBalances(!this.optionsContainer.state.hideZeroBalances)
+            .catch(console.error);
     }
 }
 

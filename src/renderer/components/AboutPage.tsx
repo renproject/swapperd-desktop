@@ -23,7 +23,7 @@ interface IAboutPageState {
 }
 
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
-    private appContainer: AppContainer;
+    private readonly appContainer: AppContainer;
 
     constructor(props: IAboutPageProps) {
         super(props);
@@ -47,39 +47,37 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const desktopNeedsUpdate = updateReady !== null;
         const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
-        return (
-            <>
-                <Banner title="Settings" />
-                <Options />
-                <div className="about--footer">
-                    {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
-                    {!locked && error && <p className="error">{error}</p>}
-                    <div className="about--footer--content">
-                        <div>
-                            <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
-                            <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
-                        </div>
-                        {!locked && showUpdate && binaryNeedsUpdate && <div className="update--button">
-                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                                <>
-                                    <button className="update" onClick={this.onUpdateHandler}>Update</button>
-                                </>
-                            }
-                        </div>}
-                        {!locked && showUpdate && desktopNeedsUpdate && <div className="update--button">
-                            {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
-                                <>
-                                    <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
-                                </>
-                            }
-                        </div>}
+        return <div className={`about--page ${showUpdate ? "update--available" : ""}`}>
+            <Banner title="Settings" />
+            <Options />
+            <div className="about--footer">
+                {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
+                {!locked && error && <p className="error">{error}</p>}
+                <div className="about--footer--content">
+                    <div>
+                        <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
+                        <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
                     </div>
+                    {!locked && showUpdate && binaryNeedsUpdate && <div className="update--button">
+                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                            <>
+                                <button className="update" onClick={this.onUpdateHandler}>Update</button>
+                            </>
+                        }
+                    </div>}
+                    {!locked && showUpdate && desktopNeedsUpdate && <div className="update--button">
+                        {updatingSwapperd ? <div className="updating"><p>Updating...</p><Loading /></div> :
+                            <>
+                                <button disabled={restarting} className="update" onClick={this.onRestartHandler}>Restart</button>
+                            </>
+                        }
+                    </div>}
                 </div>
-            </>
-        );
+            </div>
+        </div>;
     }
 
-    private onUpdateHandler = async (): Promise<void> => {
+    private readonly onUpdateHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({ error: null });
         await this.appContainer.setUpdatingSwapperd(true);
@@ -102,7 +100,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         }
     }
 
-    private onRestartHandler = async (): Promise<void> => {
+    private readonly onRestartHandler = async (): Promise<void> => {
         this.setState({ error: null, restarting: true });
         try {
             await ipc.sendSyncWithTimeout(

@@ -28,7 +28,7 @@ function digits(token: Token): BigNumber {
 }
 
 class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapState> {
-    private optionsContainer: OptionsContainer;
+    private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IApproveSwapProps) {
         super(props);
@@ -101,7 +101,7 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
         this.setState({ error: null, loading: true });
 
         try {
-            const mainResponse = await submitSwap({...swapDetails, speed: this.optionsContainer.state.defaultTransactionSpeed}, { password, network });
+            const mainResponse = await submitSwap({ ...swapDetails, speed: this.optionsContainer.state.defaultTransactionSpeed }, { password, network });
             ipc.sendMessage(Message._SwapResponse, { status: mainResponse.status, response: mainResponse.data });
             this.setState({ loading: false });
             this.props.resetSwapDetails();

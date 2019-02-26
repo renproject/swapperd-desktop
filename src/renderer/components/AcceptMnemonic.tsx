@@ -58,16 +58,16 @@ export class AcceptMnemonic extends React.Component<IAcceptMnemonicProps, IAccep
         );
     }
 
-    private handleInputChange = (event: React.FormEvent<HTMLInputElement>): void => {
+    private readonly handleInputChange = (event: React.FormEvent<HTMLInputElement>): void => {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: !this.state[element.name] }));
     }
 
-    private onBack = (): void => {
+    private readonly onBack = (): void => {
         this.setState({ ready: false, accepted: false, backedUp: false });
     }
 
-    private onAccept = (): void => {
+    private readonly onAccept = (): void => {
         this.setState({ ready: true });
     }
 }

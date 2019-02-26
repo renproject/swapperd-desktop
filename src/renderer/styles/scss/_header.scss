@@ -1,0 +1,104 @@
+/* Header */
+
+.header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 5px 10px;
+    width: 100%;
+    background-color: white;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.header img.logo {
+    width: 40px;
+}
+
+.header .header--alert {
+    position: absolute;
+    width: 20px;
+    bottom: -2px;
+    left: 13px;
+}
+
+.header .clickable:hover {
+    cursor: pointer;
+}
+
+.header select {
+    font-weight: 500;
+    text-align-last: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    width: 200px;
+    height: 30px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 10px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+select[disabled] {
+    cursor: not-allowed;
+}
+
+.header--settings {
+  &:hover {
+    width: 85px;
+  }
+
+  position: absolute;
+  width: 30px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.header--settings--logo {
+  background-image: url(images/settings.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.header--settings:hover .header--settings--logo::after {
+  content: "Settings";
+  margin-left: 33px;
+  color: #000;
+}
+
+.header--settings.settings--open {
+  width: 15px;
+
+  .header--settings--logo {
+    background-image: none;
+
+    &::before {
+      content: "\2715";
+      font-size: 18px;
+    }
+  }
+
+  &:hover {
+    width: 55px;
+
+    .header--settings--logo::after {
+      content: "Close";
+      margin-left: 5px;
+    }
+  }
+}

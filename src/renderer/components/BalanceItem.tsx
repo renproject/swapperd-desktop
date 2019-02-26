@@ -37,16 +37,16 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
         const { token, amount, address } = this.props;
         const { copied } = this.state;
         return (
-            <div className="balances--item" onClick={this.handleWithdraw}>
+            <div role="button" className="balances--item" onClick={this.handleWithdraw}>
                 <div className="balances--token">
-                    <img src={getLogo(token)} />
+                    <img alt="" role="presentation" src={getLogo(token)} />
                     <p>{token}</p>
                 </div>
                 <div className="balances--amount">
                     {/* Show at least 2 decimal places and at most 10 decimal places */}
                     <p>{amount.toFixed(Math.min(10, Math.max(2, (amount.toFixed().split(".")[1] || []).length)))}</p>
                 </div>
-                <div className="balances--address" onClick={this.consumeClick}>
+                <div role="button" className="balances--address" onClick={this.consumeClick}>
                     <CopyToClipboard text={address} onCopy={this.handleCopy}>
                         {address === "" ?
                             <p className="address" />
@@ -56,12 +56,12 @@ export class BalanceItem extends React.Component<IBalanceItemProps, IBalanceItem
                         }
                     </CopyToClipboard>
                 </div>
-                <div className="balances--transfer" onClick={this.handleWithdraw} />
+                <div role="button" className="balances--transfer" onClick={this.handleWithdraw} />
             </div >
         );
     }
 
-    private handleCopy = (): void => {
+    private readonly handleCopy = (): void => {
         this.setState({ copied: this.props.address });
         this.clipboardTimeout = setTimeout(() => {
             this.setState({ copied: "" });

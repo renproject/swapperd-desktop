@@ -1,6 +1,7 @@
 /* Balances */
 
 .balances {
+  font-size: 12px;
   position: relative;
   border-bottom: 1px solid #ccc;
   height: 220px;
@@ -46,58 +47,6 @@
 
 .balances--address:hover p.address {
   text-decoration: underline;
-}
-
-.header--settings {
-  &:hover {
-    width: 80px;
-  }
-  position: absolute;
-  width: 30px;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.header--settings--logo {
-  background-image: url(images/settings.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 30px;
-  width: 30px;
-  line-height: 30px;
-  display: flex;
-  align-items: center;
-}
-
-.header--settings:hover .header--settings--logo::after {
-  content: "Settings";
-  margin-left: 33px;
-  color: #000;
-}
-
-.header--settings.settings--open {
-  width: 15px;
-  .header--settings--logo {
-    background-image: none;
-
-    &::before {
-      content: "\2715";
-      font-size: 18px;
-    }
-  }
-
-  &:hover {
-    width: 50px;
-
-    .header--settings--logo::after {
-      content: "Close";
-      font-size: 12px;
-      margin-left: 5px;
-    }
-  }
 }
 
 .balances--transfer {

@@ -1,8 +1,11 @@
 .options--page {
   padding: 10px;
+  .update--available & {
+    padding-bottom: 150px;
+  }
 }
 
-.options--page > h2:first-child {
+.options--page>h2:first-child {
   margin-top: 0;
 }
 
@@ -15,16 +18,18 @@
   color: #0E61EC;
   border: solid 2px #0E61EC;
   transition: all 0.2s;
+
   &:last-child {
     border-left-width: 0;
   }
+
   &:hover {
-    background-color: #0E61EC;
+    background-color: lighten(#0E61EC, 5%);
     color: white;
   }
 }
 
-.options--page .input-group:not(:hover) {
+.options--page .input-group {
   button.secondary.active {
     background-color: #0E61EC;
     color: white;

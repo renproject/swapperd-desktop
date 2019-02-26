@@ -28,7 +28,7 @@ interface IApproveWithdrawState {
 }
 
 class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IApproveWithdrawState> {
-    private optionsContainer: OptionsContainer;
+    private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IApproveWithdrawProps) {
         super(props);
@@ -98,14 +98,14 @@ class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IAppro
         );
     }
 
-    private onEscape = (event: KeyboardEvent) : void => {
+    private readonly onEscape = (event: KeyboardEvent): void => {
         if (event.keyCode === 27) {
             this.onReject();
         }
     }
 
-    private cancelWithdraw = () => {
-        this.setState({gettingPassword : false, password: ""});
+    private readonly cancelWithdraw = () => {
+        this.setState({ gettingPassword: false, password: "" });
     }
 
     private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -143,7 +143,7 @@ class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IAppro
         }
     }
 
-    private handleCheckBox = (): void => {
+    private readonly handleCheckBox = (): void => {
         if (!this.state.sendAllChecked) {
             const available = this.getAvailable().toFixed();
             this.setState({ amount: available });

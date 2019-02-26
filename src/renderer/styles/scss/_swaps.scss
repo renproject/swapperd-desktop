@@ -1,0 +1,122 @@
+/* Swaps */
+
+.tabs {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.tabs li {
+    color: #666;
+    border-bottom: 1px solid #ccc;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    width: 50%;
+    padding: 8px 0;
+    text-align: center;
+    cursor: pointer;
+}
+
+.tabs li.active {
+    font-weight: 500;
+    color: black;
+    border-bottom: 3px solid #006FE8;
+}
+
+.tabs li:not(.active) {
+    color: #666;
+}
+
+.swaps {
+    min-height: 150px;
+    position: relative;
+}
+
+.swaps>p {
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.swaps--item {
+    border-bottom: 1px solid #ccc;
+}
+
+.swaps--details {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.swaps--details:hover {
+    background-color: #fafafa;
+}
+
+.swaps--details>div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.swaps--details>div:last-child {
+    align-items: flex-end;
+}
+
+.swaps--details>div:last-child>p.large {
+    font-size: 16px;
+}
+
+.swaps--details>div>*+* {
+    margin-top: 5px;
+}
+
+.swaps--extra {
+    background-color: #fafafa;
+    padding: 10px;
+}
+
+.swaps--extra h3 {
+    margin-bottom: 10px;
+}
+
+.swaps--extra p {
+    line-height: 2;
+}
+
+.swaps--expiry {
+    background-color: #ca954a;
+    height: 2px;
+    margin-left: auto;
+}
+
+.swaps--status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    color: white;
+    border-radius: 2px;
+    padding: 2px 6px;
+}
+
+.swaps--status.pending {
+    background-color: #FFCA00;
+}
+
+.swaps--status.failed,
+.swaps--status.canceled,
+.swaps--status.expired {
+    background-color: #F45532;
+}
+
+.swaps--status.confirmed {
+    background-color: #31CC9A;
+}
+
+.swaps--status.unknown {
+    background-color: #666;
+}
+
+.swaps .error {
+    padding: 0 10px;
+}

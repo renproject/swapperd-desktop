@@ -47,7 +47,7 @@ class CustomInput extends React.Component<ICustomInputProps, ICustomInputState> 
         );
     }
 
-    private handleInput = (event: React.FormEvent<HTMLInputElement>): void => {
+    private readonly handleInput = (event: React.FormEvent<HTMLInputElement>): void => {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
         if (this.props.onChange) {
@@ -77,45 +77,46 @@ export class MnemonicCheck extends React.Component<IMnemonicCheckProps, IMnemoni
     // tslint:disable:jsx-no-lambda
     public render() {
         const { mnemonic, indices, formValues } = this.state;
-        return (
-            <>
-                <Banner title="Backup confirmation" />
-                <div className="mnemonic">
-                    <p>To confirm your 12 words have been backed up, please enter the required words.</p>
-                    <div className="mnemonic--check">
-                        {
-                            indices.map((element: number, index: number) => {
-                                // tslint:disable-next-line:react-this-binding-issue
-                                return <CustomInput onChange={(event: any) => this.handleInputChange(event, mnemonic[element])} key={index} word={mnemonic[element]} placeholder={`Word no. ${element + 1}`} />;
-                            })
-                        }
-                    </div>
-                    <div className="input-group">
-                        <button className="secondary" onClick={this.props.onBack}>Back</button>
-                        <button disabled={!this.isValid(formValues)} onClick={this.props.onFinish}>Continue</button>
-                    </div>
+        return <div className="mnemonic-check">
+            <Banner title="Backup confirmation" />
+            <div className="mnemonic">
+                <p>To confirm your 12 words have been backed up, please enter the required words.</p>
+                <div className="mnemonic--check">
+                    {
+                        indices.map((element: number, index: number) => {
+                            // tslint:disable-next-line:react-this-binding-issue
+                            return <CustomInput onChange={(event: any) => { this.handleInputChange(event, mnemonic[element]); }} key={index} word={mnemonic[element]} placeholder={`Word no. ${element + 1}`} />;
+                        })
+                    }
                 </div>
-            </>
-        );
+                <div className="input-group">
+                    <button className="secondary" onClick={this.props.onBack}>Back</button>
+                    <button disabled={!this.isValid(formValues)} onClick={this.props.onFinish}>Continue</button>
+                </div>
+            </div>
+        </div>;
     }
 
-    private handleInputChange = (event: React.FormEvent<HTMLInputElement>, inputPropName: string): void => {
+    private readonly handleInputChange = (event: React.FormEvent<HTMLInputElement>, inputPropName: string): void => {
         const newState = { ...this.state };
         newState.formValues[inputPropName] = (event.target as HTMLInputElement).value;
         this.setState(newState);
     }
 
-    private isValid = (formValues: any): boolean => {
+    private readonly isValid = (formValues: any): boolean => {
         const { wordsToCheck } = this.state;
         const keys = Object.keys(formValues);
         if (keys.length !== wordsToCheck) {
+            console.log(false, "keys.length !== wordsToCheck", keys.length !== wordsToCheck, keys.length, wordsToCheck);
             return false;
         }
         for (const key of keys) {
             if (key !== formValues[key]) {
+                console.log(false, "key !== formValues[key]", key !== formValues[key], key, formValues[key]);
                 return false;
             }
         }
+        console.log(true);
         return true;
     }
     // tslint:enable:jsx-no-lambda
