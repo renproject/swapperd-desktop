@@ -45,14 +45,15 @@
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
     "start": "electron-webpack dev",
-    "build": "npm run prebuild && electron-webpack && electron-builder",
-    "build:all": "npm run prebuild && electron-webpack && electron-builder -wml --x64",
-    "build:win": "npm run prebuild && electron-webpack && electron-builder -w --x64",
-    "build:mac": "npm run prebuild && electron-webpack && electron-builder -m",
-    "build:linux": "npm run prebuild && electron-webpack && electron-builder -l",
-    "build:dir": "npm run build --dir -c.compression=store -c.mac.identity=null",
+    "build": "yarn run prebuild && electron-webpack && electron-builder",
+    "build:all": "yarn run prebuild && electron-webpack && electron-builder -wml --x64",
+    "build:win": "yarn run prebuild && electron-webpack && electron-builder -w --x64",
+    "build:mac": "yarn run prebuild && electron-webpack && electron-builder -m",
+    "build:linux": "yarn run prebuild && electron-webpack && electron-builder -l",
+    "build:dir": "yarn run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "patch-package && electron-builder install-app-deps",
-    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck"
+    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
+    "test": "echo 'No tests to run'"
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
