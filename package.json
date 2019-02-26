@@ -34,11 +34,13 @@
       "resources"
     ],
     "productName": "SwapperD Desktop",
-    "publish": [{
-      "provider": "github",
-      "owner": "republicprotocol",
-      "repo": "swapperd-desktop-releases"
-    }]
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "republicprotocol",
+        "repo": "swapperd-desktop-releases"
+      }
+    ]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
