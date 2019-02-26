@@ -14,8 +14,7 @@
       "target": "AppImage"
     },
     "mac": {
-      "icon": "resources/app.icns",
-      "artifactName": "swapperd-desktop-mac.dmg"
+      "icon": "resources/app.icns"
     },
     "win": {
       "target": "nsis",
