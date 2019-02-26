@@ -134,7 +134,6 @@ export class CreateAccountClass extends React.Component<Props, State> {
                 );
                 await swapperdReady(password);
             } catch (error) {
-                console.log(error);
                 console.error(error);
                 this.setState({ error });
                 return;
