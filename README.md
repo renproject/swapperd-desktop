@@ -9,8 +9,8 @@ Download the latest release from [SwapperD Desktop Releases](https://github.com/
 #### Clone this repo
 
 ```bash
-$ git clone https://github.com/republicprotocol/swapperd-native
-$ cd swapperd-native
+$ git clone https://github.com/renproject/swapperd-desktop
+$ cd swapperd-desktop
 ```
 
 #### Install dependencies
