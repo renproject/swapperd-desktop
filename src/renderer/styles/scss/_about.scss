@@ -9,9 +9,11 @@
 }
 
 .about--footer {
-  position: fixed;
+  .update--available & { 
+    position: fixed;
+    box-shadow: 0px 0px 15px #00000099;
+  }
   background: white;
-  box-shadow: 0px 0px 15px #00000099;
   bottom: 0;
   width: 100%;
 }

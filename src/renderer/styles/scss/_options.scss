@@ -1,6 +1,8 @@
 .options--page {
   padding: 10px;
-  padding-bottom: 110px;
+  .update--available & {
+    padding-bottom: 150px;
+  }
 }
 
 .options--page>h2:first-child {

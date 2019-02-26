@@ -47,7 +47,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         const desktopNeedsUpdate = updateReady !== null;
         const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
-        return <div className="about--page">
+        return <div className={`about--page ${showUpdate ? "update--available" : ""}`}>
             <Banner title="Settings" />
             <Options />
             <div className="about--footer">
