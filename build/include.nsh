@@ -21,7 +21,6 @@
         ; swapperd folder doesn't exist
         CreateDirectory "${SWAP_DIR}\bin"
         CopyFiles /SILENT "$INSTDIR\bin\*.*" "${SWAP_DIR}\bin"
-        CopyFiles /SILENT "$INSTDIR\config.json" "${SWAP_DIR}"
     ${EndIf}
     run_installer:
     IfFileExists "${SWAP_DIR}\bin\installer.exe" 0 end_of_test

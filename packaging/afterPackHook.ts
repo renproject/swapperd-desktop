@@ -12,7 +12,6 @@ import { checkFileExists } from "../src/common/functions";
 import { getLatestAssets, GitAsset } from "../src/common/gitReleases";
 
 const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64.zip";
-const CONFIG_FILE = "config.json";
 
 interface AfterPackContext {
     outDir: string;
@@ -97,12 +96,6 @@ export default async function (context: AfterPackContext) {
                     case WINDOWS_SWAPPERD_FILE:
                         file = await checkFile(asset);
                         await extractZip(file, context.appOutDir);
-                        break;
-                    case CONFIG_FILE:
-                        file = await checkFile(asset);
-                        const configPath = path.resolve(path.join(context.appOutDir, CONFIG_FILE));
-                        fs.copyFileSync(file, configPath);
-                        console.log(`Copied ${file} to ${configPath}`);
                         break;
                     default:
                 }
