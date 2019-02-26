@@ -107,16 +107,13 @@ export class MnemonicCheck extends React.Component<IMnemonicCheckProps, IMnemoni
         const { wordsToCheck } = this.state;
         const keys = Object.keys(formValues);
         if (keys.length !== wordsToCheck) {
-            console.log(false, "keys.length !== wordsToCheck", keys.length !== wordsToCheck, keys.length, wordsToCheck);
             return false;
         }
         for (const key of keys) {
             if (key !== formValues[key]) {
-                console.log(false, "key !== formValues[key]", key !== formValues[key], key, formValues[key]);
                 return false;
             }
         }
-        console.log(true);
         return true;
     }
     // tslint:enable:jsx-no-lambda
