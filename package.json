@@ -15,7 +15,8 @@
     },
     "mac": {
       "target": "zip",
-      "icon": "resources/app.icns"
+      "icon": "resources/app.icns",
+      "artifactName": "swapperd-desktop-mac.zip"
     },
     "win": {
       "target": "nsis",
