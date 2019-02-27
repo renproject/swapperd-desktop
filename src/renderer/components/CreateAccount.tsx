@@ -21,7 +21,7 @@ interface State {
     password2: string;
     useMnemonic: boolean;
     loading: boolean;
-    error: Error | null;
+    error: string | null;
 }
 
 export class CreateAccountClass extends React.Component<Props, State> {
@@ -56,13 +56,11 @@ export class CreateAccountClass extends React.Component<Props, State> {
 
         if (!error) {
             if (password && !passwordValid) {
-                error = new Error("Your password needs to be at least 8 characters long");
+                error = "Your password needs to be at least 8 characters long";
             } else if (password2 && !passwordsMatch) {
-                error = new Error("Your passwords do not match");
+                error = "Your passwords do not match";
             }
         }
-
-        const errorString = `${error && error.message ? error.message : error}`;
 
         const validForm = username && passwordsMatch && passwordValid;
         const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
@@ -80,7 +78,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                         <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
                         <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
-                        {error ? <p className="error">{errorString}</p> : null}
+                        {error ? <p className="error">{error}</p> : ""}
                         <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
                         {!useMnemonic ?
                             <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
@@ -90,7 +88,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                     </form>
                     :
                     error ?
-                        <p className="error">{errorString}</p>
+                        <p className="error">{error}</p>
                         :
                         <>
                             <Loading />
@@ -119,36 +117,27 @@ export class CreateAccountClass extends React.Component<Props, State> {
         // if (/\s/.test(this.state.username)) {
         //     this.setState({ error: "Please enter a valid username." });
         // }
-        this.setState({ loading: true });
-        try {
-            await this.createAccount();
-        } catch (error) {
-            this.setState({ error });
-        }
+        await this.createAccount();
         await this.appContainer.setInstallProgress(null);
     }
 
     private readonly createAccount = async (): Promise<void> => {
-        setTimeout(async () => {
-            const { useMnemonic, mnemonic, password } = this.state;
-            // const { username } = this.state;
-            let newMnemonic: string;
-            try {
-                newMnemonic = await ipc.sendSyncWithTimeout(
-                    Message.CreateAccount,
-                    0, // timeout
-                    { password, mnemonic }
-                );
-                await swapperdReady(password);
-            } catch (error) {
-                console.error(error);
-                this.setState({ error });
-                return;
-            }
-            this.setState({ loading: false });
+        this.setState({ loading: true });
+        const { useMnemonic, mnemonic, password } = this.state;
+        try {
+            const newMnemonic = await ipc.sendSyncWithTimeout(
+                Message.CreateAccount,
+                0, // timeout
+                { password, mnemonic }
+            );
+            await swapperdReady(password);
+            this.setState({ loading: false, error: null });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
-        });
+        } catch (error) {
+            console.error(error);
+            this.setState({ error, loading: false });
+        }
     }
 
     private readonly restoreWithMnemonic = (): void => {
