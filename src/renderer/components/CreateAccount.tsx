@@ -21,7 +21,7 @@ interface State {
     password2: string;
     useMnemonic: boolean;
     loading: boolean;
-    error: Error | string | null;
+    error: Error | null;
 }
 
 export class CreateAccountClass extends React.Component<Props, State> {
@@ -56,9 +56,9 @@ export class CreateAccountClass extends React.Component<Props, State> {
 
         if (!error) {
             if (password && !passwordValid) {
-                error = "Your password needs to be at least 8 characters long";
+                error = new Error("Your password needs to be at least 8 characters long");
             } else if (password2 && !passwordsMatch) {
-                error = "Your passwords do not match";
+                error = new Error("Your passwords do not match");
             }
         }
 
@@ -88,7 +88,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                     </form>
                     :
                     error ?
-                        <p className="error">{error.toString()}</p>
+                        <p className="error">{`${error && error.message ? error.message : error}`}</p>
                         :
                         <>
                             <Loading />
