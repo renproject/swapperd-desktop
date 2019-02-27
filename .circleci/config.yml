@@ -34,9 +34,7 @@ jobs:
             sudo apt-get install --no-install-recommends --assume-yes wine wine32
           name: Install Wine
       - run: yarn install
-
-      # Build for Linux and Windows
-      - run: yarn run build -- --x64 -wl
+      - run: yarn run build:all
 
       - save_cache:
           paths:
