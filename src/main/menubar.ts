@@ -77,11 +77,6 @@ export const setupMenubar = () => {
             // Someone tried to run a second instance, we should focus our window.
             mb.showWindow();
         });
-
-        // Create myWindow, load the rest of the app, etc...
-        mb.app.on("ready", () => {
-            //
-        });
     }
 
     mb.on("ready", async () => {
@@ -97,6 +92,8 @@ export const setupMenubar = () => {
         });
 
         await installExtensions();
+
+        mb.showWindow();
 
         console.log("SwapperD Desktop is ready.");
     });
