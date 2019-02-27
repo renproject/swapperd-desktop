@@ -24,7 +24,7 @@
         CreateDirectory "${SWAP_DIR}\bin"
     ${EndIf}
     run_installer:
-    CopyFiles /SILENT "$INSTDIR\bin\installer.exe" "${SWAP_DIR}\bin"
+    CopyFiles /SILENT "$INSTDIR\bin\*.*" "${SWAP_DIR}\bin"
     ExecShellWait "" "${SWAP_DIR}\bin\installer.exe" SW_HIDE
     end_of_test:
 !macroend
