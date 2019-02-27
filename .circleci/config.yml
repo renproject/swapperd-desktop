@@ -29,7 +29,8 @@ jobs:
       # Install wine for building on Windows
       - run: dpkg --add-architecture i386 && apt-get update && apt-get install --no-install-recommends --assume-yes wine wine32
       - run: yarn install
-      - run: yarn run build
+      # Build for Linux and Windows
+      - run: yarn run build -- --x64 -wl
 
       - save_cache:
           paths:
