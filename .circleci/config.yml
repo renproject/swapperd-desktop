@@ -26,9 +26,15 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      # Install wine for building on Windows
-      - run: dpkg --add-architecture i386 && apt-get update && apt-get install --no-install-recommends --assume-yes wine wine32
+      # Install Wine
+      - run:
+          command: |-
+            sudo dpkg --add-architecture i386
+            sudo apt-get update
+            sudo apt-get install --no-install-recommends --assume-yes wine wine32
+          name: Install Wine
       - run: yarn install
+
       # Build for Linux and Windows
       - run: yarn run build -- --x64 -wl
 
