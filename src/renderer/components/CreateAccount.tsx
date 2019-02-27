@@ -62,6 +62,8 @@ export class CreateAccountClass extends React.Component<Props, State> {
             }
         }
 
+        const errorString = `${error && error.message ? error.message : error}`;
+
         const validForm = username && passwordsMatch && passwordValid;
         const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
 
@@ -78,7 +80,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                         <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
                         <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
-                        {error ? <p className="error">{error}</p> : null}
+                        {error ? <p className="error">{errorString}</p> : null}
                         <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
                         {!useMnemonic ?
                             <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
@@ -88,7 +90,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                     </form>
                     :
                     error ?
-                        <p className="error">{`${error && error.message ? error.message : error}`}</p>
+                        <p className="error">{errorString}</p>
                         :
                         <>
                             <Loading />
@@ -118,7 +120,12 @@ export class CreateAccountClass extends React.Component<Props, State> {
         //     this.setState({ error: "Please enter a valid username." });
         // }
         this.setState({ loading: true });
-        await this.createAccount();
+        try {
+            await this.createAccount();
+        } catch (error) {
+            this.setState({ error });
+        }
+        await this.appContainer.setInstallProgress(null);
     }
 
     private readonly createAccount = async (): Promise<void> => {

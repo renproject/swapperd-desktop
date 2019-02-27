@@ -45,9 +45,7 @@ export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
     };
 
     if (process.platform !== "win32") {
-        const result = await run(`curl https://git.io/test-swapperd -sSLf | sh`, onErr);
-        ipc.sendMessage(Message.InstallProgress, null);
-        return result;
+        return run(`curl https://git.io/test-swapperd -sSLf | sh`, onErr);
     }
 };
 

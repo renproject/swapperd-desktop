@@ -98,8 +98,8 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             console.error(`Got error instead!!!: ${error}`);
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ error });
-            return;
         }
+        await this.appContainer.setInstallProgress(null);
     }
 
     private readonly onRestartHandler = async (): Promise<void> => {
@@ -113,8 +113,8 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
             this.setState({ restarting: false });
         } catch (error) {
             this.setState({ restarting: false, error });
-            return;
         }
+        await this.appContainer.setInstallProgress(null);
     }
 }
 
