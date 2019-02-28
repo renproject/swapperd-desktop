@@ -141,14 +141,14 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             settingsOpen: showAbout,
         };
 
-        if (false && mnemonic !== "") {
+        if (mnemonic !== "") {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
-        if (true || !accountExists) {
+        if (!accountExists) {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <CreateAccount resolve={this.accountCreated} />
