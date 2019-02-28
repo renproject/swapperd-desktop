@@ -23,6 +23,13 @@ interface IAboutPageState {
     restarting: boolean;
 }
 
+export const VersionBlock = (props: { swapperdBinaryVersion: string | null; swapperdDesktopVersion: string}) => (
+    <div>
+        <div className="version-banner">Binary version: <span>{props.swapperdBinaryVersion || "Unknown"}</span></div>
+        <div className="version-banner">UI version: <span>{props.swapperdDesktopVersion}</span></div>
+    </div>
+);
+
 class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
     private readonly appContainer: AppContainer;
 
@@ -58,10 +65,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                 {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
                 {!locked && error && <p className="error">{error}</p>}
                 <div className="about--footer--content">
-                    <div>
-                        <div className="version-banner">Binary version: <span>{swapperdBinaryVersion || "Unknown"}</span></div>
-                        <div className="version-banner">UI version: <span>{swapperdDesktopVersion}</span></div>
-                    </div>
+                    <VersionBlock swapperdBinaryVersion={swapperdBinaryVersion} swapperdDesktopVersion={swapperdDesktopVersion} />
                     {!locked && showUpdate ?
                         <div className="update--button">
                             {updatingSwapperd ? <div className="updating">

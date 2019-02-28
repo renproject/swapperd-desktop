@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { remote } from "electron";
 
-import { AboutPage } from "@/components/AboutPage";
+import { AboutPage, VersionBlock } from "@/components/AboutPage";
 import { AcceptMnemonic } from "@/components/AcceptMnemonic";
 import { ApproveSwap } from "@/components/ApproveSwap";
 import { ApproveWithdraw } from "@/components/ApproveWithdraw";
@@ -152,6 +152,12 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <CreateAccount resolve={this.accountCreated} />
+                <div className="app--footer">
+                    <VersionBlock
+                        swapperdBinaryVersion={swapperdVersion}
+                        swapperdDesktopVersion={APP_VERSION}
+                    />
+                </div>
             </div>;
         }
 
