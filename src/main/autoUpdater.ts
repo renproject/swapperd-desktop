@@ -38,6 +38,10 @@ export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
         if (match && match.length > 1) {
             const percent = parseFloat(match[1]);
             if (!isNaN(percent) && percent > last) {
+                // Sometimes the percentage jumps to 100% straight away so ignore it if that happens
+                if (percent === 100 && last === 0) {
+                    return;
+                }
                 ipc.sendMessage(Message.InstallProgress, percent);
                 last = percent;
             }
