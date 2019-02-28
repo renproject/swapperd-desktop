@@ -18,28 +18,43 @@ jobs:
 
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
       # Install Wine
       - run:
+          name: Install Wine
           command: |-
             sudo dpkg --add-architecture i386
             sudo apt-get update
             sudo apt-get install --no-install-recommends --assume-yes wine wine32
-          name: Install Wine
-      - run: yarn install
-      - run: yarn run build:all
 
+      # Download and cache dependencies
+      - restore_cache:
+          name: Restore node_modules
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+      - run:
+          name: Build
+          command: yarn run build:all
       - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
+          name: Save node_modules
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test
+      - run:
+          name: Run tests
+          command: yarn test
