@@ -25,7 +25,7 @@ interface IAboutPageState {
 
 export const VersionBlock = (props: { swapperdBinaryVersion: string | null; swapperdDesktopVersion: string}) => (
     <div>
-        <div className="version-banner">Binary version: <span>{props.swapperdBinaryVersion || "Unknown"}</span></div>
+        {props.swapperdBinaryVersion && <div className="version-banner">Binary version: <span>{props.swapperdBinaryVersion || "Unknown"}</span></div>}
         <div className="version-banner">UI version: <span>{props.swapperdDesktopVersion}</span></div>
     </div>
 );
