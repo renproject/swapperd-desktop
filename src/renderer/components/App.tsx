@@ -12,7 +12,7 @@ import { Header } from "@/components/Header";
 import { Swaps } from "@/components/Swaps";
 import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
-import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest } from "@/lib/swapperd";
+import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
@@ -141,14 +141,14 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             settingsOpen: showAbout,
         };
 
-        if (mnemonic !== "") {
+        if (false && mnemonic !== "") {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <AcceptMnemonic mnemonic={mnemonic} resolve={this.mnemonicSaved} />
             </div>;
         }
 
-        if (!accountExists) {
+        if (true || !accountExists) {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <CreateAccount resolve={this.accountCreated} />
@@ -168,13 +168,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (swapDetails) {
+        if (swapDetails !== null) {
             return <div className="app">
                 <Header {...headerProps} hideSettings={true} hideNetwork={true} />
                 <ApproveSwap
                     origin={origin}
                     network={network}
-                    swapDetails={swapDetails}
+                    swapDetails={swapDetails as IPartialSwapRequest}
                     resetSwapDetails={this.resetSwapDetails}
                 />
             </div>;
@@ -193,13 +193,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             </div>;
         }
 
-        if (withdrawRequest) {
+        if (withdrawRequest !== null) {
             return <div className="app">
                 <Header {...headerProps} hideNetwork={false} disableNetwork={true} />
                 <ApproveWithdraw
                     network={network}
                     balances={traderBalances}
-                    withdrawRequest={withdrawRequest}
+                    withdrawRequest={withdrawRequest as IWithdrawRequest}
                     setWithdrawRequest={this.setWithdrawRequest}
                 />
             </div>;
