@@ -8,7 +8,6 @@ import { ipc } from "@/ipc";
 import { swapperdReady } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
-import { rawError } from "common/functions";
 import { Message } from "common/types";
 
 interface Props extends ConnectedProps {
@@ -137,7 +136,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         } catch (error) {
             console.error(error);
-            this.setState({ error: rawError(error), loading: false });
+            this.setState({ error, loading: false });
         }
     }
 
