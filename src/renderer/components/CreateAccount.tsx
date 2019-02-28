@@ -88,7 +88,10 @@ export class CreateAccountClass extends React.Component<Props, State> {
                     </form>
                     :
                     error ?
-                        <p className="error">{error}</p>
+                        <div>
+                            <p className="error">{error}</p>
+                            <button onClick={this.retry}>Retry</button>
+                        </div>
                         :
                         <>
                             <Loading />
@@ -112,32 +115,40 @@ export class CreateAccountClass extends React.Component<Props, State> {
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
+    private retry = async (): Promise<void> => {
+        await this.createAccount(true);
+    }
+
     private async handleSubmit(): Promise<void> {
         // Ensure username does not contain any whitespace
         // if (/\s/.test(this.state.username)) {
         //     this.setState({ error: "Please enter a valid username." });
         // }
         await this.createAccount();
-        await this.appContainer.setInstallProgress(null);
     }
 
-    private readonly createAccount = async (): Promise<void> => {
-        this.setState({ loading: true });
+    private readonly createAccount = async (skipInstall?: boolean): Promise<void> => {
+        this.setState({ loading: true, error: null });
         const { useMnemonic, mnemonic, password } = this.state;
+        let newMnemonic: string = mnemonic || "";
         try {
-            const newMnemonic = await ipc.sendSyncWithTimeout(
-                Message.CreateAccount,
-                0, // timeout
-                { password, mnemonic }
-            );
+            if (!skipInstall) {
+                newMnemonic = await ipc.sendSyncWithTimeout(
+                    Message.CreateAccount,
+                    0, // timeout
+                    { password, mnemonic }
+                );
+            }
+
             await swapperdReady(password);
             this.setState({ loading: false, error: null });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         } catch (error) {
             console.error(error);
-            this.setState({ error, loading: false });
+            this.setState({ mnemonic: newMnemonic, error: error.message });
         }
+        await this.appContainer.setInstallProgress(null);
     }
 
     private readonly restoreWithMnemonic = (): void => {
