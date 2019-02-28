@@ -212,7 +212,7 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
 }
 
 export async function swapperdReady(password: string): Promise<void> {
-    let timeout = 5;
+    let timeout = 60;
     let status;
     do {
         status = await fetchAccountStatus({ network: Network.Mainnet, password });
