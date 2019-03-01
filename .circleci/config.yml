@@ -2,20 +2,16 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
-jobs:
-  build:
+version: 2.1
+
+_defaults: &defaults
     docker:
-      # specify the version you desire here
       - image: circleci/node:8.15
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
     working_directory: ~/swapperd-desktop
 
+jobs:
+  build:
+    <<: *defaults
     steps:
       - checkout
       # Install Wine
