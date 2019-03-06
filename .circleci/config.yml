@@ -16,18 +16,22 @@ commands:
       - run:
           name: Setup Git
           command: |
+            pwd
             RW_REPO_URL="https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+            echo ${CIRCLE_WORKING_DIRECTORY}
+            eval echo ${CIRCLE_WORKING_DIRECTORY}
 
-            if [ -e ${CIRCLE_WORKING_DIRECTORY}/.git ]
+            if [ -e $(eval echo ${CIRCLE_WORKING_DIRECTORY})/.git ]
             then
-              cd ${CIRCLE_WORKING_DIRECTORY}
+              cd $(eval echo ${CIRCLE_WORKING_DIRECTORY})
               git remote set-url origin "${RW_REPO_URL}" || true
               git fetch --force origin "master:remotes/origin/master"
             else
               mkdir -p $(eval echo ${CIRCLE_WORKING_DIRECTORY})
-              cd ${CIRCLE_WORKING_DIRECTORY}
+              cd $(eval echo ${CIRCLE_WORKING_DIRECTORY})
               git clone ${RW_REPO_URL} .
             fi
+            pwd
             git fetch --all
   merge:
     description: "Merge from branch into another branch"
@@ -43,6 +47,7 @@ commands:
       - run:
           name: Merging branch
           command: |
+            pwd
             git reset --hard
             git checkout --track origin/<< parameters.into >>
             git merge origin/<< parameters.from >> -v
