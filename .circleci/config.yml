@@ -16,7 +16,7 @@ commands:
       - run:
           name: Setup Git
           command: |
-            WORKING_DIR="eval echo ${CIRCLE_WORKING_DIRECTORY}"
+            WORKING_DIR=$(eval echo ${CIRCLE_WORKING_DIRECTORY})
             RW_REPO_URL="https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
 
             if [ -e ${WORKING_DIR}/.git ]
