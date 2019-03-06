@@ -1,4 +1,5 @@
-# SwapperdD Desktop
+# SwapperdD Desktop &middot; [![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/renproject/swapperd-desktop/blob/master/LICENSE) [![CircleCI Status](https://circleci.com/gh/renproject/swapperd-desktop.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/renproject/swapperd-desktop)
+
 
 ## Installation
 
