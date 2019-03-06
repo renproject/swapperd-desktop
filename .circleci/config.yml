@@ -7,7 +7,6 @@ version: 2.1
 _defaults: &defaults
     docker:
       - image: circleci/node:8.15
-    working_directory: ~/swapperd-desktop
 
 commands:
   rw_checkout:
