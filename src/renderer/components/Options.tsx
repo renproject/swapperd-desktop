@@ -2,6 +2,8 @@
 // tslint:disable:jsx-no-lambda
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
@@ -46,12 +48,12 @@ class OptionsClass extends React.Component<IOptionsProps, IOptionsState> {
 
     private readonly setTransactionSpeed = (speed: number): void => {
         this.optionsContainer.setDefaultTransactionSpeed(speed)
-            .catch(console.error);
+            .catch(logger.error);
     }
 
     private readonly handleCheckBox = (): void => {
         this.optionsContainer.setHideZeroBalances(!this.optionsContainer.state.hideZeroBalances)
-            .catch(console.error);
+            .catch(logger.error);
     }
 }
 

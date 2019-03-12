@@ -1,3 +1,5 @@
+import logger from "electron-log";
+
 import { setupAutoLaunch } from "./autoLaunch";
 import { setupAutoUpdater } from "./autoUpdater";
 import { setupExpress } from "./express";
@@ -17,7 +19,7 @@ if (
 
 const mb = setupMenubar();
 const ipc = setupIPC(mb);
-setupAutoLaunch(mb).catch(console.error);
+setupAutoLaunch(mb).catch(logger.error);
 setupExpress(mb, ipc);
 setupListeners(mb, ipc);
 setupAutoUpdater(ipc);

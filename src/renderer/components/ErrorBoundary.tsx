@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 interface Props {
 }
 
@@ -19,7 +21,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             error,
             errorInfo,
         });
-        console.error(error);
+        logger.error(error);
     }
 
     /**

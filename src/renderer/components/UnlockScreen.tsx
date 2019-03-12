@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
@@ -85,7 +87,7 @@ export class UnlockScreen extends React.Component<IUnlockScreenProps, IUnlockScr
         try {
             await getInfo(password);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
 
         this.setState({

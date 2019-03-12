@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
+import logger from "electron-log";
 import KeyBinding from "react-keybinding-component";
 
 import { Banner } from "@/components/Banner";
@@ -173,7 +174,7 @@ class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IAppro
             this.setState({ loading: false });
             this.props.setWithdrawRequest(null);
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
     }

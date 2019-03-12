@@ -1,5 +1,7 @@
 import * as path from "path";
 
+import logger from "electron-log";
+
 import {
     app,
     Menu,
@@ -27,7 +29,7 @@ const installExtensions = async () => {
         return Promise.all(
             extensions.map(name => installer.default(installer[name],
                 forceDownload)),
-        ).catch(console.error);
+        ).catch(logger.error);
     }
 };
 
@@ -98,7 +100,7 @@ export const setupMenubar = () => {
 
         await installExtensions();
 
-        console.log("SwapperD Desktop is ready.");
+        logger.info("SwapperD Desktop is ready.");
     });
 
     mb.on("after-create-window", () => {
@@ -140,13 +142,13 @@ export const setupMenubar = () => {
     //         }
     //         exec(`"%programfiles(x86)%\\Swapperd\\bin\\installer.exe" --username ${args[0]} --password ${args[1]}${mnemonicFlag}`, (err, stdout, stderr) => {
     //             if (err) {
-    //                 console.error(err);
+    //                 logger.error(err);
     //                 return;
     //             }
     //             exec('sc create swapperd binpath= "%programfiles(x86)%\\Swapperd\\bin\\swapperd.exe"', () => {
     //                 exec('sc start swapperd', (err, stdout, stderr) => {
     //                     if (err) {
-    //                         console.error(err);
+    //                         logger.error(err);
     //                         return;
     //                     }
 
@@ -156,7 +158,7 @@ export const setupMenubar = () => {
     //     } else {
     //         exec(`curl https://releases.republicprotocol.com/swapperd/remove.sh -sSf | sh -s`, (err, stdout, stderr) => {
     //             if (err) {
-    //                 console.error(err);
+    //                 logger.error(err);
     //                 return;
     //             }
     //             const data = fs.readFileSync(os.homedir() + "/.swapperd/testnet.json", {

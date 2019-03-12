@@ -1,3 +1,5 @@
+import logger from "electron-log";
+
 import { IpcMain, IpcRenderer, WebContents } from "electron";
 
 import { Message, RequestType, ResponseType } from "common/types";
@@ -67,7 +69,7 @@ export class IPC {
                 const [params, error] = args;
                 response = await callback(params, error);
             } catch (error) {
-                console.error(error);
+                logger.error(error);
                 this.replyToMessage<T>(routeResponse(route), response, error);
                 return;
             }

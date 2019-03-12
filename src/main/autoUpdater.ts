@@ -1,3 +1,5 @@
+import logger from "electron-log";
+
 import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
@@ -20,11 +22,11 @@ const run = async (command: string, onErr?: (data: string) => void) => new Promi
     // cmd.stderr.pipe(process.stderr);
 
     cmd.stdout.on("data", (data) => {
-        console.log(data);
+        logger.info(data);
     });
 
     cmd.stderr.on("data", (data) => {
-        console.error(data);
+        logger.error(data);
         if (onErr) {
             onErr(data);
         }
@@ -81,30 +83,30 @@ export const checkForUpdates = async (_ipc: IPC): Promise<UpdateCheckResult | nu
 // tslint:disable-next-line: no-any
 export const setupAutoUpdater = (ipc: IPC) => {
     autoUpdater.on("checking-for-update", () => {
-        console.log("Checking for updates...");
+        logger.info("Checking for updates...");
     });
 
     autoUpdater.on("update-available", (_info) => {
-        console.log("Update available.");
+        logger.info("Update available.");
     });
 
     autoUpdater.on("update-not-available", (_info) => {
-        console.log("Update not available.");
+        logger.info("Update not available.");
     });
 
     autoUpdater.on("error", (err: Error) => {
-        console.log(`Error in auto-updater: ${err}`);
+        logger.info(`Error in auto-updater: ${err}`);
     });
 
     autoUpdater.on("download-progress", (progressObj) => {
-        console.log(`\
+        logger.info(`\
 Download speed: ${progressObj.bytesPerSecond} \
 - Downloaded ${progressObj.percent}% \
 (${progressObj.transferred}/${progressObj.total})`);
     });
 
     autoUpdater.on("update-downloaded", (_info) => {
-        console.log("Update downloaded");
+        logger.info("Update downloaded");
 
         /**
          * Code to restart automatically:
@@ -126,11 +128,11 @@ Download speed: ${progressObj.bytesPerSecond} \
             // The update check succeeded so don't check again for another hour
             timeout = 60 * 60 * 1000;
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
 
-        setTimeout(async () => interval().catch(console.error), timeout);
+        setTimeout(async () => interval().catch(logger.error), timeout);
     };
 
-    interval().catch(console.error);
+    interval().catch(logger.error);
 };

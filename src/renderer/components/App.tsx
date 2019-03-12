@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { remote } from "electron";
 
 import { AboutPage, VersionBlock } from "@/components/AboutPage";
@@ -61,7 +63,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 await this.optionsContainer.setNetwork(network);
                 this.setState({ swapDetails: swap.body, origin });
             } catch (error) {
-                console.error(error);
+                logger.error(error);
             }
         });
 
@@ -91,8 +93,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             this.setState({ latestSwapperdVersion: version });
         });
 
-        this.callGetAccount().catch(console.error);
-        this.callGetBalances().catch(console.error);
+        this.callGetAccount().catch(logger.error);
+        this.callGetBalances().catch(logger.error);
 
         const callGetTransactions = async () => {
             const { network } = this.optionsContainer.state;
@@ -103,19 +105,19 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 try {
                     await this.appContainer.updateSwaps(network);
                 } catch (e) {
-                    console.error(e.response && e.response.data.error || e);
+                    logger.error(e.response && e.response.data.error || e);
                 }
                 try {
                     await this.appContainer.updateTransfers(network);
                 } catch (e) {
-                    console.error(e.response && e.response.data.error || e);
+                    logger.error(e.response && e.response.data.error || e);
                 }
             }
 
             if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
             this.callGetTransactionsTimeout = setTimeout(callGetTransactions, 5 * 1000);
         };
-        callGetTransactions().catch(console.error);
+        callGetTransactions().catch(logger.error);
     }
 
     // tslint:disable:jsx-no-lambda
@@ -227,8 +229,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             network,
         );
         // Fetch new balances immediately
-        await this.callGetBalances().catch(console.error);
-        await this.callGetAccount().catch(console.error);
+        await this.callGetBalances().catch(logger.error);
+        await this.callGetAccount().catch(logger.error);
     }
 
     private readonly mnemonicSaved = (): void => {
@@ -271,7 +273,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     this.setState({ balancesError: null });
                 }
             } catch (e) {
-                console.error(e);
+                logger.error(e);
                 timeout = 1 * 1000;
                 this.setState({ balancesError: `Your balances may be out of date! The most recent attempt to update balances failed.` });
             }
@@ -312,7 +314,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 }
             }
         } catch (e) {
-            console.error(e.response && e.response.data.error || e);
+            logger.error(e.response && e.response.data.error || e);
         }
 
         this.callGetAccountTimeout = setTimeout(this.callGetAccount, 10 * 1000);

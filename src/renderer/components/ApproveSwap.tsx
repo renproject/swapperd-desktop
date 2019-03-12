@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
+import logger from "electron-log";
 
 import { Banner } from "@/components/Banner";
 import { ipc } from "@/ipc";
@@ -106,7 +107,7 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
             this.setState({ loading: false });
             this.props.resetSwapDetails();
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
     }

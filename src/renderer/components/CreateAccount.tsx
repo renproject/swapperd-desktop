@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { Circle } from "rc-progress";
 
 import { Banner } from "@/components/Banner";
@@ -145,7 +147,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             this.setState({ mnemonic: newMnemonic, error: error.message });
         }
         await this.appContainer.setInstallProgress(null);

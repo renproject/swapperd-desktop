@@ -1,3 +1,4 @@
+import logger from "electron-log";
 import Store from "electron-store";
 
 import { Container } from "unstated";
@@ -20,7 +21,7 @@ export class OptionsContainer extends Container<OptionsData> {
 
     constructor() {
         super();
-        this.restore().catch(console.error);
+        this.restore().catch(logger.error);
     }
 
     // Trader data

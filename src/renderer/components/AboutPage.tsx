@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { Circle } from "rc-progress";
 
 import { ipc } from "@/ipc";
@@ -99,7 +101,7 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                 updateCompleteCallback();
             }
         } catch (error) {
-            console.error(`Got error instead!!!: ${error}`);
+            logger.error(`Got error instead!!!: ${error}`);
             await this.appContainer.setUpdatingSwapperd(false);
             this.setState({ error });
         }
