@@ -6,9 +6,9 @@ import logger from "electron-log";
 import { Banner } from "@/components/Banner";
 import { ipc } from "@/ipc";
 import { getLogo } from "@/lib/logos";
-import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "common/swapperd";
 import { Message } from "common/types";
 
 interface IApproveSwapProps extends ConnectedProps {

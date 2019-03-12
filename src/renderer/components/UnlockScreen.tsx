@@ -5,7 +5,7 @@ import logger from "electron-log";
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
-import { getInfo } from "@/lib/swapperd";
+import { getInfo } from "common/swapperd";
 import { Message } from "common/types";
 
 interface IUnlockScreenProps {

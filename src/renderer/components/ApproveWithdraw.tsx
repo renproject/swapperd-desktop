@@ -7,9 +7,9 @@ import KeyBinding from "react-keybinding-component";
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { getLogo } from "@/lib/logos";
-import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "common/swapperd";
 
 interface IApproveWithdrawProps extends ConnectedProps {
     network: string;

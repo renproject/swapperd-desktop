@@ -1,7 +1,7 @@
 import moment from "moment";
 import * as React from "react";
 
-import { ITransferItem } from "@/lib/swapperd";
+import { ITransferItem } from "common/swapperd";
 
 interface ITransferItemProps {
     transferItem: ITransferItem;

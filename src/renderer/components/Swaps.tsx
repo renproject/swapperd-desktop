@@ -7,7 +7,7 @@ import { Loading } from "@/components/Loading";
 import { SwapItem } from "@/components/SwapItem";
 import { TransferItem } from "@/components/TransferItem";
 import { ipc } from "@/ipc";
-import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "@/lib/swapperd";
+import { ISwapItem, ISwapsResponse, ITransferItem, ITransfersResponse } from "common/swapperd";
 import { Message } from "common/types";
 
 interface ISwapsProps {

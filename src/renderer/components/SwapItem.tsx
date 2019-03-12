@@ -4,7 +4,7 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { naturalTime } from "@/lib/naturalTime";
-import { ISwapItem } from "@/lib/swapperd";
+import { ISwapItem } from "common/swapperd";
 
 interface ISwapItemProps {
     swapItem: ISwapItem;

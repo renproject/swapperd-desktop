@@ -4,8 +4,8 @@ import logger from "electron-log";
 
 import { OrderedMap } from "immutable";
 
-import { sleep } from "@/lib/sleep";
-import { Network } from "common/types";
+import { sleep } from "./sleep";
+import { Network } from "./types";
 
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
@@ -138,7 +138,7 @@ export const decimals = new Map<Token, number>()
     .set(Token.USDC, 6)
     .set(Token.GUSD, 2);
 
-function swapperEndpoint(network: string) {
+export function swapperEndpoint(network: string) {
     switch (network) {
         case Network.Mainnet:
             return MAINNET_ENDPOINT;

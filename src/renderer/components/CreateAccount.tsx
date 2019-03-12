@@ -7,9 +7,9 @@ import { Circle } from "rc-progress";
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
-import { swapperdReady } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
+import { swapperdReady } from "common/swapperd";
 import { Message } from "common/types";
 
 interface Props extends ConnectedProps {

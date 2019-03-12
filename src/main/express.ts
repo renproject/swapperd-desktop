@@ -15,21 +15,10 @@ import {
 } from "./mainIpc";
 
 import { IPC } from "common/ipc";
+import { swapperEndpoint } from "common/swapperd";
 import { Message } from "common/types";
 
 const PORT = 7928;
-
-const swapperdEndpoint = (networkIn: string) => {
-    const network = networkIn || "mainnet";
-    switch (network) {
-        case "mainnet":
-            return "http://localhost:7927";
-        case "testnet":
-            return "http://localhost:17927";
-        default:
-            throw new Error(`Invalid network query parameter: ${network}`);
-    }
-};
 
 export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     const expressApp = express();
@@ -71,7 +60,7 @@ export const setupExpress = (mb: MenubarApp, ipc: IPC) => {
     expressApp.get("/*", async (req, res) => {
         log(`${highlight}expressApp${reset}${dim}: ${req.url}`);
 
-        const swapperdUrl = `${swapperdEndpoint(req.query.network)}${req.path}`;
+        const swapperdUrl = `${swapperEndpoint(req.query.network)}${req.path}`;
 
         let password: string;
         try {
