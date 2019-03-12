@@ -119,7 +119,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private retry = async (): Promise<void> => {
+    private readonly retry = async (): Promise<void> => {
         await this.createAccount(true);
     }
 

@@ -176,7 +176,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <ApproveSwap
                     origin={origin}
                     network={network}
-                    swapDetails={swapDetails as IPartialSwapRequest}
+                    swapDetails={swapDetails}
                     resetSwapDetails={this.resetSwapDetails}
                 />
             </div>;

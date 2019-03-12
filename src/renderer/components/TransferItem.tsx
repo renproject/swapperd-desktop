@@ -33,6 +33,7 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
 
         return (
             <div className="swaps--item">
+                {/*tslint:disable-next-line:react-a11y-event-has-role*/}
                 <div className="swaps--details" onClick={this.handleClick}>
                     <div>
                         <p>{timestamp}</p>
