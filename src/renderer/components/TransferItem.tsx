@@ -1,7 +1,7 @@
 import moment from "moment";
 import * as React from "react";
 
-import { ITransferItem } from "@/lib/swapperd";
+import { ITransferItem } from "common/swapperd";
 
 interface ITransferItemProps {
     transferItem: ITransferItem;
@@ -33,6 +33,7 @@ export class TransferItem extends React.Component<ITransferItemProps, ITransferI
 
         return (
             <div className="swaps--item">
+                {/*tslint:disable-next-line:react-a11y-event-has-role*/}
                 <div className="swaps--details" onClick={this.handleClick}>
                     <div>
                         <p>{timestamp}</p>

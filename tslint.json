@@ -44,7 +44,7 @@
         "newline-per-chained-call": false,
         "prefer-array-literal": false,
         "match-default-export-name": false,
-        "no-console": false,
+        "no-console": [true],
 
         // Warnings
         "no-suspicious-comment": {

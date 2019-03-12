@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
+import logger from "electron-log";
 
 import { OrderedMap } from "immutable";
 
-import { sleep } from "@/lib/sleep";
-import { Network } from "common/types";
+import { sleep } from "./sleep";
+import { Network } from "./types";
 
 const MAINNET_ENDPOINT = "http://localhost:7927";
 const TESTNET_ENDPOINT = "http://localhost:17927";
@@ -137,7 +138,7 @@ export const decimals = new Map<Token, number>()
     .set(Token.USDC, 6)
     .set(Token.GUSD, 2);
 
-function swapperEndpoint(network: string) {
+export function swapperEndpoint(network: string) {
     switch (network) {
         case Network.Mainnet:
             return MAINNET_ENDPOINT;
@@ -206,7 +207,7 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
             return "locked";
         }
     } catch (e) {
-        console.error(e);
+        logger.error(e);
         return "none";
     }
 }
@@ -371,7 +372,7 @@ export async function getInfo(password: string): Promise<boolean> {
             }
         });
     })).then((results) => results.every(status => status)).catch(err => {
-        console.error(err);
+        logger.error(err);
         return false;
     });
 }

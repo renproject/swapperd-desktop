@@ -1,6 +1,6 @@
 import { Network } from "common/types";
 
-import { IBalances, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
+import { IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperd";
 
 export interface ApplicationData {
     app: AppData;

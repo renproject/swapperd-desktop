@@ -1,9 +1,20 @@
+import logger from "electron-log";
+
+import { CONSOLE_MAIN_FORMAT, FILE_FORMAT } from "../common/logger";
 import { setupAutoLaunch } from "./autoLaunch";
 import { setupAutoUpdater } from "./autoUpdater";
 import { setupExpress } from "./express";
 import { setupListeners } from "./listeners";
 import { setupIPC } from "./mainIpc";
 import { setupMenubar } from "./menubar";
+
+logger.transports.console.format = CONSOLE_MAIN_FORMAT;
+logger.transports.file.format = FILE_FORMAT;
+
+// In production mode, only log info level messages
+if (process.env.NODE_ENV !== "development") {
+    logger.transports.file.level = "info";
+}
 
 // Fix Electron menubar icons not working in Gnome
 // https://github.com/electron/electron/issues/9046#issuecomment-296169661
@@ -17,7 +28,7 @@ if (
 
 const mb = setupMenubar();
 const ipc = setupIPC(mb);
-setupAutoLaunch(mb).catch(console.error);
+setupAutoLaunch(mb).catch(logger.error);
 setupExpress(mb, ipc);
 setupListeners(mb, ipc);
 setupAutoUpdater(ipc);

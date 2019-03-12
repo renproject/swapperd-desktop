@@ -1,14 +1,15 @@
 import * as React from "react";
 
 import BigNumber from "bignumber.js";
+import logger from "electron-log";
 import KeyBinding from "react-keybinding-component";
 
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { getLogo } from "@/lib/logos";
-import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "common/swapperd";
 
 interface IApproveWithdrawProps extends ConnectedProps {
     network: string;
@@ -173,7 +174,7 @@ class ApproveWithdrawClass extends React.Component<IApproveWithdrawProps, IAppro
             this.setState({ loading: false });
             this.props.setWithdrawRequest(null);
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             this.setState({ loading: false, error: e.response && e.response.data.error || e });
         }
     }

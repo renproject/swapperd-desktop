@@ -1,5 +1,8 @@
 import * as React from "react";
 
+import axios from "axios";
+import logger from "electron-log";
+
 import { remote } from "electron";
 
 import { AboutPage, VersionBlock } from "@/components/AboutPage";
@@ -12,10 +15,10 @@ import { Header } from "@/components/Header";
 import { Swaps } from "@/components/Swaps";
 import { UnlockScreen } from "@/components/UnlockScreen";
 import { ipc } from "@/ipc";
-import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "common/swapperd";
 import { Message, Network } from "common/types";
 
 import { version as APP_VERSION } from "../../../package.json";
@@ -24,6 +27,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
     private callGetBalancesTimeout: NodeJS.Timer | undefined;
     private callGetAccountTimeout: NodeJS.Timer | undefined;
     private callGetTransactionsTimeout: NodeJS.Timer | undefined;
+    private callCheckExpressTimeout: NodeJS.Timer | undefined;
 
     private readonly appContainer: AppContainer;
     private readonly optionsContainer: OptionsContainer;
@@ -40,6 +44,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             latestSwapperdVersion: null,
             showAbout: false,
             balancesError: null,
+            expressError: null,
         };
         [this.appContainer, this.optionsContainer] = this.props.containers;
     }
@@ -49,6 +54,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         if (this.callGetBalancesTimeout) { clearTimeout(this.callGetBalancesTimeout); }
         if (this.callGetAccountTimeout) { clearTimeout(this.callGetAccountTimeout); }
         if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
+        if (this.callCheckExpressTimeout) { clearTimeout(this.callCheckExpressTimeout); }
     }
 
     public readonly componentDidMount = async () => {
@@ -61,7 +67,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 await this.optionsContainer.setNetwork(network);
                 this.setState({ swapDetails: swap.body, origin });
             } catch (error) {
-                console.error(error);
+                logger.error(error);
             }
         });
 
@@ -91,8 +97,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             this.setState({ latestSwapperdVersion: version });
         });
 
-        this.callGetAccount().catch(console.error);
-        this.callGetBalances().catch(console.error);
+        this.callGetAccount().catch(logger.error);
+        this.callGetBalances().catch(logger.error);
+        this.callCheckExpress().catch(logger.error);
 
         const callGetTransactions = async () => {
             const { network } = this.optionsContainer.state;
@@ -103,19 +110,19 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 try {
                     await this.appContainer.updateSwaps(network);
                 } catch (e) {
-                    console.error(e.response && e.response.data.error || e);
+                    logger.error(e.response && e.response.data.error || e);
                 }
                 try {
                     await this.appContainer.updateTransfers(network);
                 } catch (e) {
-                    console.error(e.response && e.response.data.error || e);
+                    logger.error(e.response && e.response.data.error || e);
                 }
             }
 
             if (this.callGetTransactionsTimeout) { clearTimeout(this.callGetTransactionsTimeout); }
             this.callGetTransactionsTimeout = setTimeout(callGetTransactions, 5 * 1000);
         };
-        callGetTransactions().catch(console.error);
+        callGetTransactions().catch(logger.error);
     }
 
     // tslint:disable:jsx-no-lambda
@@ -124,7 +131,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { login: { password } } = this.appContainer.state;
         const { network } = this.optionsContainer.state;
 
-        const { balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest } = this.state;
+        const { expressError, balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest } = this.state;
         const { balances, swaps, transfers } = this.appContainer.state.trader;
         const traderBalances = balances.get(network) || null;
         const traderSwaps = swaps.get(network) || null;
@@ -174,7 +181,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <ApproveSwap
                     origin={origin}
                     network={network}
-                    swapDetails={swapDetails as IPartialSwapRequest}
+                    swapDetails={swapDetails}
                     resetSwapDetails={this.resetSwapDetails}
                 />
             </div>;
@@ -207,6 +214,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
         return <div className="app">
             <Header {...headerProps} />
+            {expressError && <div className="notice notice--error">{expressError}</div>}
             <Balances balances={traderBalances} balancesError={balancesError} setWithdrawRequest={this.setWithdrawRequest} />
             <Swaps swaps={traderSwaps} transfers={traderTransfers} />
         </div>;
@@ -227,8 +235,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             network,
         );
         // Fetch new balances immediately
-        await this.callGetBalances().catch(console.error);
-        await this.callGetAccount().catch(console.error);
+        await this.callGetBalances().catch(logger.error);
+        await this.callGetAccount().catch(logger.error);
     }
 
     private readonly mnemonicSaved = (): void => {
@@ -271,7 +279,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                     this.setState({ balancesError: null });
                 }
             } catch (e) {
-                console.error(e);
+                logger.error(e);
                 timeout = 1 * 1000;
                 this.setState({ balancesError: `Your balances may be out of date! The most recent attempt to update balances failed.` });
             }
@@ -281,6 +289,22 @@ class AppClass extends React.Component<IAppProps, IAppState> {
 
     private readonly logoClick = () => {
         this.setState({ showAbout: !this.state.showAbout });
+    }
+
+    private readonly callCheckExpress = async () => {
+        if (this.callCheckExpressTimeout) { clearTimeout(this.callCheckExpressTimeout); }
+        let timeout = 10 * 1000;
+        try {
+            await axios({
+                method: "GET",
+                url: "http://localhost:7928/version",
+            });
+        } catch (err) {
+            timeout = 1 * 1000;
+            logger.error(`Express server has stopped running! ${err}`);
+            this.setState({ expressError: "There appears to be an issue with your installation. Please reinstall SwapperD Desktop or contact us at https://t.me/renproject if this error persists." });
+        }
+        this.callCheckExpressTimeout = setTimeout(this.callCheckExpress, timeout);
     }
 
     // Check if user has an account set-up
@@ -306,13 +330,14 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 this.setState({
                     swapperdVersion: infoResponse.version,
                 });
+                logger.info(`Detected: SwapperD ${infoResponse.version} running`);
 
                 if (!this.state.accountExists) {
                     this.setState({ accountExists: true });
                 }
             }
         } catch (e) {
-            console.error(e.response && e.response.data.error || e);
+            logger.error(e.response && e.response.data.error || e);
         }
 
         this.callGetAccountTimeout = setTimeout(this.callGetAccount, 10 * 1000);
@@ -332,6 +357,7 @@ interface IAppState {
     showAbout: boolean;
     latestSwapperdVersion: string | null;
     balancesError: string | null;
+    expressError: string | null;
 }
 
 export const App = connect<IAppProps>([AppContainer, OptionsContainer])(AppClass);

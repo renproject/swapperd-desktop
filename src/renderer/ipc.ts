@@ -8,6 +8,6 @@ import { IPC } from "common/ipc";
 
 export type IPCResponse<T> = [T, Error];
 
-// const log = process.env.NODE_ENV === "development" ? console.log : () => null;
+// const log = process.env.NODE_ENV === "development" ? logger.info : () => null;
 
 export const ipc = new IPC(ipcRenderer, () => ipcRenderer);

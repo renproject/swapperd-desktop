@@ -1,7 +1,7 @@
 import { Container } from "unstated";
 
-import { getBalances, getSwaps, getTransfers, IBalances, ISwapsResponse, ITransfersResponse } from "@/lib/swapperd";
 import { ApplicationData } from "@/store/storeTypes";
+import { getBalances, getSwaps, getTransfers, IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperd";
 import { Network } from "common/types";
 
 const initialState: ApplicationData = {

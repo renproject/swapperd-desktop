@@ -3,9 +3,9 @@ import * as React from "react";
 import alertImage from "@/styles/images/alert.png";
 import logo from "@/styles/images/logo.png";
 
-import { NETWORKS } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
+import { NETWORKS } from "common/swapperd";
 import { Network } from "common/types";
 
 interface Props extends ConnectedProps {

@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import logger from "electron-log";
+
 import bcrypt from "bcryptjs";
 import sqlite3All, { Database } from "sqlite3";
 
@@ -89,7 +91,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         } catch (err) {
             // getPasswordHash will throw an error if it couldn't access the sqlite database
             // or if it could not retrieve the requested value
-            console.error(err);
+            logger.error(err);
             throw new Error("Failed to verify password");
         }
     });
@@ -115,7 +117,7 @@ async function storePasswordHash(db: Database, account: string, password: string
     const hash = await bcrypt.hash(password, 10);
     db.run(`INSERT INTO accounts VALUES ("${account}", "${hash}", "${nonce}")`, (_result: unknown, err: Error) => {
         if (err) {
-            console.error(err);
+            logger.error(err);
             return;
         }
     });
@@ -198,7 +200,7 @@ async function updateMnemonic(mnemonic: string): Promise<void> {
         if (await checkFileExists(file)) {
             await updateMnemonicJsonFile(mnemonic || "", file);
         } else {
-            console.error(`Could not find file: ${file}`);
+            logger.error(`Could not find file: ${file}`);
         }
     }
 }

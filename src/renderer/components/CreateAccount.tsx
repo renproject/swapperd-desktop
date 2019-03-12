@@ -1,13 +1,15 @@
 import * as React from "react";
 
+import logger from "electron-log";
+
 import { Circle } from "rc-progress";
 
 import { Banner } from "@/components/Banner";
 import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
-import { swapperdReady } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
+import { swapperdReady } from "common/swapperd";
 import { Message } from "common/types";
 
 interface Props extends ConnectedProps {
@@ -81,8 +83,10 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         {error ? <p className="error">{error}</p> : ""}
                         <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
                         {!useMnemonic ?
+                            // tslint:disable-next-line:react-a11y-anchors
                             <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
                             :
+                            // tslint:disable-next-line:react-a11y-anchors
                             <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
                         }
                     </form>
@@ -115,7 +119,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private retry = async (): Promise<void> => {
+    private readonly retry = async (): Promise<void> => {
         await this.createAccount(true);
     }
 
@@ -145,7 +149,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             this.setState({ mnemonic: newMnemonic, error: error.message });
         }
         await this.appContainer.setInstallProgress(null);

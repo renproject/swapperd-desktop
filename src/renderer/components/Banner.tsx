@@ -17,6 +17,7 @@ export class Banner extends React.Component<IBannerProps> {
             <div className="banner">
                 <h1>{title || ""}</h1>
                 {reject !== undefined &&
+                    // tslint:disable-next-line:react-a11y-event-has-role
                     <div className={`banner--cross ${disabled ? "disabled" : ""}`} onClick={disabled ? undefined : reject} />
                 }
             </div>

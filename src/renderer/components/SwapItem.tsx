@@ -4,7 +4,7 @@ import * as React from "react";
 import BigNumber from "bignumber.js";
 
 import { naturalTime } from "@/lib/naturalTime";
-import { ISwapItem } from "@/lib/swapperd";
+import { ISwapItem } from "common/swapperd";
 
 interface ISwapItemProps {
     swapItem: ISwapItem;
@@ -53,6 +53,7 @@ export class SwapItem extends React.Component<ISwapItemProps, ISwapItemState> {
         }
         return (
             <div className="swaps--item">
+                {/* tslint:disable-next-line:react-a11y-event-has-role */}
                 <div className="swaps--details" onClick={this.handleClick}>
                     <div>
                         <p>{timestamp}</p>

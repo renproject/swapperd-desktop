@@ -2,9 +2,9 @@ import * as React from "react";
 
 import { BalanceItem } from "@/components/BalanceItem";
 import { Loading } from "@/components/Loading";
-import { IBalances, IPartialWithdrawRequest, Token } from "@/lib/swapperd";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { IBalances, IPartialWithdrawRequest, Token } from "common/swapperd";
 
 interface IBalancesProps extends ConnectedProps {
     balances: null | IBalances;
