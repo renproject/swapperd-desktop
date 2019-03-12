@@ -308,6 +308,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 this.setState({
                     swapperdVersion: infoResponse.version,
                 });
+                logger.info(`Detected: SwapperD ${infoResponse.version} running`);
 
                 if (!this.state.accountExists) {
                     this.setState({ accountExists: true });

@@ -9,11 +9,6 @@ import { MenubarApp } from "./menubar";
 
 const devMode = process.env.NODE_ENV === "development";
 
-// In production mode, only log info level messages
-if (!devMode) {
-  logger.transports.file.level = "info";
-}
-
 export const reset = "\x1b[0m";
 export const dim = "\x1b[2m";
 export const highlight = "\x1b[36m";
