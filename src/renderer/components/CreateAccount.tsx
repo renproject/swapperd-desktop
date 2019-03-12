@@ -83,8 +83,10 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         {error ? <p className="error">{error}</p> : ""}
                         <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
                         {!useMnemonic ?
+                            // tslint:disable-next-line:react-a11y-anchors
                             <a role="button" onClick={this.restoreWithMnemonic}>Import using a mnemonic instead</a>
                             :
+                            // tslint:disable-next-line:react-a11y-anchors
                             <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
                         }
                     </form>

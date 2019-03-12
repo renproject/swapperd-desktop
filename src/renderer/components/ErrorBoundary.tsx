@@ -33,6 +33,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             // Error path
             return (
                 <div>
+                    {/* tslint:disable-next-line:react-a11y-anchors */}
                     <h2>Something went wrong. <a role="button" onClick={this.relaunch}>Click to reload</a></h2>
                     <details style={{ whiteSpace: "pre-wrap" }}>
                         {this.state.error && this.state.error.toString()}
