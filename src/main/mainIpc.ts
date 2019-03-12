@@ -14,7 +14,7 @@ export const dim = "\x1b[2m";
 export const highlight = "\x1b[36m";
 // tslint:disable-next-line: no-any
 export const log = devMode ? (x: any) => {
-  logger.info(`[debug] ${dim}${x}${reset}`);
+  logger.debug(`${dim}${x}${reset}`);
 } : () => null;
 
 export const setupIPC = (mb: MenubarApp) => {
