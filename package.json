@@ -34,7 +34,12 @@
     "files": [
       "resources"
     ],
-    "productName": "SwapperD Desktop"
+    "productName": "SwapperD Desktop",
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
@@ -47,7 +52,9 @@
     "build:dir": "yarn run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "patch-package && electron-builder install-app-deps",
     "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
-    "test": "echo 'No tests to run'"
+    "test": "echo 'No tests to run'",
+    "release": "yarn run build:all -p onTagOrDraft"
+
   },
   "dependencies": {
     "@types/rc-progress": "^2.2.1",
