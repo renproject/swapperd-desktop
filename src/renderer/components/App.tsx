@@ -302,7 +302,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         } catch (err) {
             timeout = 1 * 1000;
             logger.error(`Express server has stopped running! ${err}`);
-            this.setState({ expressError: "There is appears to be an issue with your installation. Please reinstall SwapperD Desktop or contact us at https://t.me/renproject if this error persists." });
+            this.setState({ expressError: "There appears to be an issue with your installation. Please reinstall SwapperD Desktop or contact us at https://t.me/renproject if this error persists." });
         }
         this.callCheckExpressTimeout = setTimeout(this.callCheckExpress, timeout);
     }
