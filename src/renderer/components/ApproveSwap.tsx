@@ -9,10 +9,10 @@ import { getLogo } from "@/lib/logos";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
 import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "common/swapperd";
-import { Message } from "common/types";
+import { Message, Network } from "common/types";
 
 interface IApproveSwapProps extends ConnectedProps {
-    network: string;
+    network: Network;
     origin: string;
     swapDetails: IPartialSwapRequest;
     resetSwapDetails(): void;
