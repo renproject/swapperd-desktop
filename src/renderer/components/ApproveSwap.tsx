@@ -63,7 +63,7 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
         if (error !== null) {
             errString = error;
         } else if (!this.sufficientBalance() && leftOver !== null) {
-            errString = `Insufficient ${swapDetails.sendToken} balance. You need another ${leftOver.abs().toFixed()} ${swapDetails.sendToken} for this swap.`;
+            errString = `Insufficient ${swapDetails.sendToken} balance. Another ${leftOver.abs().toFixed()} ${swapDetails.sendToken} is needed to complete this swap.`;
         }
 
         return (
