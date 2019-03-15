@@ -7,12 +7,13 @@ import { Banner } from "@/components/Banner";
 import { ipc } from "@/ipc";
 import { getLogo } from "@/lib/logos";
 import { connect, ConnectedProps } from "@/store/connect";
+import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
 import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "common/swapperd";
-import { Message } from "common/types";
+import { Message, Network } from "common/types";
 
 interface IApproveSwapProps extends ConnectedProps {
-    network: string;
+    network: Network;
     origin: string;
     swapDetails: IPartialSwapRequest;
     resetSwapDetails(): void;
@@ -29,6 +30,7 @@ function digits(token: Token): BigNumber {
 }
 
 class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapState> {
+    private readonly appContainer: AppContainer;
     private readonly optionsContainer: OptionsContainer;
 
     constructor(props: IApproveSwapProps) {
@@ -42,7 +44,7 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
         this.onAccept = this.onAccept.bind(this);
         this.onReject = this.onReject.bind(this);
 
-        [this.optionsContainer] = this.props.containers;
+        [this.appContainer, this.optionsContainer] = this.props.containers;
     }
 
     public render(): JSX.Element {
@@ -54,6 +56,16 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
         const feeBips = new BigNumber(swapDetails.brokerFee ? swapDetails.brokerFee : 0);
         const feePercent = feeBips.div(10000);
         const fees = readableSendAmount.times(feePercent);
+        const swapDisabled = loading || !password || !this.sufficientBalance();
+
+        const leftOver = this.leftOverBalance();
+        let errString = "";
+        if (error !== null) {
+            errString = error;
+        } else if (!this.sufficientBalance() && leftOver !== null) {
+            errString = `Insufficient ${swapDetails.sendToken} balance. Another ${leftOver.abs().toFixed()} ${swapDetails.sendToken} is needed to complete this swap.`;
+        }
+
         return (
             <>
                 <Banner title="Approve swap" disabled={loading} reject={this.onReject} />
@@ -80,13 +92,35 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
                         <form onSubmit={this.onAccept}>
                             <input type="password" placeholder="Password" value={password} name="password" onChange={this.handleInput} disabled={loading} />
                             <input type="submit" style={{ display: "none", visibility: "hidden" }} />
-                            <button type="submit" disabled={loading || !password}>Swap</button>
+                            <button type="submit" disabled={swapDisabled}>Swap</button>
                         </form>
                     </div>
-                    {error ? <p className="error">{error}</p> : null}
+                    {errString ? <p className="error">{errString}</p> : null}
                 </div>
             </>
         );
+    }
+
+    private sufficientBalance(): boolean {
+        const leftOver = this.leftOverBalance();
+        if (!leftOver) {
+            return false;
+        }
+        return leftOver.gte(new BigNumber(0));
+    }
+
+    private leftOverBalance(): BigNumber | null {
+        const { network, swapDetails } = this.props;
+        const balances = this.appContainer.state.trader.balances.get(network);
+        if (!balances) {
+            return null;
+        }
+        const available = balances.get(swapDetails.sendToken);
+        if (!available) {
+            return null;
+        }
+        const sendAmount = new BigNumber(swapDetails.sendAmount).dividedBy(digits(swapDetails.sendToken));
+        return available.balance.minus(sendAmount);
     }
 
     private handleInput(event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -118,4 +152,4 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
     }
 }
 
-export const ApproveSwap = connect<IApproveSwapProps>([OptionsContainer])(ApproveSwapClass);
+export const ApproveSwap = connect<IApproveSwapProps>([AppContainer, OptionsContainer])(ApproveSwapClass);

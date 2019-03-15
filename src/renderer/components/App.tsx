@@ -299,10 +299,15 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 method: "GET",
                 url: "http://localhost:7928/version",
             });
+            if (this.state.expressError !== null) {
+                this.setState({ expressError: null });
+            }
         } catch (err) {
             timeout = 1 * 1000;
             logger.error(`Express server has stopped running! ${err}`);
-            this.setState({ expressError: "There appears to be an issue with your installation. Please reinstall SwapperD Desktop or contact us at https://t.me/renproject if this error persists." });
+            if (this.state.expressError === null) {
+                this.setState({ expressError: "There appears to be an issue with your installation. Please reinstall SwapperD Desktop or contact us at https://t.me/renproject if this error persists." });
+            }
         }
         this.callCheckExpressTimeout = setTimeout(this.callCheckExpress, timeout);
     }
