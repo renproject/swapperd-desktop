@@ -126,16 +126,16 @@ jobs:
           command: yarn test
 
 workflows:
-  version: 2.1
   build:
     jobs:
       - build
-  deploy:
-    jobs:
       - release:
+          requires:
+            - build
           filters:
             branches:
-              only: stable
+              only:
+                - stable
   nightly:
     triggers:
       - schedule:
@@ -145,10 +145,7 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_nightly:
-          filters:
-            branches:
-              only: master
+      - merge_nightly
   monthly:
     triggers:
       - schedule:
@@ -158,14 +155,8 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_stable:
-          filters:
-            branches:
-              only: master
+      - merge_stable
       - merge_beta:
-          filters:
-            branches:
-              only: master
           # Only run merge_beta after merge_stable is run
           requires:
             - merge_stable
