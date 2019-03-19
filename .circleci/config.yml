@@ -34,7 +34,7 @@ commands:
               git clone --branch << parameters.branch >> ${RW_REPO_URL} .
             fi
             git fetch --all
-  install-deps:
+  install_deps:
     description: "Install dependencies"
     steps:
       - run:
@@ -90,7 +90,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - install-deps
+      - install_deps
       - run:
           name: Deploying to Releases
           command: |-
@@ -117,7 +117,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - install-deps
+      - install_deps
       - run:
           name: Build
           command: yarn run build:all
