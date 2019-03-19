@@ -50,6 +50,13 @@ commands:
             git push
 
 jobs:
+  release:
+    <<: *defaults
+    steps:
+      - run:
+          name: Deploying to Releases
+          command: |-
+            GH_TOKEN="${GITHUB_TOKEN}" yarn run release
   merge_nightly:
     <<: *defaults
     steps:
@@ -116,7 +123,13 @@ workflows:
   version: 2.1
   build:
     jobs:
-    - build
+      - build
+  deploy:
+    jobs:
+      - release:
+          filters:
+            branches:
+              only: stable
   nightly:
     triggers:
       - schedule:
