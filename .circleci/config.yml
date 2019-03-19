@@ -12,6 +12,10 @@ _defaults: &defaults
 commands:
   rw_checkout:
     description: "Checkout with Read/Write Privileges"
+    parameters:
+      branch:
+        type: string
+        default: $CIRCLE_BRANCH
     steps:
       - run:
           name: Setup Git
@@ -23,11 +27,11 @@ commands:
             then
               cd ${WORKING_DIR}
               git remote set-url origin "${RW_REPO_URL}" || true
-              git fetch --force origin "master:remotes/origin/master"
+              git fetch --force origin "<< parameters.branch >>:remotes/origin/<< parameters.branch >>"
             else
               mkdir -p ${WORKING_DIR}
               cd ${WORKING_DIR}
-              git clone ${RW_REPO_URL} .
+              git clone --branch << parameters.branch >> ${RW_REPO_URL} .
             fi
             git fetch --all
   merge:
@@ -40,12 +44,11 @@ commands:
         description: The branch onto which changes will be applied
         type: string
     steps:
-      - rw_checkout
+      - rw_checkout:
+          branch: << parameters.into >>
       - run:
           name: Merging branch
           command: |
-            git reset --hard
-            git checkout --track origin/<< parameters.into >>
             git merge origin/<< parameters.from >> -v
             git push
 
