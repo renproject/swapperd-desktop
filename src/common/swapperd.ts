@@ -95,6 +95,7 @@ export enum Token {
     USDC = "USDC",
     GUSD = "GUSD",
     PAX = "PAX",
+    ZEC = "ZEC",
 }
 
 export interface ITransferItem {
@@ -136,7 +137,8 @@ export const decimals = new Map<Token, number>()
     .set(Token.DAI, 18)
     .set(Token.PAX, 18)
     .set(Token.USDC, 6)
-    .set(Token.GUSD, 2);
+    .set(Token.GUSD, 2)
+    .set(Token.ZEC, 8);
 
 export function swapperEndpoint(network: string) {
     switch (network) {
@@ -290,6 +292,9 @@ export async function getTransfers(options: IOptions): Promise<ITransfersRespons
                 transfer.value = new BigNumber(transfer.value).div(new BigNumber(10).pow(decimal)).toFixed();
             }
             switch (transfer.token.blockchain) {
+                case "zcash":
+                    decimal = decimals.get(Token.ZEC);
+                    break;
                 case "bitcoin":
                     decimal = decimals.get(Token.BTC);
                     break;

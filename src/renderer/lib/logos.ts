@@ -10,6 +10,7 @@ import swap from "../styles/images/swap.svg";
 import tusd from "../styles/images/tusd.svg";
 import usdc from "../styles/images/usdc.svg";
 import wbtc from "../styles/images/wbtc.png";
+import zec from "../styles/images/zec.svg";
 import zrx from "../styles/images/zrx.svg";
 
 export function getLogo(symb: string) {
@@ -38,6 +39,8 @@ export function getLogo(symb: string) {
             return dai;
         case "PAX":
             return pax;
+        case "ZEC":
+            return zec;
         default:
             return swap;
     }
