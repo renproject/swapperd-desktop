@@ -10,8 +10,6 @@ import {
 } from "electron";
 import contextMenu from "electron-context-menu";
 
-contextMenu();
-
 import menubar from "menubar";
 
 import { format as formatUrl } from "url";
@@ -38,6 +36,9 @@ const installExtensions = async () => {
 };
 
 export const setupMenubar = () => {
+    // Enable right-click context menu in input fields
+    contextMenu();
+
     let icon = "resources/IconTemplate.png";
     const linuxDockIcon = "resources/icon.png";
     let windowPosition: Menubar.Position = "trayCenter";
@@ -123,9 +124,9 @@ export const setupMenubar = () => {
 
         // tslint:disable-next-line: whitespace
         const template = getMenuTemplate(mb);
-        const contextMenu = Menu.buildFromTemplate(template);
+        const mbIconContextMenu = Menu.buildFromTemplate(template);
         mb.tray.on("right-click", () => {
-            mb.tray.popUpContextMenu(contextMenu);
+            mb.tray.popUpContextMenu(mbIconContextMenu);
         });
     });
 
