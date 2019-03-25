@@ -8,6 +8,10 @@ import {
     nativeImage,
     shell
 } from "electron";
+import contextMenu from "electron-context-menu";
+
+contextMenu();
+
 import menubar from "menubar";
 
 import { format as formatUrl } from "url";
