@@ -57,12 +57,6 @@ jobs:
           name: Deploying to Releases
           command: |-
             GH_TOKEN="${GITHUB_TOKEN}" yarn run release
-  merge_test:
-    <<: *defaults
-    steps:
-      - core/merge:
-          from: circleci-config
-          into: test
   merge_nightly:
     <<: *defaults
     steps:
@@ -96,7 +90,6 @@ jobs:
 workflows:
   build:
     jobs:
-      - merge_test
       - build
       - release:
           requires:
