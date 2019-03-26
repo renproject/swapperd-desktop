@@ -88,7 +88,7 @@ interface SemVer {
 }
 
 function splitSemVer(ver: string): SemVer {
-  const match = ver.match(/^v(\d+)\.(\d+)\.(\d+)(.*)$/);
+  const match = ver.match(/^v?(\d+)\.(\d+)\.(\d+)(.*)$/);
   if (match && match.length === 5) {
     return {
       major: parseInt(match[1], 10),
