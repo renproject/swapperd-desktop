@@ -87,6 +87,7 @@ class ApproveSwapClass extends React.Component<IApproveSwapProps, IApproveSwapSt
                             <p>{readableReceiveAmount.toFixed()} {swapDetails.receiveToken}</p>
                         </div>
                     </div>
+                    {swapDetails.delayPriceRange && <p>This swap may still be executed if the price of {swapDetails.receiveToken} falls below {swapDetails.delayPriceRange / 100}%.</p>}
                     {fees.gt(0) && <p className="swap--fee">{`Additional fee of ${fees.toFixed()} ${swapDetails.sendToken} (${feePercent.times(100).toFixed()}%)`}</p>}
                     <div className="swap--inputs">
                         <form onSubmit={this.onAccept}>
