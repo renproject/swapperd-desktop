@@ -8,7 +8,7 @@ orbs:
     core: ren/circleci-orbs@dev:first
 
 executors:
-  default_exec:
+  default:
     docker:
       - image: circleci/node:8.15
     working_directory: ~/swapperd-desktop
@@ -50,7 +50,7 @@ commands:
 
 jobs:
   release:
-    executor: default_exec
+    executor: default
     steps:
       - checkout
       - install_deps
@@ -59,7 +59,7 @@ jobs:
           command: |-
             GH_TOKEN="${GITHUB_TOKEN}" yarn run release
   build:
-    executor: default_exec
+    executor: default
     steps:
       - checkout
       - install_deps
@@ -91,7 +91,7 @@ workflows:
                 - master
     jobs:
       - core/merge_nightly:
-          executor: default_exec
+          executor: default
   monthly:
     triggers:
       - schedule:
@@ -102,9 +102,9 @@ workflows:
                 - master
     jobs:
       - core/merge_stable:
-          executor: default_exec
+          executor: default
       - core/merge_beta:
-          executor: default_exec
+          executor: default
           # Only run merge_beta after merge_stable is run
           requires:
             - core/merge_stable
