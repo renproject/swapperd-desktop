@@ -1,6 +1,7 @@
 // tslint:disable:no-any
 
 import axios from "axios";
+import logger from "electron-log";
 
 const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
 
@@ -57,6 +58,46 @@ export async function getLatestReleaseVersion(): Promise<string> {
 export async function getLatestAssets(): Promise<GitAsset[]> {
   const release: GitRelease = await getLatestRelease();
   return release.assets;
+}
+
+export function isNewerVersion(currentVersion: string, otherVersion: string): boolean {
+  try {
+    const cv = splitSemVer(currentVersion);
+    const ov = splitSemVer(otherVersion);
+    if (ov.major !== cv.major) {
+      return ov.major > cv.major;
+    }
+    if (ov.minor !== cv.minor) {
+      return ov.minor > cv.minor;
+    }
+    if (ov.patch !== cv.patch) {
+      return ov.patch > cv.patch;
+    }
+    return ov.other !== cv.other;
+  } catch (err) {
+    logger.error(err);
+    return false;
+  }
+}
+
+interface SemVer {
+  major: number;
+  minor: number;
+  patch: number;
+  other: string;
+}
+
+function splitSemVer(ver: string): SemVer {
+  const match = ver.match(/^v(\d+)\.(\d+)\.(\d+)(.*)$/);
+  if (match && match.length === 5) {
+    return {
+      major: parseInt(match[1], 10),
+      minor: parseInt(match[2], 10),
+      patch: parseInt(match[3], 10),
+      other: match[4],
+    };
+  }
+  throw new Error(`${ver} is not valid SemVer`);
 }
 
 // tslint:enable:no-any
