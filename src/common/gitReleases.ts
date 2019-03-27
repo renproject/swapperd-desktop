@@ -84,7 +84,8 @@ export function isNewerVersion(currentVersion: string, otherVersion: string): bo
     }
     return ov.other !== cv.other;
   } catch (err) {
-    logger.error(err);
+    // tslint:disable-next-line:no-console
+    console.error(err);
     return false;
   }
 }
