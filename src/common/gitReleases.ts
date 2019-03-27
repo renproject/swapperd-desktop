@@ -59,6 +59,16 @@ export async function getLatestAssets(): Promise<GitAsset[]> {
   return release.assets;
 }
 
+export async function getLatestAsset(name: string): Promise<GitAsset> {
+  const assets: GitAsset[] = await getLatestAssets();
+  for (const asset of assets) {
+      if (asset.name === name) {
+        return asset;
+      }
+  }
+  throw new Error(`No Github Release asset with name: ${name}`);
+}
+
 export function isNewerVersion(currentVersion: string, otherVersion: string): boolean {
   try {
     const cv = splitSemVer(currentVersion);

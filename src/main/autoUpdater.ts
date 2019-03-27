@@ -4,7 +4,7 @@ import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
-import { getLatestReleaseVersion } from "common/gitReleases";
+import { getLatestReleaseVersion, getLatestAsset } from "common/gitReleases";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
 
@@ -51,7 +51,9 @@ export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
     };
 
     if (process.platform !== "win32") {
-        return run(`curl https://git.io/test-swapperd -sSLf | sh`, onErr);
+        const asset = await getLatestAsset("install.sh");
+        logger.info(`Running install.sh from: ${asset.browser_download_url}`);
+        return run(`curl ${asset.browser_download_url} -sSLf | sh`, onErr);
     }
 };
 
