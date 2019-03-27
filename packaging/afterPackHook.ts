@@ -1,5 +1,6 @@
 // tslint:disable:non-literal-fs-path
 // tslint:disable:no-any
+// tslint:disable:no-console
 
 import * as extract from "extract-zip";
 import * as fs from "fs";
@@ -9,7 +10,7 @@ import * as path from "path";
 import axios from "axios";
 
 import { checkFileExists } from "../src/common/functions";
-import { getLatestAssets, GitAsset } from "../src/common/gitReleases";
+import { getLatestAsset, GitAsset } from "../src/common/gitReleases";
 
 const WINDOWS_SWAPPERD_FILE = "swapper_windows_amd64.zip";
 
@@ -89,17 +90,9 @@ export default async function (context: AfterPackContext) {
     const platform = context.packager.platform.nodeName;
     if (platform === "win32") {
         try {
-            const assets: GitAsset[] = await getLatestAssets();
-            for (const asset of assets) {
-                let file: string;
-                switch (asset.name) {
-                    case WINDOWS_SWAPPERD_FILE:
-                        file = await checkFile(asset);
-                        await extractZip(file, context.appOutDir);
-                        break;
-                    default:
-                }
-            }
+            const asset: GitAsset = await getLatestAsset(WINDOWS_SWAPPERD_FILE);
+            const file = await checkFile(asset);
+            await extractZip(file, context.appOutDir);
         } catch (error) {
             console.error(error);
             return;
@@ -107,5 +100,6 @@ export default async function (context: AfterPackContext) {
     }
 }
 
+// tslint:enable:no-console
 // tslint:enable:no-any
 // tslint:enable:non-literal-fs-path
