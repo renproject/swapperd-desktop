@@ -4,6 +4,9 @@
   "description": "The native Desktop interface for SwapperD",
   "author": "Ren",
   "license": "MIT",
+  "config": {
+    "swapperdReleasesUrl": "https://api.github.com/repos/renproject/swapperd/releases/latest"
+  },
   "build": {
     "appId": "com.github.republicprotocol.swapperd-native",
     "afterPack": "./packaging/afterPackHook.js",

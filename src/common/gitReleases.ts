@@ -1,9 +1,8 @@
 // tslint:disable:no-any
 
 import axios from "axios";
-import logger from "electron-log";
 
-const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
+import { config } from "../../package.json";
 
 export interface GitAsset {
   url: string;
@@ -45,7 +44,7 @@ export interface GitRelease {
 export async function getLatestRelease(): Promise<GitRelease> {
   const postResponse = await axios({
     method: "GET",
-    url: SWAPPERD_RELEASES_URL,
+    url: config.swapperdReleasesUrl,
   });
   return postResponse.data as GitRelease;
 }
