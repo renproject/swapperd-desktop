@@ -23,8 +23,6 @@ commands:
           name: Restore node_modules
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
@@ -51,8 +49,7 @@ jobs:
       - install_deps
       - run:
           name: Deploying to Releases
-          command: |-
-            GH_TOKEN="${GITHUB_TOKEN}" yarn run release
+          command: GH_TOKEN="${GITHUB_TOKEN}" yarn run release
   build:
     executor: default
     steps:
