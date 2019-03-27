@@ -17,12 +17,7 @@ commands:
   install_deps:
     description: "Install dependencies"
     steps:
-      - run:
-          name: Install Wine
-          command: |-
-            sudo dpkg --add-architecture i386
-            sudo apt-get update
-            sudo apt-get install --no-install-recommends --assume-yes wine wine32
+      - core/install_wine
       # Download and cache dependencies
       - restore_cache:
           name: Restore node_modules
