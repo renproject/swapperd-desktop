@@ -12,7 +12,7 @@ export const setupAutoLaunch = async (mb: MenubarApp) => {
             name: string;
             path?: string;
         }
-        const autoLaunchConfig: AutoLaunchOptions = { name: "Swapperd Desktop" };
+        const autoLaunchConfig: AutoLaunchOptions = { name: "SwapperD Desktop" };
         if (process.env.APPIMAGE) {
             autoLaunchConfig.path = process.env.APPIMAGE.replace(" ", "\\ ");
         }

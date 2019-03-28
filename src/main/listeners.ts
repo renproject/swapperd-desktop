@@ -13,7 +13,7 @@ import { checkFileExists } from "common/functions";
 import { IPC, } from "common/ipc";
 import { Message } from "common/types";
 
-import { installSwapperd } from "./autoUpdater";
+import { installSwapperD } from "./autoUpdater";
 import { MenubarApp } from "./menubar";
 
 const sqlite3 = sqlite3All.verbose();
@@ -45,7 +45,7 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
             // username
         } = value;
 
-        await installSwapperd(ipc);
+        await installSwapperD(ipc);
         // Update the mnemonic if it's not null
         if (mnemonic) {
             await updateMnemonic(mnemonic);
@@ -100,13 +100,13 @@ export const setupListeners = (mb: MenubarApp, ipc: IPC) => {
         mb.app.relaunch();
     });
 
-    ipc.on(Message.UpdateSwapperd, async (value, _error?: Error) => {
+    ipc.on(Message.UpdateSwapperD, async (value, _error?: Error) => {
         const {
-            swapperd,
+            swapperD,
             restart,
         } = value;
-        if (swapperd) {
-            await installSwapperd(ipc);
+        if (swapperD) {
+            await installSwapperD(ipc);
         } else if (restart) {
             autoUpdater.quitAndInstall();
         }
@@ -123,7 +123,7 @@ async function storePasswordHash(db: Database, account: string, password: string
     });
 }
 
-function swapperdHome() {
+function swapperDHome() {
     switch (process.platform) {
         case "win32":
             return path.resolve(path.join(app.getPath("appData"), "swapperd"));
@@ -136,7 +136,7 @@ async function connectToDB(): Promise<Database> {
     return new Promise((resolve, reject) => {
         let db: Database;
         // tslint:disable-next-line: no-bitwise
-        db = new sqlite3.Database(path.join(swapperdHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
+        db = new sqlite3.Database(path.join(swapperDHome(), "sqlite.db"), sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE, (err) => {
             if (err) {
                 reject(err);
             }
@@ -175,14 +175,14 @@ async function getPasswordHash(account: string) {
 
 async function handleAccountCreation(password: string): Promise<string> {
     // tslint:disable-next-line: non-literal-fs-path
-    fs.writeFileSync(path.join(swapperdHome(), "sqlite.db"), "");
+    fs.writeFileSync(path.join(swapperDHome(), "sqlite.db"), "");
 
     const db: Database = await connectToDB();
 
     db.run("CREATE TABLE IF NOT EXISTS accounts(account TEXT, passwordHash TEXT, nonce TEXT)");
 
     // tslint:disable-next-line: non-literal-fs-path
-    const data = fs.readFileSync(path.join(swapperdHome(), "testnet.json"), {
+    const data = fs.readFileSync(path.join(swapperDHome(), "testnet.json"), {
         encoding: "utf-8"
     });
 
@@ -194,8 +194,8 @@ async function handleAccountCreation(password: string): Promise<string> {
 }
 
 async function updateMnemonic(mnemonic: string): Promise<void> {
-    const testnetJSON = path.join(swapperdHome(), "testnet.json");
-    const mainnetJSON = path.join(swapperdHome(), "mainnet.json");
+    const testnetJSON = path.join(swapperDHome(), "testnet.json");
+    const mainnetJSON = path.join(swapperDHome(), "mainnet.json");
     for (const file of [testnetJSON, mainnetJSON]) {
         if (await checkFileExists(file)) {
             await updateMnemonicJsonFile(mnemonic || "", file);

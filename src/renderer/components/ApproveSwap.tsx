@@ -9,7 +9,7 @@ import { getLogo } from "@/lib/logos";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
-import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "common/swapperd";
+import { decimals, IPartialSwapRequest, NETWORKS, submitSwap, Token } from "common/swapperD";
 import { Message, Network } from "common/types";
 
 interface IApproveSwapProps extends ConnectedProps {

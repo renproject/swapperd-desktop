@@ -48,7 +48,7 @@ export const setupMenubar = () => {
     }
 
     const options: Menubar.MenubarOptions = {
-        tooltip: "Swapperd",
+        tooltip: "SwapperD",
         preloadWindow: true,
         resizable: true, // devMode,
         webPreferences: {

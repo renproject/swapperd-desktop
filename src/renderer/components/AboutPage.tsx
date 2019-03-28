@@ -13,9 +13,9 @@ import { Options } from "./Options";
 
 interface IAboutPageProps extends ConnectedProps {
     updateAvailable: boolean;
-    latestSwapperdVersion: string | null;
-    swapperdBinaryVersion: string | null;
-    swapperdDesktopVersion: string;
+    latestSwapperDVersion: string | null;
+    swapperDBinaryVersion: string | null;
+    swapperDDesktopVersion: string;
     updateCompleteCallback?(): void;
 }
 
@@ -25,10 +25,10 @@ interface IAboutPageState {
     restarting: boolean;
 }
 
-export const VersionBlock = (props: { swapperdBinaryVersion: string | null; swapperdDesktopVersion: string}) => (
+export const VersionBlock = (props: { swapperDBinaryVersion: string | null; swapperDDesktopVersion: string }) => (
     <div>
-        {props.swapperdBinaryVersion && <div className="version-banner">Binary version: <span>{props.swapperdBinaryVersion || "Unknown"}</span></div>}
-        <div className="version-banner">UI version: <span>{props.swapperdDesktopVersion}</span></div>
+        {props.swapperDBinaryVersion && <div className="version-banner">Binary version: <span>{props.swapperDBinaryVersion || "Unknown"}</span></div>}
+        <div className="version-banner">UI version: <span>{props.swapperDDesktopVersion}</span></div>
     </div>
 );
 
@@ -47,13 +47,13 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
 
     // tslint:disable-next-line:cyclomatic-complexity
     public render() {
-        const { updateAvailable, latestSwapperdVersion, swapperdBinaryVersion, swapperdDesktopVersion } = this.props;
+        const { updateAvailable, latestSwapperDVersion, swapperDBinaryVersion, swapperDDesktopVersion } = this.props;
         const { error, updateComplete, restarting } = this.state;
-        const { updatingSwapperd, updateReady } = this.appContainer.state.app;
+        const { updatingSwapperD, updateReady } = this.appContainer.state.app;
         const { password } = this.appContainer.state.login;
         const locked = password === "" || password === null;
 
-        const binaryNeedsUpdate = !updateComplete && updateAvailable && latestSwapperdVersion !== null && swapperdBinaryVersion !== null;
+        const binaryNeedsUpdate = !updateComplete && updateAvailable && latestSwapperDVersion !== null && swapperDBinaryVersion !== null;
         const desktopNeedsUpdate = updateReady !== null;
         const showUpdate = binaryNeedsUpdate || desktopNeedsUpdate;
         const noticeMessage = (binaryNeedsUpdate) ? "An update is available! Click the button below to update." : "An update has been installed. Please restart the app for the changes to take effect.";
@@ -67,10 +67,10 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
                 {!locked && showUpdate && <div className="notice notice--alert">{noticeMessage}</div>}
                 {!locked && error && <p className="error">{error}</p>}
                 <div className="about--footer--content">
-                    <VersionBlock swapperdBinaryVersion={swapperdBinaryVersion} swapperdDesktopVersion={swapperdDesktopVersion} />
+                    <VersionBlock swapperDBinaryVersion={swapperDBinaryVersion} swapperDDesktopVersion={swapperDDesktopVersion} />
                     {!locked && showUpdate ?
                         <div className="update--button">
-                            {updatingSwapperd ? <div className="updating">
+                            {updatingSwapperD ? <div className="updating">
                                 <Circle percent={progress || 0} strokeWidth="4" className="progress" /></div> :
                                 <>
                                     {binaryNeedsUpdate ?
@@ -88,21 +88,21 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
     private readonly onUpdateHandler = async (): Promise<void> => {
         const { updateCompleteCallback } = this.props;
         this.setState({ error: null });
-        await this.appContainer.setUpdatingSwapperd(true);
+        await this.appContainer.setUpdatingSwapperD(true);
         try {
             await ipc.sendSyncWithTimeout(
-                Message.UpdateSwapperd,
+                Message.UpdateSwapperD,
                 0, // timeout
-                { swapperd: true, restart: false }
+                { swapperD: true, restart: false }
             );
-            await this.appContainer.setUpdatingSwapperd(false);
+            await this.appContainer.setUpdatingSwapperD(false);
             this.setState({ updateComplete: true });
             if (updateCompleteCallback) {
                 updateCompleteCallback();
             }
         } catch (error) {
             logger.error(`Got error instead!!!: ${error}`);
-            await this.appContainer.setUpdatingSwapperd(false);
+            await this.appContainer.setUpdatingSwapperD(false);
             this.setState({ error });
         }
         await this.appContainer.setInstallProgress(null);
@@ -112,9 +112,9 @@ class AboutPageClass extends React.Component<IAboutPageProps, IAboutPageState> {
         this.setState({ error: null, restarting: true });
         try {
             await ipc.sendSyncWithTimeout(
-                Message.UpdateSwapperd,
+                Message.UpdateSwapperD,
                 0, // timeout
-                { swapperd: false, restart: true }
+                { swapperD: false, restart: true }
             );
             this.setState({ restarting: false });
         } catch (error) {
