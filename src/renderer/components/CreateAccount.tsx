@@ -23,8 +23,23 @@ interface State {
     password2: string;
     useMnemonic: boolean;
     loading: boolean;
-    error: string | null;
+    submitError: string | null;
 }
+
+// tslint:disable-next-line: no-any
+export const renderError = (errorIn: any) => {
+    const error = errorIn.message || errorIn;
+
+    if (typeof error === "string") {
+        return error;
+    } else {
+        try {
+            return JSON.stringify(error);
+        } catch (_err) {
+            return `${_err}`;
+        }
+    }
+};
 
 export class CreateAccountClass extends React.Component<Props, State> {
     private readonly appContainer: AppContainer;
@@ -38,34 +53,28 @@ export class CreateAccountClass extends React.Component<Props, State> {
             password2: "",
             useMnemonic: false,
             loading: false,
-            error: null,
+            submitError: null,
         };
-        this.handleTextArea = this.handleTextArea.bind(this);
-        this.handleInput = this.handleInput.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
         [this.appContainer] = this.props.containers;
     }
 
     // tslint:disable-next-line:cyclomatic-complexity
     public render(): JSX.Element {
-        const { useMnemonic, loading, username, password, password2, mnemonic } = this.state;
-        let error = this.state.error;
+        const { useMnemonic, loading, username, password, password2, mnemonic, submitError } = this.state;
 
         // Disable password length enforcing for account restoration
         const passwordValid = useMnemonic || password.length >= 8;
         const passwordsMatch = password && password2 && password === password2;
 
-        if (!error) {
-            if (password && !passwordValid) {
-                error = "Your password needs to be at least 8 characters long";
-            } else if (password2 && !passwordsMatch) {
-                error = "Your passwords do not match";
-            }
+        let inputError = null;
+        if (password && !passwordValid) {
+            inputError = "Your password needs to be at least 8 characters long";
+        } else if (password2 && !passwordsMatch) {
+            inputError = "Your passwords do not match";
         }
 
         const validForm = username && passwordsMatch && passwordValid;
-        const disabled: boolean = error !== null || !validForm || (useMnemonic && !mnemonic);
+        const disabled: boolean = inputError !== null || !validForm || (useMnemonic && !mnemonic);
 
         const progress = this.appContainer.state.app.installProgress;
 
@@ -80,7 +89,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                         <input type="text" name="username" placeholder="Username" onChange={this.handleInput} />
                         <input type="password" name="password" placeholder={`Password${useMnemonic ? " (this must be identical to the one you used originally)" : ""}`} onChange={this.handleInput} />
                         <input type="password" name="password2" placeholder="Confirm password" onChange={this.handleInput} />
-                        {error ? <p className="error">{error}</p> : ""}
+                        {inputError ? <p className="error">{inputError}</p> : ""}
                         <button disabled={disabled}>{useMnemonic ? "Import" : "Create"} account</button>
                         {!useMnemonic ?
                             // tslint:disable-next-line:react-a11y-anchors
@@ -89,41 +98,48 @@ export class CreateAccountClass extends React.Component<Props, State> {
                             // tslint:disable-next-line:react-a11y-anchors
                             <a role="button" onClick={this.restoreWithoutMnemonic}>Create new account instead</a>
                         }
-                    </form>
-                    :
-                    error ?
+                    </form> :
+                    submitError ?
                         <div>
-                            <p className="error">{error}</p>
+                            Unable to create account
+                                    <details style={{ whiteSpace: "pre-wrap" }}>
+                                {submitError}
+                            </details>
                             <button onClick={this.retry}>Retry</button>
-                        </div>
-                        :
+                            <button className="button--light" onClick={this.cancel}>Cancel</button>
+                        </div> :
                         <>
+
                             <Loading />
                             <Circle percent={progress || 0} strokeWidth="4" className="progress" />
                             <span>
                                 Setting up your account. This could take a few minutes...
-                            </span>
+                        </span>
                         </>
                 }
             </div>
-        </div>;
+        </div >;
     }
 
-    private handleTextArea(event: React.FormEvent<HTMLTextAreaElement>): void {
+    private readonly handleTextArea = (event: React.FormEvent<HTMLTextAreaElement>): void => {
         const element = (event.target as HTMLTextAreaElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
-    private handleInput(event: React.FormEvent<HTMLInputElement>): void {
+    private readonly handleInput = (event: React.FormEvent<HTMLInputElement>): void => {
         const element = (event.target as HTMLInputElement);
         this.setState((state) => ({ ...state, [element.name]: element.value }));
     }
 
     private readonly retry = async (): Promise<void> => {
-        await this.createAccount(true);
+        await this.createAccount(false);
     }
 
-    private async handleSubmit(): Promise<void> {
+    private readonly cancel = async (): Promise<void> => {
+        this.setState({ loading: false, submitError: null });
+    }
+
+    private readonly handleSubmit = async (): Promise<void> => {
         // Ensure username does not contain any whitespace
         // if (/\s/.test(this.state.username)) {
         //     this.setState({ error: "Please enter a valid username." });
@@ -132,7 +148,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
     }
 
     private readonly createAccount = async (skipInstall?: boolean): Promise<void> => {
-        this.setState({ loading: true, error: null });
+        this.setState({ loading: true, submitError: null });
         const { useMnemonic, mnemonic, password } = this.state;
         let newMnemonic: string = mnemonic || "";
         try {
@@ -145,12 +161,12 @@ export class CreateAccountClass extends React.Component<Props, State> {
             }
 
             await swapperdReady(password);
-            this.setState({ loading: false, error: null });
+            this.setState({ loading: false, submitError: null });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);
         } catch (error) {
             logger.error(error);
-            this.setState({ mnemonic: newMnemonic, error: error.message });
+            this.setState({ mnemonic: newMnemonic, submitError: renderError(error) });
         }
         await this.appContainer.setInstallProgress(null);
     }
