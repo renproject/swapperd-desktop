@@ -99,8 +99,18 @@ button {
     }
 }
 
+.button--light {
+    background-color: white;
+    border: 0.5px solid #ccc;
+    color: black;
+
+    &:not(:disabled):hover {
+        background-color: #f7f7f7;
+    }
+}
+
 button:not(:disabled):hover {
-    background-color: #0D41FF;
+    background-color: #107FF8;
 
     &.cancel {
         background-color: red;

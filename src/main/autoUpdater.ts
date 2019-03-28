@@ -11,9 +11,15 @@ import { Message } from "common/types";
 //////////////////////////////// Swapperd Daemon ///////////////////////////////
 
 const run = async (command: string, onErr?: (data: string) => void) => new Promise((resolve, reject) => {
+    let latestError: string | null = null;
+
     const cmd = exec(command, (error) => {
         if (error) {
-            reject(error);
+            if (latestError) {
+                reject(`Installing SwapperD Daemon failed: ${latestError}`);
+            } else {
+                reject(error);
+            }
         }
         resolve();
     });
@@ -30,6 +36,7 @@ const run = async (command: string, onErr?: (data: string) => void) => new Promi
         if (onErr) {
             onErr(data);
         }
+        latestError = data;
     });
 });
 
