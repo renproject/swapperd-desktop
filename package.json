@@ -57,7 +57,7 @@
     "postinstall": "patch-package && electron-builder install-app-deps",
     "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
     "test": "echo 'No tests to run'",
-    "release": "sh ./patch_version.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
+    "release": "sh ./patch_package_json.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
   "dependencies": {
     "@types/rc-progress": "^2.2.1",
