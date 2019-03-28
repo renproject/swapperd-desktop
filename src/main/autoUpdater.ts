@@ -58,7 +58,10 @@ export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
 /////////////////////////////// Swapperd Daemon ////////////////////////////////
 
 export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
-    const version = await getLatestReleaseVersion();
+    let version = await getLatestReleaseVersion();
+    if (version[0] === "v") {
+        version = version.slice(1);
+    }
     logger.info(`Latest SwapperD version is: ${version}`);
     await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 5, version);
 };
