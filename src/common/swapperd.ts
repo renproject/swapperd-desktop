@@ -47,6 +47,8 @@ export interface IPartialSwapRequest {
     shouldInitiateFirst: boolean;
     brokerFee?: number;
     speed?: number;
+    // amount that the price can vary by in bips e.g. 500 = 5%
+    delayPriceRange?: number;
 }
 
 export interface ISwapRequest extends IPartialSwapRequest {
