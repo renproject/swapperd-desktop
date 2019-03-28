@@ -1,6 +1,6 @@
 {
   "name": "swapperd-desktop",
-  "version": "v1.0.0-beta.5",
+  "version": "1.0.1",
   "description": "The native Desktop interface for SwapperD",
   "author": "Ren",
   "license": "MIT",
@@ -37,7 +37,8 @@
     "productName": "SwapperD Desktop",
     "publish": [
       {
-        "provider": "github"
+        "provider": "github",
+        "releaseType": "release"
       }
     ]
   },
@@ -53,8 +54,7 @@
     "postinstall": "patch-package && electron-builder install-app-deps",
     "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
     "test": "echo 'No tests to run'",
-    "release": "yarn run build:all -p onTagOrDraft"
-
+    "release": "sh ./patch_version.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
   "dependencies": {
     "@types/rc-progress": "^2.2.1",
@@ -63,6 +63,7 @@
     "bcryptjs": "^2.4.3",
     "bignumber.js": "^8.0.2",
     "body-parser": "^1.18.3",
+    "electron-context-menu": "^0.11.0",
     "electron-log": "^3.0.1",
     "electron-store": "^2.0.0",
     "electron-updater": "^4.0.6",
@@ -101,6 +102,7 @@
     "electron-webpack": "^2.6.2",
     "electron-webpack-ts": "^3.1.1",
     "extract-zip": "^1.6.7",
+    "jq.node": "^2.1.2",
     "node-sass": "^4.11.0",
     "patch-package": "^6.0.2",
     "postinstall-postinstall": "^2.0.0",

@@ -18,6 +18,7 @@ import { ipc } from "@/ipc";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
+import { isNewerVersion } from "common/gitReleases";
 import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "common/swapperd";
 import { Message, Network } from "common/types";
 
@@ -137,7 +138,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const traderSwaps = swaps.get(network) || null;
         const traderTransfers = transfers.get(network) || null;
 
-        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== null && latestSwapperdVersion !== swapperdVersion;
+        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== null && swapperdVersion !== null && isNewerVersion(swapperdVersion, latestSwapperdVersion);
 
         // tslint:disable-next-line:no-any
         const headerProps: any = {

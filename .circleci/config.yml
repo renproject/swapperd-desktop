@@ -4,88 +4,25 @@
 #
 version: 2.1
 
-_defaults: &defaults
+orbs:
+    core: ren/circleci-orbs@dev:first
+
+executors:
+  default:
     docker:
       - image: circleci/node:8.15
     working_directory: ~/swapperd-desktop
 
 commands:
-  rw_checkout:
-    description: "Checkout with Read/Write Privileges"
+  install_deps:
+    description: "Install dependencies"
     steps:
-      - run:
-          name: Setup Git
-          command: |
-            WORKING_DIR=$(eval echo ${CIRCLE_WORKING_DIRECTORY})
-            RW_REPO_URL="https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
-
-            if [ -e ${WORKING_DIR}/.git ]
-            then
-              cd ${WORKING_DIR}
-              git remote set-url origin "${RW_REPO_URL}" || true
-              git fetch --force origin "master:remotes/origin/master"
-            else
-              mkdir -p ${WORKING_DIR}
-              cd ${WORKING_DIR}
-              git clone ${RW_REPO_URL} .
-            fi
-            git fetch --all
-  merge:
-    description: "Merge from branch into another branch"
-    parameters:
-      from:
-        description: The branch with changes to be merged into another branch
-        type: string
-      into:
-        description: The branch onto which changes will be applied
-        type: string
-    steps:
-      - rw_checkout
-      - run:
-          name: Merging branch
-          command: |
-            git reset --hard
-            git checkout --track origin/<< parameters.into >>
-            git merge origin/<< parameters.from >> -v
-            git push
-
-jobs:
-  merge_nightly:
-    <<: *defaults
-    steps:
-      - merge:
-          from: master
-          into: nightly
-  merge_beta:
-    <<: *defaults
-    steps:
-      - merge:
-          from: nightly
-          into: beta
-  merge_stable:
-    <<: *defaults
-    steps:
-      - merge:
-          from: beta
-          into: stable
-  build:
-    <<: *defaults
-    steps:
-      - checkout
-      - run:
-          name: Install Wine
-          command: |-
-            sudo dpkg --add-architecture i386
-            sudo apt-get update
-            sudo apt-get install --no-install-recommends --assume-yes wine wine32
-
+      - core/install_wine
       # Download and cache dependencies
       - restore_cache:
           name: Restore node_modules
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
@@ -93,9 +30,6 @@ jobs:
       - run:
           name: Install Dependencies
           command: yarn install --frozen-lockfile
-      - run:
-          name: Build
-          command: yarn run build:all
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
@@ -107,16 +41,38 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # run tests!
+jobs:
+  release:
+    executor: default
+    steps:
+      - checkout
+      - install_deps
+      - run:
+          name: Deploying to Releases
+          command: GH_TOKEN="${GITHUB_TOKEN}" yarn run release
+  build:
+    executor: default
+    steps:
+      - checkout
+      - install_deps
+      - run:
+          name: Build
+          command: yarn run build:all
       - run:
           name: Run tests
           command: yarn test
 
 workflows:
-  version: 2.1
   build:
     jobs:
-    - build
+      - build
+      - release:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - stable
   nightly:
     triggers:
       - schedule:
@@ -126,10 +82,8 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_nightly:
-          filters:
-            branches:
-              only: master
+      - core/merge_nightly:
+          executor: default
   monthly:
     triggers:
       - schedule:
@@ -139,14 +93,10 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_stable:
-          filters:
-            branches:
-              only: master
-      - merge_beta:
-          filters:
-            branches:
-              only: master
+      - core/merge_stable:
+          executor: default
+      - core/merge_beta:
+          executor: default
           # Only run merge_beta after merge_stable is run
           requires:
-            - merge_stable
+            - core/merge_stable
