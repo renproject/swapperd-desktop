@@ -4,7 +4,7 @@ import { exec } from "child_process";
 import { autoUpdater, UpdateCheckResult } from "electron-updater";
 
 // import { GetPasswordRequest, GetPasswordResponse, IPC, Message } from "common/ipc";
-import { getLatestReleaseVersion, getLatestAsset } from "common/gitReleases";
+import { getLatestAsset, getLatestReleaseVersion } from "common/gitReleases";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
 
