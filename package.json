@@ -55,7 +55,7 @@
     "build:linux": "yarn run build -l",
     "build:dir": "yarn run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "patch-package && electron-builder install-app-deps",
-    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
+    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck --resolveJsonModule",
     "test": "echo 'No tests to run'",
     "release": "sh ./patch_package_json.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
