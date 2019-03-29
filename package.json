@@ -45,14 +45,16 @@
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
     "start": "electron-webpack dev",
-    "build": "electron-webpack && electron-builder",
+    "build": "electron-webpack && yarn run package",
     "build:all": "yarn run build --x64 -wml",
     "build:win": "yarn run build --x64 -w",
     "build:mac": "yarn run build -m",
     "build:linux": "yarn run build -l",
     "build:dir": "yarn run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "patch-package && electron-builder install-app-deps",
-    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck",
+    "package": "electron-builder",
+    "prepackage": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck --resolveJsonModule",
+    "postpackage": "rm -rf ./src/common/*.js",
     "test": "echo 'No tests to run'",
     "release": "sh ./patch_version.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
