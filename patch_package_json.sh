@@ -18,6 +18,6 @@ patch_download_link() {
 patch_version $@
 
 # patch download link if nightly branch
-if [ "${BRANCH}" == "nightly" ]; then
+if [ "${BRANCH}" = "nightly" ]; then
   patch_download_link $@
 fi
