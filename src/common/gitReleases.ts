@@ -1,9 +1,8 @@
 // tslint:disable:no-any
 
 import axios from "axios";
-import logger from "electron-log";
 
-const SWAPPERD_RELEASES_URL = "https://api.github.com/repos/renproject/swapperd/releases/latest";
+import { config } from "../../package.json";
 
 export interface GitAsset {
   url: string;
@@ -45,7 +44,7 @@ export interface GitRelease {
 export async function getLatestRelease(): Promise<GitRelease> {
   const postResponse = await axios({
     method: "GET",
-    url: SWAPPERD_RELEASES_URL,
+    url: config.swapperDReleasesUrl,
   });
   return postResponse.data as GitRelease;
 }
@@ -58,6 +57,16 @@ export async function getLatestReleaseVersion(): Promise<string> {
 export async function getLatestAssets(): Promise<GitAsset[]> {
   const release: GitRelease = await getLatestRelease();
   return release.assets;
+}
+
+export async function getLatestAsset(name: string): Promise<GitAsset> {
+  const assets: GitAsset[] = await getLatestAssets();
+  for (const asset of assets) {
+      if (asset.name === name) {
+        return asset;
+      }
+  }
+  throw new Error(`No Github Release asset with name: ${name}`);
 }
 
 export function isNewerVersion(currentVersion: string, otherVersion: string): boolean {
@@ -75,7 +84,8 @@ export function isNewerVersion(currentVersion: string, otherVersion: string): bo
     }
     return ov.other !== cv.other;
   } catch (err) {
-    logger.error(err);
+    // tslint:disable-next-line:no-console
+    console.error(err);
     return false;
   }
 }
