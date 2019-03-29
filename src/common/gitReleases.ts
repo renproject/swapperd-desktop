@@ -44,7 +44,7 @@ export interface GitRelease {
 export async function getLatestRelease(): Promise<GitRelease> {
   const postResponse = await axios({
     method: "GET",
-    url: config.swapperdReleasesUrl,
+    url: config.swapperDReleasesUrl,
   });
   return postResponse.data as GitRelease;
 }
