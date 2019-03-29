@@ -7,7 +7,8 @@ version: 2.1
 orbs:
     core: ren/circleci-orbs@dev:first
 
-_defaults: &defaults
+executors:
+  default:
     docker:
       - image: circleci/node:8.15
     working_directory: ~/swapperd-desktop
@@ -16,19 +17,12 @@ commands:
   install_deps:
     description: "Install dependencies"
     steps:
-      - run:
-          name: Install Wine
-          command: |-
-            sudo dpkg --add-architecture i386
-            sudo apt-get update
-            sudo apt-get install --no-install-recommends --assume-yes wine wine32
+      - core/install_wine
       # Download and cache dependencies
       - restore_cache:
           name: Restore node_modules
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
       - restore_cache:
           name: Restore Yarn Package Cache
           keys:
@@ -49,34 +43,15 @@ commands:
 
 jobs:
   release:
-    <<: *defaults
+    executor: default
     steps:
       - checkout
       - install_deps
       - run:
           name: Deploying to Releases
-          command: |-
-            GH_TOKEN="${GITHUB_TOKEN}" yarn run release
-  merge_nightly:
-    <<: *defaults
-    steps:
-      - core/merge:
-          from: master
-          into: nightly
-  merge_beta:
-    <<: *defaults
-    steps:
-      - core/merge:
-          from: nightly
-          into: beta
-  merge_stable:
-    <<: *defaults
-    steps:
-      - core/merge:
-          from: beta
-          into: stable
+          command: GH_TOKEN="${GITHUB_TOKEN}" yarn run release
   build:
-    <<: *defaults
+    executor: default
     steps:
       - checkout
       - install_deps
@@ -107,7 +82,8 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_nightly
+      - core/merge_nightly:
+          executor: default
   monthly:
     triggers:
       - schedule:
@@ -117,8 +93,10 @@ workflows:
               only:
                 - master
     jobs:
-      - merge_stable
-      - merge_beta:
+      - core/merge_stable:
+          executor: default
+      - core/merge_beta:
+          executor: default
           # Only run merge_beta after merge_stable is run
           requires:
-            - merge_stable
+            - core/merge_stable
