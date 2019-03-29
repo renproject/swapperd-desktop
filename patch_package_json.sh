@@ -2,7 +2,7 @@
 
 BRANCH=$(git branch | grep \* | cut -d ' ' -f2)
 HASH=$(git describe --always --long)
-NIGHTLY_DOWNLOAD_URL="https://api.github.com/repos/renproject/swapperd/releases/tags/nightly"
+NIGHTLY_DOWNLOAD_URL="https://api.github.com/repos/renproject/swapperd/releases/tags/latest_nightly"
 
 patch_version() {
   tmp=$(mktemp)
