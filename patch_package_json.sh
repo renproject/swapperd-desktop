@@ -11,7 +11,7 @@ patch_version() {
 
 patch_download_link() {
   tmp=$(mktemp)
-  cat $1 | URL="${NIGHTLY_DOWNLOAD_URL}" yarn --silent jqn --color=false --require process 'update("config.swapperdReleasesUrl", (v) => process.env.URL)' > "$tmp" && mv -f "$tmp" $1
+  cat $1 | URL="${NIGHTLY_DOWNLOAD_URL}" yarn --silent jqn --color=false --require process 'update("config.swapperDReleasesUrl", (v) => process.env.URL)' > "$tmp" && mv -f "$tmp" $1
 }
 
 # patch version
