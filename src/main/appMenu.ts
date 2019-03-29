@@ -66,7 +66,7 @@ export const getMenuTemplate = (mb: MenubarApp): Electron.MenuItemConstructorOpt
             type: "separator"
         },
         {
-            label: "Quit Swapperd",
+            label: "Quit SwapperD",
             click: () => {
                 mb.app.quit();
             }

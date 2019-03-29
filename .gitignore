@@ -29,4 +29,3 @@ yarn-error.log*
 
 # prebuild scripts
 /packaging/*.js
-/src/common/*.js

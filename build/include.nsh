@@ -10,7 +10,7 @@
 !macroend
 
 ; Run the swapperd uninstaller if it exists
-!macro uninstallSwapperd
+!macro uninstallSwapperD
     IfFileExists "${SWAP_DIR}\bin\uninstaller.exe" 0 end_of_test
     ExecShellWait "" "${SWAP_DIR}\bin\uninstaller.exe" SW_HIDE
     end_of_test:
@@ -20,8 +20,8 @@
 !macro customInstall
     ${If} ${FileExists} `${SWAP_DIR}\*.*`
         ; swapperd is a directory
-        ; uninstall Swapperd
-        !insertmacro uninstallSwapperd
+        ; uninstall SwapperD
+        !insertmacro uninstallSwapperD
         ; remove the entire bin directory
         RMDir /r "${SWAP_DIR}\bin"
     ${ElseIf} ${FileExists} `${SWAP_DIR}`
@@ -38,5 +38,5 @@
 
 ; Run the swapperd uninstaller to deregister services
 !macro unregisterFileAssociations
-    !insertmacro uninstallSwapperd
+    !insertmacro uninstallSwapperD
 !macroend

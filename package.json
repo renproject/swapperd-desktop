@@ -38,29 +38,28 @@
       "resources"
     ],
     "productName": "SwapperD Desktop",
-    "publish": [
-      {
-        "provider": "github",
-        "releaseType": "release"
-      }
-    ]
+    "publish": [{
+      "provider": "github",
+      "releaseType": "release"
+    }]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",
     "start": "electron-webpack dev",
-    "build": "electron-webpack && electron-builder",
+    "build": "electron-webpack && yarn run package",
     "build:all": "yarn run build --x64 -wml",
     "build:win": "yarn run build --x64 -w",
     "build:mac": "yarn run build -m",
     "build:linux": "yarn run build -l",
     "build:dir": "yarn run build --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "patch-package && electron-builder install-app-deps",
-    "prebuild": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck --resolveJsonModule",
+    "package": "electron-builder",
+    "prepackage": "tsc packaging/afterPackHook.ts --lib es2015 --skipLibCheck --resolveJsonModule",
+    "postpackage": "rm -rf ./src/common/*.js",
     "test": "echo 'No tests to run'",
     "release": "sh ./patch_package_json.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
   "dependencies": {
-    "@types/rc-progress": "^2.2.1",
     "auto-launch": "^5.0.5",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
@@ -95,6 +94,7 @@
     "@types/menubar": "^5.1.6",
     "@types/node": "^10.12.21",
     "@types/node-notifier": "^0.0.28",
+    "@types/rc-progress": "^2.2.1",
     "@types/react": "^16.8.1",
     "@types/react-dom": "^16.0.11",
     "@types/sqlite3": "^3.1.3",

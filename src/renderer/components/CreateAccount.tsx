@@ -9,7 +9,7 @@ import { Loading } from "@/components/Loading";
 import { ipc } from "@/ipc";
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
-import { swapperdReady } from "common/swapperd";
+import { swapperDReady } from "common/swapperD";
 import { Message } from "common/types";
 
 interface Props extends ConnectedProps {
@@ -160,7 +160,7 @@ export class CreateAccountClass extends React.Component<Props, State> {
                 );
             }
 
-            await swapperdReady(password);
+            await swapperDReady(password);
             this.setState({ loading: false, submitError: null });
             // If the user provided a mnemonic, there is no point passing the new one to the parent
             this.props.resolve(useMnemonic ? "" : newMnemonic, password);

@@ -8,7 +8,7 @@ import { getLatestAsset, getLatestReleaseVersion } from "common/gitReleases";
 import { IPC } from "common/ipc";
 import { Message } from "common/types";
 
-//////////////////////////////// Swapperd Daemon ///////////////////////////////
+//////////////////////////////// SwapperD Daemon ///////////////////////////////
 
 const run = async (command: string, onErr?: (data: string) => void) => new Promise((resolve, reject) => {
     let latestError: string | null = null;
@@ -40,7 +40,7 @@ const run = async (command: string, onErr?: (data: string) => void) => new Promi
     });
 });
 
-export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
+export const installSwapperD = async (ipc: IPC): Promise<void | {}> => {
     let last = 0;
     const onErr = (data: string) => {
         const match = data.match(/^#*\s*(\d+(.\d)?)%$/);
@@ -64,23 +64,23 @@ export const installSwapperd = async (ipc: IPC): Promise<void | {}> => {
     }
 };
 
-/////////////////////////////// Swapperd Daemon ////////////////////////////////
+/////////////////////////////// SwapperD Daemon ////////////////////////////////
 
-export const checkForSwapperdUpdates = async (ipc: IPC): Promise<void> => {
+export const checkForSwapperDUpdates = async (ipc: IPC): Promise<void> => {
     let version = await getLatestReleaseVersion();
     if (version[0] === "v") {
         version = version.slice(1);
     }
     logger.info(`Latest SwapperD version is: ${version}`);
-    await ipc.sendSyncWithTimeout(Message.LatestSwapperdVersion, 5, version);
+    await ipc.sendSyncWithTimeout(Message.LatestSwapperDVersion, 5, version);
 };
 
-/////////////////////////////// Swapperd Desktop ///////////////////////////////
+/////////////////////////////// SwapperD Desktop ///////////////////////////////
 
 export const checkForUpdates = async (_ipc: IPC): Promise<UpdateCheckResult | null> => {
 
     const [resultPromise] = await Promise.all([
-        // installOrUpdateSwapperd(null),
+        // installOrUpdateSwapperD(null),
         autoUpdater.checkForUpdatesAndNotify(),
     ]);
 
@@ -137,7 +137,7 @@ Download speed: ${progressObj.bytesPerSecond} \
         let timeout = 2 * 60 * 1000;
         try {
             await checkForUpdates(ipc);
-            await checkForSwapperdUpdates(ipc);
+            await checkForSwapperDUpdates(ipc);
             // The update check succeeded so don't check again for another hour
             timeout = 60 * 60 * 1000;
         } catch (err) {

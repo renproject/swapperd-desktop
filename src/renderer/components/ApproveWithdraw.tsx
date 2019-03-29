@@ -9,7 +9,7 @@ import { Loading } from "@/components/Loading";
 import { getLogo } from "@/lib/logos";
 import { connect, ConnectedProps } from "@/store/connect";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
-import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "common/swapperd";
+import { IBalances, IPartialWithdrawRequest, IWithdrawRequest, submitWithdraw } from "common/swapperD";
 
 interface IApproveWithdrawProps extends ConnectedProps {
     network: string;
