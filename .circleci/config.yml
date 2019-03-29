@@ -40,16 +40,32 @@ commands:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+  release:
+    description: Makes a release to Github
+    parameters:
+      prerelease:
+        description: Whether the release should be a prerelease or not
+        type: boolean
+        default: false
+    steps:
+      - run:
+          name: Deploying to Releases
+          command: <<# parameters.prerelease >>EP_PRE_RELEASE="true"<</ parameters.prerelease >> GH_TOKEN="${GITHUB_TOKEN}" yarn run release
 
 jobs:
+  prerelease:
+    executor: default
+    steps:
+      - checkout
+      - install_deps
+      - release:
+          prerelease: true
   release:
     executor: default
     steps:
       - checkout
       - install_deps
-      - run:
-          name: Deploying to Releases
-          command: GH_TOKEN="${GITHUB_TOKEN}" yarn run release
+      - release
   build:
     executor: default
     steps:
@@ -73,6 +89,13 @@ workflows:
             branches:
               only:
                 - stable
+      - prerelease:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - nightly
   nightly:
     triggers:
       - schedule:
