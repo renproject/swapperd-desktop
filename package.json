@@ -59,7 +59,6 @@
     "release": "sh ./patch_version.sh ./package.json; yarn run build:all -p always; git checkout HEAD -- ./package.json"
   },
   "dependencies": {
-    "@types/rc-progress": "^2.2.1",
     "auto-launch": "^5.0.5",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
@@ -94,6 +93,7 @@
     "@types/menubar": "^5.1.6",
     "@types/node": "^10.12.21",
     "@types/node-notifier": "^0.0.28",
+    "@types/rc-progress": "^2.2.1",
     "@types/react": "^16.8.1",
     "@types/react-dom": "^16.0.11",
     "@types/sqlite3": "^3.1.3",
