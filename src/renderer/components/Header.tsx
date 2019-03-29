@@ -5,7 +5,7 @@ import logo from "@/styles/images/logo.png";
 
 import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
-import { NETWORKS } from "common/swapperd";
+import { NETWORKS } from "common/swapperD";
 import { Network } from "common/types";
 
 interface Props extends ConnectedProps {
@@ -43,7 +43,7 @@ class HeaderClass extends React.Component<Props, State> {
         return (
             <div className="header">
                 <div className={`${logoOnClick ? "clickable" : ""}`} {...logoProps}>
-                    <img className="logo" src={logo} alt="Swapperd" />
+                    <img className="logo" src={logo} alt="SwapperD" />
                 </div>
                 {!hideNetwork &&
                     <select disabled={disableNetwork} value={this.props.network} onChange={this.handleChange}>

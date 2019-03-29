@@ -19,7 +19,7 @@ import { connect, ConnectedProps } from "@/store/connect";
 import { AppContainer } from "@/store/containers/appContainer";
 import { OptionsContainer } from "@/store/containers/optionsContainer";
 import { isNewerVersion } from "common/gitReleases";
-import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "common/swapperd";
+import { fetchInfo, IPartialSwapRequest, IPartialWithdrawRequest, IWithdrawRequest } from "common/swapperD";
 import { Message, Network } from "common/types";
 
 import { version as APP_VERSION } from "../../../package.json";
@@ -41,8 +41,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             accountExists: false,
             swapDetails: null,
             withdrawRequest: null,
-            swapperdVersion: null,
-            latestSwapperdVersion: null,
+            swapperDVersion: null,
+            latestSwapperDVersion: null,
             showAbout: false,
             balancesError: null,
             expressError: null,
@@ -75,7 +75,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         ipc.on(Message.GetPassword, () => {
             const { password } = this.appContainer.state.login;
             if (password === null) {
-                throw new Error("Swapperd locked");
+                throw new Error("SwapperD locked");
             }
             return password;
         });
@@ -94,8 +94,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
             return;
         });
 
-        ipc.on(Message.LatestSwapperdVersion, async (version: string) => {
-            this.setState({ latestSwapperdVersion: version });
+        ipc.on(Message.LatestSwapperDVersion, async (version: string) => {
+            this.setState({ latestSwapperDVersion: version });
         });
 
         this.callGetAccount().catch(logger.error);
@@ -132,13 +132,13 @@ class AppClass extends React.Component<IAppProps, IAppState> {
         const { login: { password } } = this.appContainer.state;
         const { network } = this.optionsContainer.state;
 
-        const { expressError, balancesError, latestSwapperdVersion, origin, showAbout, swapperdVersion, mnemonic, accountExists, swapDetails, withdrawRequest } = this.state;
+        const { expressError, balancesError, latestSwapperDVersion, origin, showAbout, swapperDVersion, mnemonic, accountExists, swapDetails, withdrawRequest } = this.state;
         const { balances, swaps, transfers } = this.appContainer.state.trader;
         const traderBalances = balances.get(network) || null;
         const traderSwaps = swaps.get(network) || null;
         const traderTransfers = transfers.get(network) || null;
 
-        const updateAvailable = remote.process.platform !== "win32" && latestSwapperdVersion !== null && swapperdVersion !== null && isNewerVersion(swapperdVersion, latestSwapperdVersion);
+        const updateAvailable = remote.process.platform !== "win32" && latestSwapperDVersion !== null && swapperDVersion !== null && isNewerVersion(swapperDVersion, latestSwapperDVersion);
 
         // tslint:disable-next-line:no-any
         const headerProps: any = {
@@ -162,8 +162,8 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <CreateAccount resolve={this.accountCreated} />
                 <div className="app--footer">
                     <VersionBlock
-                        swapperdBinaryVersion={swapperdVersion}
-                        swapperdDesktopVersion={APP_VERSION}
+                        swapperDBinaryVersion={swapperDVersion}
+                        swapperDDesktopVersion={APP_VERSION}
                     />
                 </div>
             </div>;
@@ -194,9 +194,9 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 <AboutPage
                     updateCompleteCallback={this.callGetAccount}
                     updateAvailable={updateAvailable}
-                    latestSwapperdVersion={latestSwapperdVersion}
-                    swapperdBinaryVersion={swapperdVersion}
-                    swapperdDesktopVersion={APP_VERSION}
+                    latestSwapperDVersion={latestSwapperDVersion}
+                    swapperDBinaryVersion={swapperDVersion}
+                    swapperDDesktopVersion={APP_VERSION}
                 />
             </div>;
         }
@@ -334,7 +334,7 @@ class AppClass extends React.Component<IAppProps, IAppState> {
                 // We can try to login since we know an account exists
                 const infoResponse = await fetchInfo({ network: network, password: password || "" });
                 this.setState({
-                    swapperdVersion: infoResponse.version,
+                    swapperDVersion: infoResponse.version,
                 });
                 logger.info(`Detected: SwapperD ${infoResponse.version} running`);
 
@@ -359,9 +359,9 @@ interface IAppState {
     accountExists: boolean;
     swapDetails: IPartialSwapRequest | null;
     withdrawRequest: IPartialWithdrawRequest | null;
-    swapperdVersion: string | null;
+    swapperDVersion: string | null;
     showAbout: boolean;
-    latestSwapperdVersion: string | null;
+    latestSwapperDVersion: string | null;
     balancesError: string | null;
     expressError: string | null;
 }

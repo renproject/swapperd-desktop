@@ -214,7 +214,7 @@ export async function fetchAccountStatus(options: IOptions): Promise<string> {
     }
 }
 
-export async function swapperdReady(password: string): Promise<void> {
+export async function swapperDReady(password: string): Promise<void> {
     let timeout = 60;
     let status;
     do {

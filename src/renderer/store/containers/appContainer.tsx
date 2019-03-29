@@ -1,13 +1,13 @@
 import { Container } from "unstated";
 
 import { ApplicationData } from "@/store/storeTypes";
-import { getBalances, getSwaps, getTransfers, IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperd";
+import { getBalances, getSwaps, getTransfers, IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperD";
 import { Network } from "common/types";
 
 const initialState: ApplicationData = {
     app: {
         updateReady: null,
-        updatingSwapperd: false,
+        updatingSwapperD: false,
         installProgress: null,
     },
     login: {
@@ -37,12 +37,12 @@ export class AppContainer extends Container<ApplicationData> {
     public clearPassword = async () =>
         this.setState({ login: { ...this.state.login, password: null } })
 
-    // Swapperd Updating state
-    public setUpdatingSwapperd = async (updating: boolean) =>
-        this.setState({ app: { ...this.state.app, updatingSwapperd: updating } })
+    // SwapperD Updating state
+    public setUpdatingSwapperD = async (updating: boolean) =>
+        this.setState({ app: { ...this.state.app, updatingSwapperD: updating } })
 
     /**
-     * updateBalances fetches and updates the balances from Swapperd.
+     * updateBalances fetches and updates the balances from SwapperD.
      *
      * @throws an error if the call to getBalances() failed
      */

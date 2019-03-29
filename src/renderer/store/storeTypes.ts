@@ -1,6 +1,6 @@
 import { Network } from "common/types";
 
-import { IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperd";
+import { IBalances, ISwapsResponse, ITransfersResponse } from "common/swapperD";
 
 export interface ApplicationData {
     app: AppData;
@@ -10,7 +10,7 @@ export interface ApplicationData {
 
 export interface AppData {
     updateReady: string | null;
-    updatingSwapperd: boolean;
+    updatingSwapperD: boolean;
     installProgress: number | null;
 }
 

@@ -35,12 +35,10 @@
       "resources"
     ],
     "productName": "SwapperD Desktop",
-    "publish": [
-      {
-        "provider": "github",
-        "releaseType": "release"
-      }
-    ]
+    "publish": [{
+      "provider": "github",
+      "releaseType": "release"
+    }]
   },
   "scripts": {
     "lint": "tslint --project ./ -t stylish",

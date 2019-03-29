@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 import { getLogo } from "@/lib/logos";
-import { IPartialWithdrawRequest, Token } from "common/swapperd";
+import { IPartialWithdrawRequest, Token } from "common/swapperD";
 
 interface IBalanceItemProps {
     token: Token;
