@@ -136,27 +136,27 @@ workflows:
             branches:
               only:
                 - stable
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 2 * * *" # every night at 02:00
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - merge_nightly
-  monthly:
-    triggers:
-      - schedule:
-          cron: "0 0 1 * *" # on the 1st of every month at 00:00
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - merge_stable
-      - merge_beta:
-          # Only run merge_beta after merge_stable is run
-          requires:
-            - merge_stable
+#  nightly:
+#    triggers:
+#      - schedule:
+#          cron: "0 2 * * *" # every night at 02:00
+#          filters:
+#            branches:
+#              only:
+#                - master
+#    jobs:
+#      - merge_nightly
+#  monthly:
+#    triggers:
+#      - schedule:
+#          cron: "0 0 1 * *" # on the 1st of every month at 00:00
+#          filters:
+#            branches:
+#              only:
+#                - master
+#    jobs:
+#      - merge_stable
+#      - merge_beta:
+#          # Only run merge_beta after merge_stable is run
+#          requires:
+#            - merge_stable
